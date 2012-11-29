@@ -1,0 +1,85 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <h:inputHidden id="id" value="#{disciplinaController.item.id}"/>
+
+            <p:panel header="Datos del Autoridad">
+            <p:panelGrid columns="3" id="form_disciplina">
+                <h:outputLabel for="nombre" value="Nombre: *" />
+                <p:inputText id="nombre" value="#{disciplinaController.item.nombre}" required="true" />
+                <p:message for="nombre"/>
+
+                <h:outputLabel for="descripcion" value="Descripcion: " />
+                <p:inputText id="descripcion" value="#{disciplinaController.item.descripcion}"  />
+                <p:message for="descripcion"/>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar" update="@form"  action="#{disciplinaController.guardar}" ajax="true">
+                    <p:collector value="#{disciplinaController.item}" addTo="#{disciplinaController.items}"/>
+                </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+            </p:panel>
+
+
+            <br/>
+
+            <br/>
+
+
+            <p:outputPanel id="disciplinas">
+                <p:commandLink actionListener="#{disciplinaController.crearNuevo}" update="@form" value="Crear Nuevo"/>
+                <p:dataTable value="#{disciplinaController.items}" var="item" >
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Nombre" />
+                        </f:facet>
+                        <h:outputText value="#{item.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Descripción" />
+                        </f:facet>
+                        <h:outputText value="#{item.descripcion}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Borrar" />
+                        </f:facet>
+                        <p:commandLink update=":form:disciplinas :form:msgs"  process="@this" actionListener="#{disciplinaController.borrar}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="itemCambiar" value="#{item}" />
+                            <p:collector value="#{item}" removeFrom="#{disciplinaController.items}"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Actualizar" />
+                        </f:facet>
+                        <p:commandLink update="@form"  process="@this" actionListener="#{disciplinaController.actualizar}">
+                            <p:graphicImage value="/images/update.png"/>
+                            <f:attribute name="itemCambiar" value="#{item}" />
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

@@ -1,0 +1,49 @@
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:commandLink ajax="false" action="#{permisoController.crearNuevo}">
+                #{labels.crear_nuevo_permiso}
+            </p:commandLink>
+
+            <p:outputPanel id="permisos">
+                <p:dataTable value="#{permisoController.trabajos}" var="trabajo"
+                             paginator="true"
+                             rows="5"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                    <p:column headerText="#{labels.numero}" filterBy="#{trabajo.id}">
+                        <p:commandLink ajax="false" value="#{trabajo.id}"
+                                       actionListener="#{permisoController.findPermisoTrabajo}"
+                                       action="#{permisoController.navPermisoTrabajo}">
+                            <f:attribute name="itemCambiar" value="#{trabajo}" />
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="#{labels.nombre}">
+                        <h:outputText value="#{trabajo.tarea}"/>
+                    </p:column>
+                    <p:column headerText="#{labels.creador}">
+                        <h:outputText value="#{trabajo.usuarioCreacion}"/>
+                    </p:column>
+                    
+                </p:dataTable>
+            </p:outputPanel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

@@ -1,0 +1,150 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <h:inputHidden value="#{contratistaController.contratista.id}"/>
+            <p:growl id="msgs" />
+            <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                <p:commandLink update=":form"  process="@this"
+                                   actionListener="#{contratistaController.nuevoContratista}" value="Crear Nuevo Contratista"/>
+            </sec:ifAnyGranted>
+            <p:panel header="#{labels.datos_contratista}">
+                
+                <p:panelGrid id="form_contratista" columns="6">
+                    <h:outputLabel for="num_id" value="#{labels.num_id} " />
+                    <p:inputText id="num_id" value="#{contratistaController.contratista.numId}" required="true"/>
+                    <p:message for="num_id"/>
+
+                    <h:outputLabel for="nombre" value="#{labels.nombre} " />
+                    <p:inputText id="nombre" value="#{contratistaController.contratista.nombre}" required="true"/>
+                    <p:message for="nombre"/>
+                    
+                    <h:outputLabel for="domicilio" value="#{labels.domicilio} " />
+                    <p:inputText id="domicilio" value="#{contratistaController.contratista.domicilio}" required="true"/>
+                    <p:message for="domicilio"/>
+                    
+                    <h:outputLabel for="telefono" value="#{labels.telefono} " />
+                    <p:inputText id="telefono" value="#{contratistaController.contratista.telefono}" required="true"/>
+                   <p:message for="telefono"/>
+                    
+                    <h:outputLabel for="objeto_social" value="#{labels.objeto_social}" />
+                    <p:inputText id="objeto_social" value="#{contratistaController.contratista.objetoSocial}" />
+                    <p:message for="objeto_social"/>
+                    
+                    <h:outputLabel for="nombre_contacto" value="#{labels.nombre_contacto}" />
+                    <p:inputText id="nombre_contacto" value="#{contratistaController.contratista.nombreContacto}" required="true"/>
+                    <p:message for="nombre_contacto"/>
+                    
+                    <h:outputLabel for="telefono_contacto" value="#{labels.telefono_contacto}" />
+                    <p:inputText id="telefono_contacto" value="#{contratistaController.contratista.telefonoContacto}" />
+                    <p:message for="telefono_contacto"/>
+                    
+                    <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
+                    <p:inputText id="mail" value="#{contratistaController.contratista.mail}" required="true"/>
+                    <p:message for="mail"/>
+                    
+                    <h:outputLabel for="arp" value="#{labels.arp}" />
+                    <p:inputText id="arp" value="#{contratistaController.contratista.arp}" required="true"/>
+                    <p:message for="arp"/>
+                    
+                    <h:outputLabel for="nivel_riesgo" value="#{labels.nivel_riesgo}" />
+                    <p:inputText id="nivel_riesgo" value="#{contratistaController.contratista.nivelRiesgo}" />
+                    <p:message for="nivel_riesgo"/>
+                    
+                    
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                        <h:outputLabel for="usr" value="#{labels.usr}" />
+                        <p:inputText id="usr" value="#{contratistaController.contratista.usuario}" required="true"/>
+                        <p:message for="usr"/>
+
+                        <h:outputLabel for="pwd" value="#{labels.pwd}" />
+                        <h:panelGrid columns="1">
+                            <h:outputText value="#{labels.msj_no_cambio_clave}" style="color: blue;font-size: 9"/>
+                            <p:password id="pwd" value="#{contratistaController.contrasena}" feedback="true"/>
+                        </h:panelGrid>
+                        <p:message for="pwd"/>
+                    </sec:ifAnyGranted>
+                    
+                    <h:outputLabel  value="#{labels.contratista_activo}" />
+                    <p:selectBooleanCheckbox id="activo" value="#{contratistaController.contratista.activo}" />
+                    <p:message for="activo"/>
+
+                    
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                        <f:facet name="footer">
+                            <p:commandButton value="#{labels.boton_enviar}" update="@form" action="#{contratistaController.guardar}" ajax="false"/>
+                        </f:facet>
+                    </sec:ifAnyGranted>    
+                </p:panelGrid>
+            </p:panel>
+
+            <br/>
+
+            <p:panel id="empleados" header="#{labels.empleados}">
+                <h:panelGrid columns="1">
+                    <p:commandLink ajax="false" process="@this" 
+                                action="#{empleadoController.navEmpleado}"
+                                disabled="#{!contratistaController.permitirAddEmpleados}">
+                        #{labels.crear_empleado}
+                    </p:commandLink>
+                </h:panelGrid>
+                <p:dataTable value="#{contratistaController.contratista.empleados}" var="empleado" paginator="true"
+                             rows="20"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.num_id}" />
+                        </f:facet>
+                        <h:outputText value="#{empleado.numId}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.nombre}" />
+                        </f:facet>
+                        <h:outputText value="#{empleado.nombresApellidos}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.activar}" />
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{empleado.activo}"/>
+                    </p:column>
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Vetar" />
+                            </f:facet>
+                            <p:selectBooleanCheckbox value="#{empleado.betado}"/>
+                        </p:column>
+                    </sec:ifAnyGranted>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.actualizar}" />
+                        </f:facet>
+                        <p:commandLink ajax="false"  process="@this" 
+                                       actionListener="#{empleadoController.mostrarEmpleadoContratista}" 
+                                       action="#{empleadoController.navEmpleado}">
+                            <p:graphicImage value="/images/update.png"/>
+                            <f:attribute name="empleadoCambiar" value="#{empleado}" />
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

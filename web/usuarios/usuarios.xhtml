@@ -1,0 +1,79 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+      <h:form id="form">
+        <p:growl id="msgs" />
+        <h:inputHidden id="id" value="#{usuariosController.usuario.id}"/>
+
+        <p:panel id="form_grupo" header="Datos del Usuario">
+        <p:panelGrid columns="3" id="grid">
+            <h:outputLabel for="usr" value="Usuario: " />
+            <p:inputText id="usr" value="#{usuariosController.usuario.usr}" required="true"  />
+            <p:message for="usr"/>
+
+            <h:outputLabel for="pwd" value="Contraseña: *" />
+            <p:password id="pwd" value="#{usuariosController.usuario.pwd}" feedback="true"/>
+            <p:message for="pwd"/>
+
+
+            <h:outputLabel value="Grupos: " />
+            <p:dataGrid id="grupos_usr" var="grupo" value="#{usuariosController.grupos}" 
+                            columns="#{usuariosController.gridColumnasGrupos}" 
+                            rows="#{usuariosController.gridFilasGrupos}">
+                <p:column>
+                    <p:selectBooleanCheckbox value="#{grupo.addUser}" />
+                    <h:outputText value="#{grupo.codigo}"/>
+                </p:column>
+            </p:dataGrid>
+            <p:message for="grupos_usr"/>
+            <f:facet name="footer">
+            <p:commandButton value="Guardar" update="@form"  action="#{usuariosController.guardar}" ajax="true"/>
+            </f:facet>
+        </p:panelGrid>
+        </p:panel>
+
+        <br/>
+        
+        <p:outputPanel id="usuarios">
+            <p:commandLink update="@form" actionListener="#{usuariosController.nuevo}" value="Nuevo Usuario"/>
+            <p:dataTable value="#{usuariosController.usuarios}" var="usuario"
+                             paginator="true"
+                             rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             paginatorPosition="top"
+                             paginatorAlwaysVisible="false">
+                <p:column headerText="Login" filterBy="#{usuario.usr}">
+                    <h:outputText value="#{usuario.usr}"/>
+                </p:column>
+
+                <p:column headerText="Borrar">
+                    <p:commandLink update=":form:usuarios :form:msgs"  process="@this" actionListener="#{usuariosController.borrar}">
+                        <p:graphicImage value="/images/cross.gif"/>
+                        <f:attribute name="usuarioBorrar" value="#{usuario}" />
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Actualizar">
+                    <p:commandLink update="@form"  process="@this" actionListener="#{usuariosController.actualizar}">
+                        <p:graphicImage value="/images/update.png"/>
+                        <f:attribute name="usuarioCambiar" value="#{usuario}" />
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </p:outputPanel>
+
+
+
+    </h:form>
+    </ui:define>
+  </ui:composition>
+</f:view>
+</html>

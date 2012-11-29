@@ -1,0 +1,66 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="plantilla1.xhtml">
+    <ui:define name="navegador">
+        <h:form>
+            <table>
+               <!-- <tr><td>
+                    <p:graphicImage value="/images/Ingles.png"/>
+                    <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
+                        <h:outputText value="English" style="font-size: 8px"/>
+                        <f:attribute name="language" value="en" />
+                    </p:commandLink>
+                </td><td>
+                     <p:graphicImage value="/images/espanol.png"/>
+                     <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
+
+                        <h:outputText value="Español" style="font-size: 8px"/>
+                        <f:attribute name="language" value="es" />
+                     </p:commandLink>
+                </td><td>
+                    <p:graphicImage value="/images/portuqes.png"/>
+                    <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
+                        <h:outputText value="Portugues" style="font-size: 8px"/>
+                        <f:attribute name="language" value="pt" />
+                    </p:commandLink>
+                </td></tr>-->
+            </table>
+        </h:form>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="loginForm" prependId="false">
+        <!-- Agregue la implementación del navegador-->
+        <p:messages/>
+        <h:outputLabel value="#{loginController.mensaje}" style="color: red"  />
+        <table>
+             <tr>
+                 <td><h:outputLabel value="#{labels.usr}"/></td>
+             </tr>
+             <tr>
+                 <td><h:inputText id="j_username"  size="15"/></td>
+             </tr>
+             <tr>
+                <td><h:outputLabel value="#{labels.pwd}"/></td>
+             </tr>
+             <tr>
+                 <td><h:inputSecret id="j_password" size="15"/></td>
+             </tr>
+             <tr>
+                 <td></td>
+             </tr>
+             <tr>
+                 <td><h:commandButton type="submit" id="login" action="#{loginController.doLogin}" value="#{labels.boton_enviar}"/></td>
+             </tr>
+        </table>
+        </h:form>
+    </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

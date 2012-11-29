@@ -1,0 +1,98 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <h:inputHidden id="id" value="#{menusController.menu.id}"/>
+
+            <p:panel header="Datos del Menú">
+            <p:panelGrid columns="3" id="form_menu">
+                <h:outputLabel for="nombre" value="Nombre: *" />
+                <p:inputText id="nombre" value="#{menusController.menu.nombre}" required="true" />
+                <p:message for="nombre"/>
+
+                <h:outputLabel for="descripcion" value="Descripción: " />
+                <p:inputText id="descripcion" value="#{menusController.menu.descripcion}"  />
+                <p:message for="descripcion"/>
+
+                <h:outputLabel for="menu" value="Menú:" />
+                <h:selectOneMenu id="menu" value="#{menusController.menu.menuPadre.id}">
+                    <f:selectItems  value="#{menusController.items}" />
+                </h:selectOneMenu>
+                <p:message for="menu"/>
+                
+                <h:outputLabel for="idioma" value="Idioma:" />
+                <h:selectOneMenu id="idioma" value="#{menusController.menu.idioma}">
+                    <f:selectItems  value="#{menusController.idiomas}" />
+                </h:selectOneMenu>
+                <p:message for="idioma"/>
+
+                <f:facet name="footer">
+                <p:commandButton value="Guardar" update="@form"  action="#{menusController.guardar}" ajax="true">
+                    <p:collector value="#{menusController.menu}" addTo="#{menusController.menus}"/>
+                </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+            </p:panel>
+
+
+            <br/>
+
+
+            <p:outputPanel id="menus">
+                <p:commandLink update="@form" actionListener="#{menusController.nuevo}" value="Nuevo Menu"/>
+                <p:dataTable value="#{menusController.menus}" var="menu"
+                             paginator="true"
+                             rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             paginatorPosition="top"
+                             paginatorAlwaysVisible="false">
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Nombre" />
+                        </f:facet>
+                        <h:outputText value="#{menu.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Menu" />
+                        </f:facet>
+                        <h:outputText value="#{menu.menuPadre.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Borrar" />
+                        </f:facet>
+                        <p:commandLink update=":form:menus :form:msgs"  process="@this" actionListener="#{menusController.borrar}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="menuCambiar" value="#{menu}" />
+                            <p:collector value="#{menu}" removeFrom="#{menusController.menus}"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Actualizar" />
+                        </f:facet>
+                        <p:commandLink update="@form"  process="@this" actionListener="#{menusController.actualizar}">
+                            <p:graphicImage value="/images/update.png"/>
+                            <f:attribute name="menuCambiar" value="#{menu}" />
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+        </h:form>
+    </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

@@ -1,0 +1,16 @@
+
+
+.site-breadcrumbs {
+background: #FFF;
+margin: 62px 0 0;
+padding: 11px 13px;
+width: auto;
+}
+
+
+/* ---------- Hidden Accessible ---------- */
+
+#skip-to-content, #banner h2, #banner h3, #navigation h1, .site-breadcrumbs h1 {
+	clip: rect(0 0 0 0);
+	position: absolute;
+}

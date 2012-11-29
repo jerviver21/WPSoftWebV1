@@ -1,0 +1,33 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+  <ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:messages id="msgs" />
+            <p:panel id="form_parametro" header="Descargar Log:">
+                <p:commandButton value="Descargar" update="@form" action="#{logController.generarLog}" ajax="true"/>
+            </p:panel>
+            
+            <p:commandLink ajax="false" title="Download" value="descargar"
+                           actionListener="#{logController.descargar}" rendered="#{logController.renderDownload}">
+                    <p:fileDownload value="#{logController.file}"/>
+            </p:commandLink>
+   
+            <p:spacer height="5" width="500"/>
+
+            <p:panel id="last_log" header="Last Log:">
+                "#{logController.textoLog}"
+            </p:panel>
+            
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>

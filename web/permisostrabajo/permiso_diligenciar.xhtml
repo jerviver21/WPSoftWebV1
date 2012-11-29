@@ -1,0 +1,254 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panel header="Datos del Permiso">
+                <p:panelGrid>
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column>
+                               <h:outputText value="Permiso"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="Solicitante" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="Sector" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="Equipo" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="Fecha Inicio" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="Fecha Fin" />
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.tarea}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.usuarioCreacion}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.equipo.nombre}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.sector.nombre}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.fechaIni}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.fechaFin}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+            <p:panel header="Disciplina">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="disciplina" value="Disciplina:" />
+                    <h:selectOneMenu id="disciplina" value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.disciplina.id}">
+                        <f:selectItems  value="#{permisoDiligenciadorController.disciplinas}" />
+                        <p:ajax update=":form:otra"/>
+                    </h:selectOneMenu>
+                    <p:message for="disciplina"/>
+
+                    <h:outputLabel for="otra" value="Cual: *" />
+                    <p:inputText id="otra" value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.otraDisciplina}" disabled="#{permisoDiligenciadorController.permisoDiligenciar.permiso.disciplina.id ne -1}"/>
+                    <p:message for="otra"/>
+                </p:panelGrid>
+            </p:panel>
+            <p:panel header="Otros Sectores Afectados">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="sectores" value="Sector:" />
+                    <h:selectOneMenu id="sectores" value="#{permisoDiligenciadorController.idSector}">
+                        <f:selectItems  value="#{permisoDiligenciadorController.sectores}" />
+                        <p:ajax/>
+                    </h:selectOneMenu>
+                    <p:commandLink value="Agregar Sector Afectado" actionListener="#{permisoDiligenciadorController.agregarSectorAfectado}" update=":form:sectores_afectados"/>
+                </p:panelGrid>
+
+                <p:outputPanel id="sectores_afectados">
+                    <p:dataTable value="#{permisoDiligenciadorController.permisoDiligenciar.permiso.sectoresAfectados}" var="sector">
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Sector" />
+                            </f:facet>
+                            <h:outputText value="#{sector.nombre}"/>
+                        </p:column>
+                        <p:column >
+                            <f:facet name="header">
+                                <h:outputText value="Borrar" />
+                            </f:facet>
+                            <p:commandLink update=":form:sectores_afectados"  process="@this" actionListener="#{permisoDiligenciadorController.borrarSectorAfectado}">
+                                <p:graphicImage value="/images/cross.gif"/>
+                                <f:attribute name="itemCambiar" value="#{sector}"/>
+                            </p:commandLink>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:panel>
+
+            <p:panel header="Evaluación de Riesgos">
+                
+                <p:commandLink update="@form" actionListener="#{permisoDiligenciadorController.addTarea}" value="Agregar Tarea" />
+                <p:dataTable value="#{permisoDiligenciadorController.permisoDiligenciar.tareasVista}"  var="tarea" id="tareas" editable="true">
+                    <p:column headerText="Paso">
+                        <h:outputText value="#{tarea.consecutivo}"/>
+                    </p:column>
+                    <p:column headerText="Tarea">
+                         <p:cellEditor>
+                             <f:facet name="output">
+                                 <h:outputText value="#{tarea.datos}"/>
+                             </f:facet>
+                             <f:facet name="input">
+                                 <p:inputText value="#{tarea.datos}" style="width:100%">
+                                     <p:ajax/>
+                                 </p:inputText>
+                             </f:facet>
+                         </p:cellEditor>
+                     </p:column>
+                     <p:column headerText="Peligro">
+                         <p:commandLink update="@form"  process="@this" actionListener="#{permisoDiligenciadorController.setTarea}" oncomplete="dlg_peligros.show()" value="Ver Peligros" disabled="#{tarea.datos eq null}">
+                            <f:attribute name="itemCambiar" value="#{tarea}"/>
+                         </p:commandLink>
+                     </p:column>
+                     <p:column headerText="Editar" style="width:50px">
+                        <p:rowEditor />
+                     </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:dialog id="peligros_permiso" header="Peligros" widgetVar="dlg_peligros" modal="true" width="800" height="500">
+                <p:panelGrid style="width: 100%">
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel for="peligro" value="Peligros:" />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu id="peligro" value="#{permisoDiligenciadorController.idPeligro}">
+                                <f:selectItems  value="#{permisoDiligenciadorController.peligros}" />
+                                <p:ajax/>
+                            </h:selectOneMenu>
+                        </p:column>
+
+                        <p:column>
+                            <p:commandLink update=":form:peligros" actionListener="#{permisoDiligenciadorController.addPeligro}" value="Adicionar Peligro" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:dataTable id="peligros" value="#{permisoDiligenciadorController.tarea.peligros}" var="peligro"
+                             paginator="true"
+                             rows="2"
+                             paginatorTemplate="{PreviousPageLink} {NextPageLink}"
+                             paginatorAlwaysVisible="false"
+                             paginatorPosition="top"
+                             >
+                                <p:column headerText="Peligro">
+                                    <h:outputText value="#{peligro.peligro.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Riesgos">
+                                    <p:dataGrid var="riesgo" value="#{peligro.riesgos}"  columns="1" 
+                                            paginatorPosition="top"
+                                            paginator="true"
+                                            rows="2"
+                                            paginatorTemplate="{PreviousPageLink} {NextPageLink}"
+                                            paginatorAlwaysVisible="false">
+                                        <p:column>
+                                           <h:outputText value="#{riesgo.consecutivo}"/>
+                                           <p:spacer width="20"/>
+                                           <h:outputText value="#{riesgo.nombre}"/>
+                                           <p:spacer width="20"/>
+                                           <p:commandLink ajax="false" actionListener="#{permisoDiligenciadorController.borrarRiesgo}" oncomplete="dlg_peligros.show()">
+                                                <p:graphicImage value="/images/cross.gif"/>
+                                                <f:attribute name="itemCambiar1" value="#{peligro}"/>
+                                                <f:attribute name="itemCambiar2" value="#{riesgo}"/>
+                                           </p:commandLink>
+                                        </p:column>
+                                    </p:dataGrid>
+                                </p:column>
+                                <p:column>
+                                    <p:commandLink update="@form" oncomplete="dlg_peligros.show()" actionListener="#{permisoDiligenciadorController.setPeligro}" value="Agregar Riesgos">
+                                      <f:attribute name="itemCambiar" value="#{peligro}"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Guardar" actionListener="#{permisoDiligenciadorController.guardar}" oncomplete="dlg_peligros.hide()" update="@form"/>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+
+                <p:spacer height="20" width="100"/>
+                <br/>
+
+                <p:panelGrid  columns="3" rendered="#{permisoDiligenciadorController.renderRiesgo}" id="priesgo">
+                    <f:facet name="header">
+                        <h:outputText value="Riesgo Asociado al Peligro:"/>
+                    </f:facet>
+                    <h:outputText value="Descripcion del Riesgo:"/>
+                    <p:inputText value="#{permisoDiligenciadorController.riesgo}">
+                         <p:ajax/>
+                    </p:inputText>
+                    <p:commandButton value="Guardar Riesgo" actionListener="#{permisoDiligenciadorController.addRiesgo}" oncomplete="dlg_peligros.show()" update="@form"/>
+
+                </p:panelGrid>
+
+            </p:dialog>
+
+            <p:commandButton value="Solicitar Aprobación" action="#{permisoDiligenciadorController.solicitarAprobacion}" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.SOLICITAR_APROBACION }"/>
+            <p:commandButton value="Aprobar" oncomplete="dlg_nota.show()" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.APROBAR}"/>
+            <p:commandButton value="No Aprobar" oncomplete="dlg_nota.show()" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.APROBAR}"/>
+            <p:commandButton value="Terminar" oncomplete="dlg_nota.show()" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.TERMINAR}"/>
+            <p:commandButton value="Cancelar" oncomplete="dlg_nota.show()" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.CANCELAR}"/>
+            <p:commandButton value="Cancelar" oncomplete="dlg_nota.show()" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.FINALIZAR}"/>
+
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
+
+                <p:panelGrid  columns="2">
+                    <f:facet name="header">
+                        <h:outputText value="Observaciones:"/>
+                    </f:facet>
+                    <p:inputTextarea id="nota" value="#{permisoDiligenciadorController.permisoDiligenciar.nota}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Aprobar" action="#{permisoDiligenciadorController.aprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.APROBAR}"/>
+                        <p:commandButton value="No Aprobar" action="#{permisoDiligenciadorController.noAprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.APROBAR}"/>
+                        <p:commandButton value="Terminar" action="#{permisoDiligenciadorController.terminar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.TERMINAR}"/>
+                        <p:commandButton value="Cancelar" action="#{permisoDiligenciadorController.cancelar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.CANCELAR}"/>
+                        <p:commandButton value="Cancelar" action="#{permisoDiligenciadorController.finalizar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{permisoDiligenciadorController.permisoDiligenciar.etapa eq permisoDiligenciadorController.permisoDiligenciar.FINALIZAR}"/>
+                    </f:facet>
+                </p:panelGrid>
+                <p:spacer height="20" width="100"/>
+            </p:dialog>
+
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

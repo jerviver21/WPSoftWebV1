@@ -1,0 +1,66 @@
+/* ---------- Wrapper ---------- */
+
+.column_detail{
+background:url(../images/main_bg1.jpg) repeat-x 0 0;
+}
+
+.banner{
+text-align: right;
+background: #fff
+}
+
+.portlet-layout {
+border-collapse: collapse;
+border-spacing: 0;
+clear: both;
+display: table;
+margin: 10px auto 0;
+table-layout: auto;
+width: 960px;
+}
+.column_detail .portlet-layout{
+background: url(../images/main_top.png) no-repeat 0 70px;
+display: block;
+margin: 0 auto;
+padding: 10px 0 0;
+position: relative;
+width: 950px;
+}
+
+.column_detail.one .portlet-layout .portlet-layout{
+background:#fff;
+display:block;
+}
+
+.texture{
+display:block;
+height:351px;
+position:absolute;
+top:70px;
+width:13px;
+}
+.texture.right{
+background:url(../images/shadow_right.png) no-repeat 0 0;
+right:-13px;
+}
+.texture.left{
+background:url(../images/shadow_left.png) no-repeat 0 0;
+left:-13px;
+}
+.column_detail.one #column-1{
+background: #FFF;
+display: block;
+min-height: 250px;
+padding: 0 13px;
+}
+
+
+.portlet-column-content-only, .ltr .portlet-column-content-first, .rtl .portlet-column-content-last {
+	padding-left: 0;
+}
+
+.portlet-column-content-only, .ltr .portlet-column-content-last, .rtl .portlet-column-content-first {
+	padding-right: 0;
+}
+
+

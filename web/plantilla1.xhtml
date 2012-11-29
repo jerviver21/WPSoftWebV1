@@ -1,0 +1,41 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:c="http://java.sun.com/jsp/jstl/core"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+
+    <h:head>
+        <title>Sistema Gestion V1</title>
+        <link rel="stylesheet" type="text/css" href="/WPSoftWebV1/styles/principal.css"/>
+        <f:view locale="#{generalController.locale}" />
+
+     </h:head>
+    <h:body>
+        <div class="column_detail one" id="main-content" role="main">
+
+            
+        
+	<div class="portlet-layout">
+            
+            <nav class="site-breadcrumbs" id="breadcrumbs">
+                <ui:insert name="navegador"></ui:insert>
+            </nav>
+            <div class="banner">
+                <sec:ifAnyGranted roles="ROLE_USER, MASTER">
+                    <a href="/WPSoftWebV1/j_spring_security_logout">Cerrar Sesión</a>
+                </sec:ifAnyGranted>
+            </div>
+            <div class="portlet-layout">
+                <div class="portlet-column portlet-column-only" id="column-1">
+                    <ui:insert name="contenido"></ui:insert>
+                </div>
+            </div>
+            <div class="texture left"></div>
+            <div class="texture right"></div>
+           </div>
+        </div>
+        
+    </h:body>
+</html>
+

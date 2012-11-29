@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:beans="http://www.springframework.org/schema/beans"
+xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+       http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
+
+   <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+
+   <beans:bean id="userService" class="com.vbrothers.security.spring.dao.CustomJdbcDaoImpl">
+    <beans:property name="enableGroups" value="true"/>
+    <beans:property name="enableAuthorities" value="false"/>
+    <beans:property name="usersByUsernameQuery">
+      <beans:value>
+        select usr,pwd,estado from users where usr=?
+      </beans:value>
+    </beans:property>
+    <beans:property name="groupAuthoritiesByUsernameQuery">
+      <beans:value>
+        SELECT g.id, g.codigo, r.codigo
+        FROM users as u, groups as g, user_group as ug, rol as r, group_rol as gr
+        WHERE ug.id_group = g.id AND ug.id_user = u.id AND gr.id_group = g.id AND gr.id_rol = r.id AND usr = ?
+      </beans:value>
+    </beans:property>
+  </beans:bean>
+
+</beans:beans>

@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+  <ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:messages id="msgs" />
+            <p:panel header="Ejecutor de sentencias">
+                <p:panelGrid columns="2">
+                    <h:outputLabel value="Consulta:"/>
+                    <p:selectBooleanCheckbox id="select" value="#{bdController.isSelect}"/>
+                    <h:outputLabel value="Sentencia:"/>
+                    <p:inputTextarea id="query" value="#{bdController.sentencia}"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Enviar" update="@form" action="#{bdController.ejecutar}" ajax="true"/>
+                    </f:facet>
+                </p:panelGrid>
+
+                
+                
+                <p:outputPanel id="parametros">
+                    <p:dataTable value="#{bdController.resultado}" var="registro"
+                                 paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}">
+                        <p:column >
+                            <h:outputText value="#{registro}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+
+            </p:panel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>

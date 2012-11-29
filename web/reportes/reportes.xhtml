@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui"
+     >
+
+
+    <f:view>
+
+        <ui:composition template="../plantilla1.xhtml">
+            <ui:define name="navegador">
+                <ui:include src="../menu.xhtml"/>
+            </ui:define>
+            <ui:define name="contenido">
+                <h:form id="formId" prependId="false">
+                    
+                    
+                    <p:messages id="msgs" />
+                    <p:panel id="lista_reportes">
+                        <h:outputText value="#{labels.reporte}"/>
+                        <p:selectOneMenu id="selectId"  value="#{reportesController.codReporte}"  valueChangeListener="#{reportesController.desplegarParametros}">
+                            <p:ajax update=":formId:contenedor"/>
+                            <f:selectItem itemLabel="..." itemValue="-1"  />
+                            <f:selectItems  value="#{reportesController.reportes}"  />
+                        </p:selectOneMenu>
+                    </p:panel>
+
+                    <p:panel>
+                        <h:panelGrid id="contenedor" columns="2" binding="#{reportesController.contenedor}">
+                            
+
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:panel>
+                        <p:commandButton value="#{labels.boton_enviar}" action="#{reportesController.generar}" ajax="false"/>
+                    </p:panel>
+
+                    <p:commandLink value="#{labels.descargar}" ajax="false" title="Download" actionListener="#{reportesController.descargar}" rendered="#{reportesController.renderDownload}">
+                          <p:fileDownload value="#{reportesController.file}"/>
+                    </p:commandLink>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </f:view>
+
+</html>

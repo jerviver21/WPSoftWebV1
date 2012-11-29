@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+  <ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:messages id="msgs" />
+            <p:panelGrid columns="2">
+                <p:graphicImage value="/images/Ingles.png"/>
+                <p:commandLink actionListener="#{generalController.changeLanguage}" ajax="false">
+                    <h:outputText value="English" style="font-size: 8px"/>
+                    <f:attribute name="language" value="en" />
+                </p:commandLink>
+                 <p:graphicImage value="/images/espanol.png"/>
+                 <p:commandLink actionListener="#{generalController.changeLanguage}" ajax="false">
+                    <h:outputText value="Español" style="font-size: 8px"/>
+                    <f:attribute name="language" value="es" />
+                 </p:commandLink>
+                <p:graphicImage value="/images/portuqes.png"/>
+                <p:commandLink actionListener="#{generalController.changeLanguage}" ajax="false">
+                    <h:outputText value="Portugues" style="font-size: 8px"/>
+                    <f:attribute name="language" value="pt" />
+                </p:commandLink>
+            </p:panelGrid>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>

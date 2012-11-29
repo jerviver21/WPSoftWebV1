@@ -1,0 +1,154 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:messages id="msgs" />
+            <p:panel id="form_proyecto" header="#{labels.datos_proyecto}">
+                <p:panelGrid columns="3" id="grid">
+                    <h:outputLabel for="num_gest_cambio" value="#{labels.num_gestion_cambio}" />
+                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}"  />
+                    <p:message for="num_gest_cambio"/>
+                    <h:outputLabel for="nombre_proyecto" value="#{labels.nombre_proyecto}" />
+                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" />
+                    <p:message for="nombre_proyecto"/>
+                    <h:outputLabel for="cuenta_cargada" value="#{labels.cuenta_cargada}" />
+                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" />
+                    <p:message for="cuenta_cargada"/>
+                    <h:outputLabel  for="fecha_ini" value="#{labels.fecha_ini}" />
+                    <p:calendar id="fecha_ini" value="#{proyectoController.proyecto.fechaIni}" pattern="yyyy-MM-dd"/>
+                    <p:message for="fecha_ini"/>
+                    <h:outputLabel  for="fecha_fin" value="#{labels.fecha_fin}" />
+                    <p:calendar id="fecha_fin" value="#{proyectoController.proyecto.fechaFin}" pattern="yyyy-MM-dd"/>
+                    <p:message for="fecha_fin"/>
+                </p:panelGrid>
+                <p:spacer height="10" width="500"/>
+            
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="contratista" value="#{labels.contratistas_proy}" style="font-weight: bold;"/>
+                    <h:selectOneMenu id="contratista" value="#{proyectoController.idContratista}">
+                        <f:selectItem itemLabel="..." itemValue="-1" />
+                        <f:selectItems  value="#{proyectoController.contratistas}" />
+                        <p:ajax event="blur"/>
+                    </h:selectOneMenu> 
+                    <p:commandLink update=":form:contratistas :form:msgs"  process="@this" actionListener="#{proyectoController.agregarContratista}">
+                        #{labels.agregar}
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:dataTable id="contratistas" value="#{proyectoController.proyecto.contratistas}" var="contratista" >
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.contratista}" />
+                        </f:facet>
+                        <h:outputText value="#{contratista.contratista.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.actividad}" />
+                        </f:facet>
+                        <p:inputText value="#{contratista.actividad}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.borrar}" />
+                        </f:facet>
+                        <p:commandLink update=":form:form_proyecto :form:msgs"  process="@this" actionListener="#{proyectoController.borrarContratista}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="itemCambiar" value="#{contratista}" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="empleado" value="#{labels.empleados_proy}" style="font-weight: bold;"/>
+                    <h:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" >
+                        <f:selectItem itemLabel="..." itemValue="-1" />
+                        <f:selectItems  value="#{proyectoController.empleados}" />
+                        <p:ajax event="blur"/>
+                    </h:selectOneMenu> 
+                    <p:commandLink update=":form:empleados :form:msgs"  process="@this" actionListener="#{proyectoController.agregarEmpleado}">
+                        #{labels.agregar}
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:dataTable id="empleados" value="#{proyectoController.proyecto.empleados}" var="empleado" >
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.empleado}" />
+                        </f:facet>
+                        <h:outputText value="#{empleado.empleado.nombresApellidos}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.actividad}" />
+                        </f:facet>
+                        <p:inputText value="#{empleado.actividad}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.borrar}" />
+                        </f:facet>
+                        <p:commandLink update=":form:form_proyecto :form:msgs"  process="@this" actionListener="#{proyectoController.borrarEmpleado}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="itemCambiar" value="#{empleado}" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+            
+                <f:facet name="footer">
+                    <p:commandButton value="#{labels.boton_enviar}" update="@form" action="#{proyectoController.createProyecto}" ajax="true"/>
+                </f:facet>
+
+            </p:panel>
+            
+            <p:outputPanel id="proyectos">
+                <p:dataTable value="#{proyectoController.proyectos}" var="proyecto"
+                             paginator="true"
+                             rows="5"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.num_gestion_cambio}" />
+                        </f:facet>
+                        <h:outputText value="#{proyecto.numGestionCambio}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.nombre_proyecto}" />
+                        </f:facet>
+                        <h:outputText value="#{proyecto.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.borrar}" />
+                        </f:facet>
+                        <p:commandLink update=":form:proyectos :form:msgs"  process="@this" actionListener="#{proyectoController.borrar}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="proyectoCambiar" value="#{proyecto}" />
+                        </p:commandLink>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{labels.actualizar}" />
+                        </f:facet>
+                        <p:commandLink update="@form"  process="@this" actionListener="#{proyectoController.actualizar}">
+                            <p:graphicImage value="/images/update.png"/>
+                            <f:attribute name="proyectoCambiar" value="#{proyecto}" />
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

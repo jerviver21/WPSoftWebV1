@@ -1,0 +1,154 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <h:inputHidden value="#{empleadoController.empleado.id}"/>
+            <p:growl id="msgs" />
+            <p:commandLink update=":form"  process="@this"
+                               action="#{empleadoController.nuevoEmpleado}" value="Crear Empleado"/>
+            <p:panel id="form_proyecto" header="#{labels.datos_empleado}">
+                <p:panelGrid columns="6" id="grid">
+                    <h:outputLabel for="num_id" value="#{labels.num_id}" />
+                    <p:inputText id="num_id" value="#{empleadoController.empleado.numId}" required="true" >
+                        <p:ajax event="blur"/>
+                    </p:inputText>
+                    
+                    
+                    <p:message for="num_id"/>
+                    <h:outputLabel for="nombre" value="#{labels.nombre_completo}" />
+                    <p:inputText id="nombre" value="#{empleadoController.empleado.nombresApellidos}" required="true">
+                        <p:ajax/>
+                    </p:inputText>
+                    <p:message for="nombre"/>
+                    <h:outputLabel for="telefono" value="#{labels.telefono}" />
+                    <p:inputText id="telefono" value="#{empleadoController.empleado.telefono}" >
+                        <p:ajax/>
+                    </p:inputText>
+                    <p:message for="telefono"/>
+                    <h:outputLabel for="tipo_sangre" value="#{labels.tipo_sangre}" />
+                    <p:inputText id="tipo_sangre" value="#{empleadoController.empleado.tipoSangre}" required="true">
+                        <p:ajax/>
+                    </p:inputText>
+                    <p:message for="tipo_sangre"/>
+                    <h:outputLabel for="eps" value="#{labels.eps}" />
+                    <p:inputText id="eps" value="#{empleadoController.empleado.eps}" required="true">
+                        <p:ajax/>
+                    </p:inputText>
+                    <p:message for="eps"/>
+
+                    <sec:ifNotGranted roles="#{applicationController.ROL_CONTRATISTA}">
+                        <h:outputLabel for="contratista" value="#{labels.contratista}" />
+                        <h:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}">
+                            <f:selectItems  value="#{empleadoController.contratistas}" />
+                            <f:selectItem itemLabel="Planta" itemValue="-1"  />
+                            <p:ajax/>
+                        </h:selectOneMenu>
+                        <p:message for="contratista"/>
+                    </sec:ifNotGranted>
+                    
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_CONTRATISTA},#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                        <h:outputLabel for="usr" value="#{labels.usr}" />
+                        <p:inputText id="usr" value="#{empleadoController.empleado.usuario}" required="true">
+                            <p:ajax/>
+                        </p:inputText>
+                        <p:message for="usr"/>
+
+                        <h:outputLabel for="pwd" value="#{labels.pwd}" />
+                        <h:panelGrid columns="1">
+                            <h:outputText value="#{labels.msj_no_cambio_clave}" style="color: blue;font-size: 9"/>
+                            <p:password id="pwd" value="#{empleadoController.contrasena}" feedback="true">
+                                <p:ajax/>
+                            </p:password>
+                        </h:panelGrid>
+                        <p:message for="pwd"/>
+                    </sec:ifAnyGranted>
+
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN}, #{applicationController.ROL_GERENTE}">
+                        <h:outputLabel for="betado" value="#{labels.empleado_betado}" />
+                        <p:selectBooleanCheckbox id="betado" value="#{empleadoController.empleado.betado}"  />
+                        <p:message for="betado"/>
+                    </sec:ifAnyGranted>
+
+                    <h:outputLabel for="cert_medico" value="Certificado Medico"/>
+                    <p:commandLink id="cert_medico" value="#{labels.descargar}" ajax="false" actionListener="#{empleadoController.descargarCertMedico}" disabled="#{!empleadoController.empleado.certificadoMedico}">
+                      <p:fileDownload value="#{empleadoController.certificadoMedicoDown}"/>
+                    </p:commandLink>
+                    <p:message for="cert_medico"/>
+
+
+                    <h:outputLabel for="cert_trab_altura" value="Certificado Trabajo Alturas"/>
+                    <p:commandLink id="cert_trab_altura" value="#{labels.descargar}" ajax="false" actionListener="#{empleadoController.descargarCertTA}" disabled="#{!empleadoController.empleado.trabajoAlturas}">
+                       <p:fileDownload value="#{empleadoController.trabajoAlturasDown}"/>
+                    </p:commandLink>
+                    <p:message for="cert_trab_altura"/>
+
+                    <h:outputLabel for="restricciones" value="#{labels.restricciones_medicas}" />
+                    <p:selectBooleanCheckbox id="restricciones" value="#{empleadoController.empleado.restriccionesMedicas}">
+                        <p:ajax event="change" update=":form"/>
+                    </p:selectBooleanCheckbox>
+                    <p:message for="restricciones"/>
+
+                    <h:outputLabel id="l_cual_rest_medica" for="cual_rest_medica" value="#{labels.cuales}" rendered="#{empleadoController.empleado.restriccionesMedicas}" />
+                    <p:inputText id="cual_rest_medica" value="#{empleadoController.empleado.cualRestMedica}" required="true" rendered="#{empleadoController.empleado.restriccionesMedicas}" />
+                    <p:message id="m_cual_rest_medica" for="cual_rest_medica" rendered="#{empleadoController.empleado.restriccionesMedicas}"/>
+                    
+
+                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                        <h:outputLabel for="observaciones" value="#{labels.observaciones}" />
+                        <p:inputTextarea id="observaciones" value="#{empleadoController.empleado.observaciones}"  />
+                        <p:message for="observaciones"/>
+                    </sec:ifAnyGranted>
+                    
+                    <f:facet name="footer">
+                        <p:commandButton value="#{labels.boton_enviar}" action="#{empleadoController.createEmpleado}" ajax="false"/>
+                    </f:facet>
+                </p:panelGrid>
+                
+            </p:panel>
+        </h:form>
+        
+        <h:form id="form1" enctype="multipart/form-data">
+            <p:panel header="#{labels.certificado_medico1}" id="p_ccm">
+
+                <p:messages id="msgs1"/>
+                <p:panelGrid columns="2">
+                    <h:outputLabel value="#{labels.cargar}"/>
+                    <p:fileUpload fileUploadListener="#{empleadoController.cargarCertMedico}" 
+                                    mode="advanced" update=":form1:msgs1 :form:cert_medico"
+                                    allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000" 
+                                    label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar"/>
+                </p:panelGrid>
+
+            </p:panel>
+        </h:form>
+        <h:form id="form2" enctype="multipart/form-data">
+            <p:panel header="#{labels.certificado_altura1}" id="p_cta">
+
+                <p:messages id="msgs2"/>
+                <p:panelGrid columns="2">
+                    <h:outputLabel value="#{labels.cargar}"/>
+                    <p:fileUpload fileUploadListener="#{empleadoController.cargarCertTA}" 
+                                    mode="advanced" update=":form2:msgs2 :form:cert_trab_altura"
+                                    allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000"
+                                    label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar"
+                                    /> 
+                </p:panelGrid>
+
+            </p:panel>
+        </h:form>
+        
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

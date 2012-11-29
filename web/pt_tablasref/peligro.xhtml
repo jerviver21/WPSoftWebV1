@@ -1,0 +1,132 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <h:inputHidden id="id" value="#{riesgoController.item.id}"/>
+
+
+            <p:panelGrid id="form_riesgo" style="width: 100%">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="3"><h:outputLabel value="Datos del Peligro"/></p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="1"><h:outputLabel for="nombre" value="Peligro" /></p:column>
+                    <p:column colspan="1"><p:inputText id="nombre" value="#{riesgoController.item.nombre}" required="true" /></p:column>
+                    <p:column colspan="1"><p:message for="nombre"/></p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="3">
+                        <p:accordionPanel id="controles_peligro">
+                            <p:tab title="Precauciones del peligro">
+                                <p:panelGrid columns="4">
+                                    <h:outputLabel for="datos" value="Control:" />
+                                    <p:inputText id="datos" value="#{riesgoController.control.nombre}">
+                                        <p:ajax/>
+                                    </p:inputText>
+                                    <p:message for="datos"/>
+                                    <p:commandLink update=":form:controles_peligro"  process="@this" actionListener="#{riesgoController.addControl}" value="Agregar Control"/>
+                                </p:panelGrid>
+                                <p:dataTable value="#{riesgoController.item.controles}" var="control"
+                                             paginator="true" rows="5"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             paginatorAlwaysVisible="false"
+                                             paginatorPosition="top">
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Paso" />
+                                        </f:facet>
+                                        <h:outputText value="#{control.consecutivo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Control" />
+                                        </f:facet>
+                                        <h:outputText value="#{control.nombre}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Borrar" />
+                                        </f:facet>
+                                        <p:commandLink update=":form"  process="@this" actionListener="#{riesgoController.removeControl}" ajax="true">
+                                                 <p:graphicImage value="/images/cross.gif"/>
+                                            <f:attribute name="itemBorrar" value="#{control}" />
+                                        </p:commandLink>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                        </p:accordionPanel>
+                    </p:column>
+                </p:row>
+                <f:facet name="footer">
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton value="Guardar" update="@form"  action="#{riesgoController.guardar}" ajax="true">
+                                <p:collector value="#{riesgoController.item}" addTo="#{riesgoController.items}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:row>
+                </f:facet>
+           </p:panelGrid>
+
+
+            
+
+
+
+            <br/>
+
+            <br/>
+
+
+            <p:outputPanel id="riesgos">
+                <p:commandLink actionListener="#{riesgoController.crearNuevo}" update="@form" value="Crear Nuevo"/>
+                <p:dataTable value="#{riesgoController.items}" var="item" >
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Codigo" />
+                        </f:facet>
+                        <h:outputText value="#{item.nombre}"/>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Borrar" />
+                        </f:facet>
+                        <p:commandLink update=":form:riesgos :form:msgs"  process="@this" actionListener="#{riesgoController.borrar}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="itemCambiar" value="#{item}" />
+                            <p:collector value="#{item}" removeFrom="#{riesgoController.items}"/>
+                        </p:commandLink>
+                    </p:column>
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="Actualizar" />
+                        </f:facet>
+                        <p:commandLink update="@form"  process="@this" actionListener="#{riesgoController.actualizar}">
+                            <p:graphicImage value="/images/update.png"/>
+                            <f:attribute name="itemCambiar" value="#{item}" />
+                        </p:commandLink>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:outputPanel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+
