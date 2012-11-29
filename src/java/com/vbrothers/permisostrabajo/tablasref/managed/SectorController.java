@@ -51,7 +51,6 @@ public class SectorController {
     public void init(){
         crearNuevo();
         setGrupos(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.GRUPOS_AUTORIDAD_AREA)));
-        
     }
 
     public void crearNuevo(){
