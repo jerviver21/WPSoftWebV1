@@ -39,7 +39,6 @@ public class ApplicationController {
         locator = ServiceLocator.getInstance();
         System.out.println("--> Iniciando application controller <--");
         commonServices.updateEstructuraMenus();
-        commonServices.updateEstructuraReportes();
         
         
         ROL_ADMIN = locator.getParameter("rolAdmin");
