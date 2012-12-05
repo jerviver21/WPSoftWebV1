@@ -7,7 +7,7 @@
 
     <h:head>
         <title>Sistema Gestion V1</title>
-        <link rel="stylesheet" type="text/css" href="/WPSoftWebV1/styles/principal.css"/>
+        <link rel="stylesheet" type="text/css" href="/wpsoft/styles/principal.css"/>
         <f:view locale="#{generalController.locale}" />
 
      </h:head>
@@ -23,7 +23,7 @@
             </nav>
             <div class="banner">
                 <sec:ifAnyGranted roles="ROLE_USER, MASTER">
-                    <a href="/WPSoftWebV1/j_spring_security_logout">Cerrar Sesión</a>
+                    <a href="/wpsoft/j_spring_security_logout">Cerrar Sesión</a>
                 </sec:ifAnyGranted>
             </div>
             <div class="portlet-layout">
