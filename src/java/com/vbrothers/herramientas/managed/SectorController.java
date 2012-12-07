@@ -3,17 +3,19 @@
  * and open the template in the editor.
  */
 
-package com.vbrothers.permisostrabajo.tablasref.managed;
+package com.vbrothers.herramientas.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.Sector;
-import com.vbrothers.permisostrabajo.tablasref.services.EquiposServicesLocal;
-import com.vbrothers.permisostrabajo.tablasref.services.SectoresServicesLocal;
+import com.vbrothers.herramientas.services.EquiposServicesLocal;
+import com.vbrothers.herramientas.services.SectoresServicesLocal;
+import com.vbrothers.usuarios.services.GruposServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,18 +41,17 @@ public class SectorController {
     private List<SelectItem> grupos;
 
 
-    
-
-
     @EJB
     private SectoresServicesLocal sectorService;
     @EJB
     private EquiposServicesLocal equipoService;
+    @EJB
+    private GruposServicesLocal grupoService;
 
     @PostConstruct
     public void init(){
         crearNuevo();
-        setGrupos(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.GRUPOS_AUTORIDAD_AREA)));
+        setGrupos(FacesUtil.getSelectsItem(new HashSet(grupoService.findGruposByRol(locator.getParameter("rolAutArea")))));
     }
 
     public void crearNuevo(){

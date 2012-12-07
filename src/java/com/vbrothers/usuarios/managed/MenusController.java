@@ -42,8 +42,8 @@ public class MenusController {
         locator = ServiceLocator.getInstance();
         GeneralController general = (GeneralController)FacesUtil.getManagedBean("#{generalController}");
         setMenus(menuServices.findAll(general.getLocale()));
-        setItems(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.MENU_X_ID)));
-        idiomas = FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.LENGUAJES));
+        setItems(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_MENU)));
+        idiomas = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_IDIOMA));
     }
 
     public MenusController() {

@@ -57,10 +57,8 @@ public class ProyectoController {
         proyecto.setContratistas(new ArrayList<ContratistasProyecto>());
         proyecto.setEmpleados(new ArrayList<EmpleadosProyecto>());
         setProyectos(proyectoService.findAll());
-        Map contratistasMap = locator.getConditionalRefTable(ServiceLocator.CONTRATISTAS_X_ID, null, null, null);
-        contratistas = FacesUtil.getSelectsItem(contratistasMap);
-        Map empleadosMap = locator.getConditionalRefTable(ServiceLocator.EMPLEADOS_X_ID, "PROPIO", null, null);
-        empleados = FacesUtil.getSelectsItem(empleadosMap);
+        contratistas = FacesUtil.getSelectsItem(contratistaService.findContratistasActivos());
+        empleados = FacesUtil.getSelectsItem(empleadoService.findEmpleadosActivosPlanta());
         
     }
 

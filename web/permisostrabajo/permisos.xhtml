@@ -1,7 +1,3 @@
-
-
-
-
 <html xmlns="http://www.w3.org/1999/xhtml"
      xmlns:h="http://java.sun.com/jsf/html"
      xmlns:p="http://primefaces.org/ui"
@@ -16,19 +12,20 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:commandLink ajax="false" action="#{permisoController.crearNuevo}">
+            <p:commandLink ajax="false" action="#{creaPermisoController.crearNuevo}">
                 #{labels.crear_nuevo_permiso}
             </p:commandLink>
 
             <p:outputPanel id="permisos">
-                <p:dataTable value="#{permisoController.trabajos}" var="trabajo"
+                <p:dataTable value="#{creaPermisoController.trabajos}" var="trabajo"
                              paginator="true"
                              rows="5"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             paginatorPosition="top">
                     <p:column headerText="#{labels.numero}" filterBy="#{trabajo.id}">
                         <p:commandLink ajax="false" value="#{trabajo.id}"
-                                       actionListener="#{permisoController.findPermisoTrabajo}"
-                                       action="#{permisoController.navPermisoTrabajo}">
+                                       actionListener="#{creaPermisoController.findPermisoTrabajo}"
+                                       action="#{creaPermisoController.navPermisoTrabajo}">
                             <f:attribute name="itemCambiar" value="#{trabajo}" />
                         </p:commandLink>
                     </p:column>

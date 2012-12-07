@@ -86,7 +86,7 @@ public class ReportesController {
         if(FacesUtil.getPaginaRequest().matches(".*reportes.xhtml.*")){
             proceso = REPORTE;
         }
-        setReportes(FacesUtil.getSelectsItem(locator.getConditionalRefTable(ServiceLocator.REPORTES_X_ID, proceso+"", null,sessionControler.getRoles())));
+        setReportes(FacesUtil.getSelectsItem(reporteService.getReportesByProcesoAndRol(proceso, sessionControler.getRoles())));
     }
 
     public ReportesController() {
@@ -120,7 +120,7 @@ public class ReportesController {
                 case DATA:
                     HtmlSelectOneMenu menu = new HtmlSelectOneMenu();
                     UISelectItems items = new UISelectItems();
-                    items.setValue(FacesUtil.getSelectsItem(locator.getReferenceTable(parametro.getData().getId())));
+                    items.setValue(FacesUtil.getSelectsItem(locator.getDataForCombo(parametro.getData().getId())));
                     menu.setId(parametro.getNombre()+""+parametro.getId());
                     menu.getChildren().add(items);
                     componentes.add(menu);

@@ -15,6 +15,7 @@ import com.vbrothers.util.Log;
 import com.vbrothers.util.SpringUtils;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -73,18 +74,18 @@ public class EmpleadoController {
         empleado = new Empleado();
         Contratista contratista = new Contratista(-1l);
         SessionController sessionControler = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        Map contratistasMap = null;
+        List<Contratista> contratistasList = new ArrayList<Contratista>();
         if(sessionControler.getRoles().contains(locator.getParameter("rolContratista")) &&
                 !sessionControler.getRoles().contains(locator.getParameter("rolMaster"))){
             contratista = contratistaService.findByUser(sessionControler.getUsuario().getUsr());
-            contratistasMap = locator.getConditionalRefTable(ServiceLocator.CONTRATISTAS_X_ID, contratista.getUsuario(), null, null);
+            contratistasList.add(contratistaService.findByUser(sessionControler.getUsuario().getUsr()));
             empleadosContratista = empleadoService.findEmpleadosXContratita(contratista.getId());
         }else{
-            contratistasMap = locator.getConditionalRefTable(ServiceLocator.CONTRATISTAS_X_ID, null, null, null);
+            contratistasList = contratistaService.findAll();
             empleadosContratista = empleadoService.findEmpleadosXContratita(-2l);
         }
         empleado.setContratista(contratista);
-        setContratistas(FacesUtil.getSelectsItem(contratistasMap));
+        setContratistas(FacesUtil.getSelectsItem(contratistasList));
         
     }
     

@@ -13,9 +13,9 @@ import com.vbrothers.permisostrabajo.dominio.Sector;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.RiesgosPeligroTarea;
 import com.vbrothers.permisostrabajo.dominio.Tarea;
-import com.vbrothers.permisostrabajo.services.PermisoTrabajoServicesLocal;
-import com.vbrothers.permisostrabajo.tablasref.services.SectoresServicesLocal;
-import com.vbrothers.permisostrabajo.tablasref.services.PeligrosServicesLocal;
+import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
+import com.vbrothers.herramientas.services.SectoresServicesLocal;
+import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
@@ -35,7 +35,7 @@ import javax.faces.model.SelectItem;
  */
 @ManagedBean(name="permisoDiligenciadorController")
 @SessionScoped
-public class PermisoDiligenciadorController {
+public class DiligenciaPermisoController {
     ServiceLocator locator;
     private PermisoTrabajoTO permisoDiligenciar;
     private List<PermisoTrabajo> permisosPendientes;
@@ -56,7 +56,7 @@ public class PermisoDiligenciadorController {
     SectoresServicesLocal sectoresServices;
 
     @EJB
-    PermisoTrabajoServicesLocal permisoServices;
+    CreacionPermisoServicesLocal permisoServices;
 
     @EJB
     PeligrosServicesLocal peligroServices;
@@ -70,9 +70,9 @@ public class PermisoDiligenciadorController {
 
         SessionController sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
         setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
-        setSectores(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.SECTORES_X_ID)));
-        setDisciplinas(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.DISCIPLINA_X_ID)));
-        setPeligros(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.PELIGROS_X_ID)));
+        setSectores(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_SECTOR)));
+        setDisciplinas(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_DISCIPLINA)));
+        setPeligros(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_PELIGRO)));
         permisoDiligenciar.setUsr(sesion.getUsuario());
     }
 

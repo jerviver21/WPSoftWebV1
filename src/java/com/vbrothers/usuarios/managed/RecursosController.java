@@ -46,8 +46,8 @@ public class RecursosController {
         locator = ServiceLocator.getInstance();
         GeneralController sessionController = (GeneralController)FacesUtil.getManagedBean("#{generalController}");
         setRecursos(recursoService.findAll(sessionController.getLocale()));
-        setMenus(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.MENU_X_ID)));
-        setIdiomas(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.LENGUAJES)));
+        setMenus(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_MENU)));
+        setIdiomas(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_IDIOMA)));
         
         System.out.println("En el inicio: "+getRecurso().getId());
     }

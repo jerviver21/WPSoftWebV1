@@ -35,7 +35,7 @@ public class ParamsController {
         locator = ServiceLocator.getInstance();
         setParametro(new Parametro());
         setParametros(paramService.findAll());
-        setContexto(locator.getReferenceTable(ServiceLocator.PARAMETROS));
+        setContexto(locator.getDataForCombo(ServiceLocator.PARAMETROS));
     }
 
     public String create(){
@@ -73,7 +73,7 @@ public class ParamsController {
 
     public String recargarContexto(){
         locator.restartCache();
-        contexto = locator.getReferenceTable(ServiceLocator.PARAMETROS);
+        contexto = locator.getDataForCombo(ServiceLocator.PARAMETROS);
         return null;
     }
 

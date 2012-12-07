@@ -3,13 +3,13 @@
  * and open the template in the editor.
  */
 
-package com.vbrothers.permisostrabajo.tablasref.managed;
+package com.vbrothers.herramientas.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
-import com.vbrothers.permisostrabajo.tablasref.services.ControlesServicesLocal;
-import com.vbrothers.permisostrabajo.tablasref.services.PeligrosServicesLocal;
+import com.vbrothers.herramientas.services.ControlesServicesLocal;
+import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;

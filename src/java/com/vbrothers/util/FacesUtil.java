@@ -91,6 +91,24 @@ public class FacesUtil {
         }
         return items;
     }
+    
+    public static List<SelectItem> getSelectsItem(Set opciones){
+        List<SelectItem> items = null;
+        try {
+            items = new ArrayList<SelectItem>();
+            for(Object pk : opciones ){
+                SelectItem item = new SelectItem();
+                item.setValue(pk.toString());
+                item.setLabel(pk.toString());
+                items.add(item);
+            }    
+        } catch (Exception e) {
+            System.out.println("La lista, contiene objetos sin el método getId");
+            Log.getLogger().log(Level.SEVERE, "La lista contiene objetos sin el método getId");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+        return items;
+    }
 
     public static MenuModel getMenu(Set<Resource> recursos){
         String language = ((GeneralController)FacesUtil.getManagedBean("#{generalController}")).getLocale();

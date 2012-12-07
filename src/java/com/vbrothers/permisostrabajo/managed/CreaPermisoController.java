@@ -4,13 +4,10 @@ package com.vbrothers.permisostrabajo.managed;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
-import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
-import com.vbrothers.permisostrabajo.dominio.Proyecto;
-import com.vbrothers.permisostrabajo.dominio.Sector;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
+import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
-import com.vbrothers.permisostrabajo.services.PermisoTrabajoServicesLocal;
 import com.vbrothers.permisostrabajo.services.ProyectoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
@@ -34,26 +31,23 @@ import javax.faces.model.SelectItem;
  * @author Jerson Viveros
  */
 
-@ManagedBean(name="permisoController")
+@ManagedBean(name="creaPermisoController")
 @SessionScoped
-public class PermisoController {
+public class CreaPermisoController {
     ServiceLocator locator;
     @EJB
-    PermisoTrabajoServicesLocal permisoTrabajoService;
+    CreacionPermisoServicesLocal permisoService;
     @EJB
     EmpleadoServicesLocal empleadoServices;  
     @EJB
     ProyectoServicesLocal proyectoServices;
     @EJB
     ContratistaServicesLocal contratistaServices;
-    
-    
-    
-    
+
     SessionController sesion;
     
     /*Permite la creación y consulta de permisos de trabajo*/
-    private PermisoTrabajoTO trabajo;
+    private PermisoTrabajoTO permiso;
     private List<SelectItem> proyectos;
     private List<SelectItem> equipos;
     private List<SelectItem> sectores;
@@ -73,7 +67,7 @@ public class PermisoController {
     private int tipoEjecutante = EMPLEADO;
     
     /*Permite el listamiento de todos los trabajos asignados al usuario*/
-    private List<PermisoTrabajo> trabajos;
+    private List<PermisoTrabajo> permisos;
 
     //Permite seleccionar varios empleados
     private long idEmpleado;
@@ -85,38 +79,37 @@ public class PermisoController {
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
-        setTrabajos(permisoTrabajoService.findAll());
-        setProyectos(FacesUtil.getSelectsItem(proyectoServices.findProyectosActivos()));
-        setSectores(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.SECTORES_X_ID)));
-        equiposXgrupo = locator.getReferenceTable(ServiceLocator.EQUIPOS_X_SECTOR_ID);
-        setEquipos(FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue())));
-        setEmpleados(FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosXContratita(null)));
-        setContratistas(FacesUtil.getSelectsItem(contratistaServices.findActivos()));
-        crearNuevo();
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
+        permisos = permisoService.findPermisosEnProceso(sesion.getUsuario().getUsr());
+        equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
+        proyectos = FacesUtil.getSelectsItem(proyectoServices.findProyectosActivos());
+        sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
+        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
+        contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         permisosProyecto = new ArrayList<PermisoTrabajo>();
+        crearNuevo();
     }
     
     //Métodos para el listado de permisos de trabajo
     public String crearNuevo(){
-        setTrabajo(new PermisoTrabajoTO());
-        trabajo.setPermiso(new PermisoTrabajo());
-        sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        trabajo.setUsr(sesion.getUsuario());
+        setPermiso(new PermisoTrabajoTO());
+        permiso.setPermiso(new PermisoTrabajo());
+        permiso.setUsr(sesion.getUsuario());
         return "/permisostrabajo/permiso.xhtml";
     }
 
     public void findPermisoTrabajo(ActionEvent event){
-        trabajo.setPermiso((PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar"));
-        trabajo = permisoTrabajoService.findPermisoTrabajo(trabajo.getPermiso().getId());
-        if(trabajo.getPermiso().getProyecto() != null){
+        permiso.setPermiso((PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar"));
+        permiso = permisoService.findPermisoTrabajo(permiso.getPermiso().getId());
+        if(permiso.getPermiso().getProyecto() != null){
             tipoTrabajo = PROYECTO;
-        }else if(trabajo.getPermiso().getNumOrden() != null){
+        }else if(permiso.getPermiso().getNumOrden() != null){
             tipoTrabajo = ORDEN_TRABAJO;
         }else{
             tipoTrabajo = CORRECTIVO_SIN_ORDEN;
         }
-        if(trabajo.getPermiso().isEjecutorContratista()){
+        if(permiso.getPermiso().isEjecutorContratista()){
             tipoEjecutante = CONTRATISTA;
         }
     }
@@ -128,8 +121,8 @@ public class PermisoController {
     public void borrarPermiso(ActionEvent event){
         try {
             PermisoTrabajo r  = (PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar");
-            permisoTrabajoService.remove(r);
-            trabajos.remove(r);
+            permisoService.remove(r);
+            permisosActivos.remove(r);
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar la tarea del permiso de trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -139,10 +132,10 @@ public class PermisoController {
     
     public String guardarPermisoTrabajo(){
         try {
-            trabajo.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
-            trabajo.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
-            permisoTrabajoService.crearPermiso(trabajo);
-            setTrabajos(permisoTrabajoService.findAll());
+            permiso.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
+            permiso.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
+            permisoService.crearPermiso(permiso);
+            permisosActivos = permisoService.findAll();
             FacesUtil.addMessage(FacesUtil.INFO, "El permiso de trabajo fue guardado!");  
         } catch (ParseException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
@@ -151,21 +144,21 @@ public class PermisoController {
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
         if(tipoTrabajo == PROYECTO){
-            permisosProyecto.add(trabajo.getPermiso());
+            permisosProyecto.add(permiso.getPermiso());
             return crearNuevo();
         }
         return "/permisostrabajo/permisos.xhtml";
     }
     
     public void findPermisoProyecto(ActionEvent event){
-        trabajo.setPermiso((PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar"));
-        trabajo = permisoTrabajoService.findPermisoTrabajo(permisoTrabajoService.find(trabajo.getPermiso().getId()));
+        permiso.setPermiso((PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar"));
+        permiso = permisoService.findPermisoTrabajo(permisoService.find(permiso.getPermiso().getId()));
     }
     
     public void borrarPermisoProyecto(ActionEvent event){
         try {
             PermisoTrabajo r  = (PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar");
-            permisoTrabajoService.remove(r);
+            permisoService.remove(r);
             permisosProyecto.remove(r);
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar la tarea del permiso de trabajo");
@@ -176,7 +169,7 @@ public class PermisoController {
     //Métodos de control de visualización
     public void addEmpleado(){
         Empleado empleado = empleadoServices.find(idEmpleado);
-        trabajo.getEmpleados().add(empleado);
+        permiso.getEmpleados().add(empleado);
     }
     
     public void buscarEquiposXSector(ValueChangeEvent event){
@@ -192,15 +185,15 @@ public class PermisoController {
     public void seleccionarTipoTrabajo(ValueChangeEvent event){
         setTipoTrabajo((int) (Integer)event.getNewValue());
         if(getTipoTrabajo() == getPROYECTO()){
-            trabajo.getPermiso().setNumOrden(null);
+            permiso.getPermiso().setNumOrden(null);
         }else{
-            trabajo.setHoraIni(null);
-            trabajo.setHoraFin(null);
+            permiso.setHoraIni(null);
+            permiso.setHoraFin(null);
             if(getTipoTrabajo() == getORDEN_TRABAJO()){
-                trabajo.getPermiso().setProyecto(null);
+                permiso.getPermiso().setProyecto(null);
             }else{
-                trabajo.getPermiso().setProyecto(null);
-                trabajo.getPermiso().setNumOrden(null);
+                permiso.getPermiso().setProyecto(null);
+                permiso.getPermiso().setNumOrden(null);
             }
         }
     }
@@ -208,10 +201,10 @@ public class PermisoController {
     public void seleccionarTipoEjecutante(ValueChangeEvent event){
         setTipoEjecutante((int) (Integer)event.getNewValue());
         if(getTipoEjecutante() == getCONTRATISTA()){
-            trabajo.setEmpleados(new ArrayList<Empleado>());
-            trabajo.setContratista(new Contratista());
+            permiso.setEmpleados(new ArrayList<Empleado>());
+            permiso.setContratista(new Contratista());
         }else{
-            trabajo.setContratista(null);
+            permiso.setContratista(null);
         }
     }
 
@@ -219,29 +212,29 @@ public class PermisoController {
     /**
      * @return the PermisoTrabajo
      */
-    public PermisoTrabajoTO getTrabajo() {
-        return trabajo;
+    public PermisoTrabajoTO getPermiso() {
+        return permiso;
     }
 
     /**
      * @param PermisoTrabajo the PermisoTrabajo to set
      */
-    public void setTrabajo(PermisoTrabajoTO PermisoTrabajo) {
-        this.trabajo = PermisoTrabajo;
+    public void setPermiso(PermisoTrabajoTO PermisoTrabajo) {
+        this.permiso = PermisoTrabajo;
     }
 
     /**
      * @return the PermisoTrabajos
      */
-    public List<PermisoTrabajo> getTrabajos() {
-        return trabajos;
+    public List<PermisoTrabajo> getPermisos() {
+        return permisos;
     }
 
     /**
      * @param PermisoTrabajos the PermisoTrabajos to set
      */
-    public void setTrabajos(List<PermisoTrabajo> PermisoTrabajos) {
-        this.trabajos = PermisoTrabajos;
+    public void setPermisos(List<PermisoTrabajo> PermisoTrabajos) {
+        this.permisos = PermisoTrabajos;
     }
 
     /**

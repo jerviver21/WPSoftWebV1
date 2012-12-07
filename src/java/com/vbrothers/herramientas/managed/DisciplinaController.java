@@ -3,12 +3,12 @@
  * and open the template in the editor.
  */
 
-package com.vbrothers.permisostrabajo.tablasref.managed;
+package com.vbrothers.herramientas.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Disciplina;
-import com.vbrothers.permisostrabajo.tablasref.services.DisciplinasServicesLocal;
+import com.vbrothers.herramientas.services.DisciplinasServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.List;
