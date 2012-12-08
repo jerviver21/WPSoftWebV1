@@ -20,7 +20,6 @@ import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
@@ -69,10 +68,10 @@ public class DiligenciaPermisoController {
         tarea = new Tarea();
 
         SessionController sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
+        /*setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
         setSectores(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_SECTOR)));
         setDisciplinas(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_DISCIPLINA)));
-        setPeligros(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_PELIGRO)));
+        setPeligros(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_PELIGRO)));*/
         permisoDiligenciar.setUsr(sesion.getUsuario());
     }
 
@@ -88,18 +87,18 @@ public class DiligenciaPermisoController {
     }
     
     public void guardar(){
-        try {
+        /*try {
             permisoServices.guardarPermiso(getPermisoDiligenciar());
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }
+        }*/
     }
 
     public String solicitarAprobacion(){
-        try {
+        /*try {
             permisoServices.solicitarAprobacion(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Solicitud de aprobación enviada!!");
         } catch (LlaveDuplicadaException e) {
@@ -109,12 +108,12 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 
     public String aprobar(){
-        try {
+        /*try {
             permisoServices.aprobarPermiso(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso aprobado");
         } catch (LlaveDuplicadaException e) {
@@ -124,12 +123,12 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 
     public String noAprobar(){
-        try {
+        /*try {
             permisoServices.noAprobarPermiso(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso no aprobado");
         } catch (LlaveDuplicadaException e) {
@@ -139,12 +138,12 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 
     public String terminar(){
-        try {
+        /*try {
             permisoServices.terminarPermiso(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso terminado");
         } catch (LlaveDuplicadaException e) {
@@ -154,13 +153,13 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 
 
     public String cancelar(){
-        try {
+        /*try {
             permisoServices.cancelarPermiso(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso cancelado");
         } catch (LlaveDuplicadaException e) {
@@ -170,12 +169,12 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 
     public String finalizar(){
-        try {
+        /*try {
             permisoServices.finalizarPermiso(getPermisoDiligenciar());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso cancelado");
         } catch (LlaveDuplicadaException e) {
@@ -185,7 +184,7 @@ public class DiligenciaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }
+        }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
 

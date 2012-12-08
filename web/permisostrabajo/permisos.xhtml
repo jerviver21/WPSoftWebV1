@@ -2,8 +2,7 @@
      xmlns:h="http://java.sun.com/jsf/html"
      xmlns:p="http://primefaces.org/ui"
      xmlns:f="http://java.sun.com/jsf/core"
-     xmlns:ui="http://java.sun.com/jsf/facelets"
-     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+     xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
 <ui:composition template="../plantilla1.xhtml">
     <ui:define name="navegador">
@@ -17,23 +16,32 @@
             </p:commandLink>
 
             <p:outputPanel id="permisos">
-                <p:dataTable value="#{creaPermisoController.trabajos}" var="trabajo"
+                <p:dataTable value="#{creaPermisoController.permisos}" var="permiso"
                              paginator="true"
                              rows="5"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                             paginatorPosition="top">
-                    <p:column headerText="#{labels.numero}" filterBy="#{trabajo.id}">
-                        <p:commandLink ajax="false" value="#{trabajo.id}"
+                             paginatorPosition="bottom">
+                    <p:column headerText="#{labels.numero}" filterBy="#{permiso.id}">
+                        <p:commandLink ajax="false" value="#{permiso.id}"
                                        actionListener="#{creaPermisoController.findPermisoTrabajo}"
                                        action="#{creaPermisoController.navPermisoTrabajo}">
-                            <f:attribute name="itemCambiar" value="#{trabajo}" />
+                            <f:attribute name="itemCambiar" value="#{permiso}" />
                         </p:commandLink>
                     </p:column>
                     <p:column headerText="#{labels.nombre}">
-                        <h:outputText value="#{trabajo.tarea}"/>
+                        <h:outputText value="#{permiso.tarea}"/>
                     </p:column>
                     <p:column headerText="#{labels.creador}">
-                        <h:outputText value="#{trabajo.usuarioCreacion}"/>
+                        <h:outputText value="#{permiso.usuarioCreacion}"/>
+                    </p:column>
+                    <p:column headerText="Estado" filterBy="#{permiso.estadoPermiso.descripcion}">
+                        <h:outputText value="#{permiso.estadoPermiso.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Borrar">
+                        <p:commandLink update="@form" actionListener="#{creaPermisoController.borrarPermiso}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="itemCambiar" value="#{permiso}" />
+                        </p:commandLink>
                     </p:column>
                     
                 </p:dataTable>

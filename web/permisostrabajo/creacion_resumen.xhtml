@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panelGrid columns="2">
+                <f:facet name="header">
+                    Datos del Permiso de Trabajo
+                </f:facet>
+                
+                <p:outputLabel value="Tipo de Permiso"/>
+                <p:outputLabel value="#{labels.correctivo_sin_orden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+                <p:outputLabel value="Planificado" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
+                <p:outputLabel value="#{labels.proyecto}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
+
+                
+                <p:outputLabel value="Planificado" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.numOrden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
+                <p:outputLabel value="Proyecto" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.proyecto.nombre}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
+                
+                <p:outputLabel value="Sector"/>
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.sector.nombre}"/>
+                
+                <p:outputLabel value="Equipo"/>
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.equipo.nombre}"/>
+                
+                <p:outputLabel value="Descripcion"/>
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.tarea}"/>
+                
+                <h:outputLabel value="Fecha Inicio" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+                <p:calendar value="#{creaPermisoController.permiso.permiso.fechaIni}" pattern="yyyy-MM-dd" readonly="true" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+
+                <h:outputLabel value="Hora Inicio" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}" />
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.horaIni}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/> 
+
+                <h:outputLabel value="Fecha Fin" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+                <p:calendar value="#{creaPermisoController.permiso.permiso.fechaFin}" pattern="yyyy-MM-dd" readonly="true"  rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+
+                <h:outputLabel value="Hora Fin" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}" />
+                <p:outputLabel value="#{creaPermisoController.permiso.permiso.horaFin}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
+                
+                <h:outputLabel value="#{labels.contratista}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.CONTRATISTA}"/>
+                <h:outputLabel value="#{creaPermisoController.permiso.contratista.nombre}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.CONTRATISTA}"/>
+                
+                
+                <h:outputLabel value="#{labels.empleado}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}"/>
+                <p:dataList value="#{creaPermisoController.permiso.empleados}" var="emp" itemType="disc" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}">  
+                    #{emp.nombresApellidos}
+                </p:dataList> 
+                
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar" icon="ui-icon-check" onclick="dlg1.show();" type="button"/>
+                    <p:commandButton value="Atras" action="#{creaPermisoController.navDatosPermiso}" ajax="false"/>
+                </f:facet>
+            </p:panelGrid>
+            
+            
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

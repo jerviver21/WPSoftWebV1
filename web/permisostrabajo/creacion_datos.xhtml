@@ -13,162 +13,114 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:panel header="#{labels.permiso_trabajo}">
-                <p:panelGrid columns="3"> 
-                    <h:outputLabel for="tipo_trabajo" value="" />
-                    <p:selectOneRadio id="tipo_trabajo" value="#{permisoController.tipoTrabajo}" valueChangeListener="#{permisoController.seleccionarTipoTrabajo}">
-                        <f:selectItem itemLabel="#{labels.proyecto}" itemValue="#{permisoController.PROYECTO}" />
-                        <f:selectItem itemLabel="Planificado" itemValue="#{permisoController.ORDEN_TRABAJO}" />
-                        <f:selectItem itemLabel="#{labels.correctivo_sin_orden}" itemValue="#{permisoController.CORRECTIVO_SIN_ORDEN}" />
-                        <p:ajax update=":form"/>
-                    </p:selectOneRadio>
-                    <p:message for="tipo_trabajo"/>
-                    <h:outputLabel for="nro_proyecto" value="#{labels.proyecto}" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}" />
-                    <h:selectOneMenu id="nro_proyecto" value="#{permisoController.trabajo.permiso.proyecto.id}" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}">
-                        <f:selectItems  value="#{permisoController.proyectos}" />
-                        <p:ajax/>
-                    </h:selectOneMenu>
-                    <p:message for="nro_proyecto" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}"/>
-                    <h:outputLabel for="num_orden" value="#{labels.nro_orden}" rendered="#{permisoController.tipoTrabajo eq permisoController.ORDEN_TRABAJO}"/>
-                    <p:inputText id="num_orden" value="#{permisoController.trabajo.permiso.numOrden}" rendered="#{permisoController.tipoTrabajo eq permisoController.ORDEN_TRABAJO}">
-                        <p:ajax/>
-                    </p:inputText>
-                    <p:message for="num_orden" rendered="#{permisoController.tipoTrabajo eq permisoController.ORDEN_TRABAJO}"/>
-                </p:panelGrid>
-
+            <p:panel header="Diligencie los datos del Permiso de Trabajo">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="area" value="#{labels.area_sitio}" />
-                    <h:selectOneMenu id="area" value="#{permisoController.trabajo.permiso.sector.id}" valueChangeListener="#{permisoController.buscarEquiposXSector}">
-                        <f:selectItems  value="#{permisoController.sectores}" />
-                            <p:ajax update=":form:equipo"/>
-                        </h:selectOneMenu>
+                    <h:selectOneMenu id="area" value="#{creaPermisoController.permiso.permiso.sector.id}" valueChangeListener="#{creaPermisoController.buscarEquiposXSector}">
+                        <f:selectItems  value="#{creaPermisoController.sectores}" />
+                        <p:ajax update=":form:equipo"/>
+                    </h:selectOneMenu>
                     <p:message for="area"/>
                     
                     <h:outputLabel for="equipo" value="#{labels.equipo_intervenido}" />
-                    <h:selectOneMenu id="equipo" value="#{permisoController.trabajo.permiso.equipo.id}">
-                        <f:selectItems  value="#{permisoController.equipos}" />
+                    <h:selectOneMenu id="equipo" value="#{creaPermisoController.permiso.permiso.equipo.id}">
+                        <f:selectItems  value="#{creaPermisoController.equipos}" />
                         <p:ajax/>
                     </h:selectOneMenu>
                     <p:message for="equipo"/>
                         
                     <h:outputLabel for="desc_tarea" value="#{labels.tarea}" />
-                    <p:inputTextarea id="desc_tarea" cols="50" value="#{permisoController.trabajo.permiso.tarea}">
+                    <p:inputTextarea id="desc_tarea" cols="50" value="#{creaPermisoController.permiso.permiso.tarea}">
                             <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="desc_tarea"/>
                         
-                    <h:outputLabel for="fecha_ini" value="Fecha Inicio" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}"/>
-                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{permisoController.trabajo.permiso.fechaIni}" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}">
+                    <h:outputLabel for="fecha_ini" value="Fecha Inicio" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{creaPermisoController.permiso.permiso.fechaIni}" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}">
                         <p:ajax event="dateSelect"/>
                     </p:calendar>
-                    <p:message for="fecha_ini" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}"/>
+                    <p:message for="fecha_ini" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
                     
-                     <h:outputLabel for="hora_ini" value="Hora Inicio" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}" />
-                     <p:inputText id="hora_ini" value="#{permisoController.trabajo.horaIni}" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}">
+                     <h:outputLabel for="hora_ini" value="Hora Inicio" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}" />
+                     <p:inputText id="hora_ini" value="#{creaPermisoController.permiso.horaIni}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}">
                             <p:ajax/>
                     </p:inputText>
-                    <p:message for="hora_ini" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}"/>
+                    <p:message for="hora_ini" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
                     
-                    <h:outputLabel for="fecha_fin" value="Fecha Fin" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}"/>
-                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{permisoController.trabajo.permiso.fechaFin}" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}">
+                    <h:outputLabel for="fecha_fin" value="Fecha Fin" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{creaPermisoController.permiso.permiso.fechaFin}" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}">
                         <p:ajax event="dateSelect"/>
                     </p:calendar>
-                    <p:message for="fecha_fin" rendered="#{permisoController.tipoTrabajo ne permisoController.CORRECTIVO_SIN_ORDEN}"/>
+                    <p:message for="fecha_fin" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
                     
-                     <h:outputLabel for="hora_fin" value="Hora Fin" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}" />
-                    <p:inputText id="hora_fin" value="#{permisoController.trabajo.horaFin}" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}">
+                     <h:outputLabel for="hora_fin" value="Hora Fin" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}" />
+                    <p:inputText id="hora_fin" value="#{creaPermisoController.permiso.horaFin}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}">
                             <p:ajax/>
                     </p:inputText>
-                    <p:message for="hora_fin" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}"/>
+                    <p:message for="hora_fin" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
                     
                         
                     <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
-                    <p:selectOneRadio id="tipo_ejecutante" value="#{permisoController.tipoEjecutante}" valueChangeListener="#{permisoController.seleccionarTipoEjecutante}">
-                        <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{permisoController.EMPLEADO}" />
-                        <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{permisoController.CONTRATISTA}" />
+                    <p:selectOneRadio id="tipo_ejecutante" value="#{creaPermisoController.tipoEjecutante}" valueChangeListener="#{creaPermisoController.seleccionarTipoEjecutante}">
+                        <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{creaPermisoController.EMPLEADO}" />
+                        <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{creaPermisoController.CONTRATISTA}" />
                         <p:ajax update=":form"/>
                     </p:selectOneRadio>
                     <p:message for="tipo_ejecutante"/>
                         
                     
-                    <h:outputLabel for="empleado" value="#{labels.empleado}" rendered="#{permisoController.tipoEjecutante eq permisoController.EMPLEADO}"/>
-                    <h:selectOneMenu id="empleado" value="#{permisoController.idEmpleado}" rendered="#{permisoController.tipoEjecutante eq permisoController.EMPLEADO}">
-                        <f:selectItems  value="#{permisoController.empleados}" />
+                    <h:outputLabel for="empleado" value="#{labels.empleado}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}"/>
+                    <p:selectOneMenu id="empleado" value="#{creaPermisoController.idEmpleado}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}">
+                        <f:selectItems  value="#{creaPermisoController.empleados}" />
                         <p:ajax/>
-                    </h:selectOneMenu>
-                    <p:commandLink actionListener="#{permisoController.addEmpleado}" value="Agregar Empleado" update="@form" rendered="#{permisoController.tipoEjecutante eq permisoController.EMPLEADO}"/>
+                    </p:selectOneMenu>
+                    <p:commandButton actionListener="#{creaPermisoController.addEmpleado}" icon="ui-icon-plus" update="@form" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}"/>
                     
                     
-                    <h:outputLabel for="contratista" value="#{labels.contratista}" rendered="#{permisoController.tipoEjecutante eq permisoController.CONTRATISTA}"/>
-                    <h:selectOneMenu id="contratista" value="#{permisoController.trabajo.contratista.id}" rendered="#{permisoController.tipoEjecutante eq permisoController.CONTRATISTA}">
-                        <f:selectItems  value="#{permisoController.contratistas}" />
+                    <h:outputLabel for="contratista" value="#{labels.contratista}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.CONTRATISTA}"/>
+                    <p:selectOneMenu id="contratista" value="#{creaPermisoController.permiso.contratista.id}" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.CONTRATISTA}">
+                        <f:selectItems  value="#{creaPermisoController.contratistas}" />
                         <p:ajax/>
-                    </h:selectOneMenu>
-                    <p:message for="contratista" rendered="#{permisoController.tipoEjecutante eq permisoController.CONTRATISTA}"/>
+                    </p:selectOneMenu>
+                    <p:message for="contratista" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.CONTRATISTA}"/>
                     
-                    <h:outputLabel value="Empleados" rendered="#{permisoController.tipoEjecutante eq permisoController.EMPLEADO}"/>
-                    <p:dataTable value="#{permisoController.trabajo.empleados}" var="empleado"
+                    <h:outputLabel value="Empleados" rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}"/>
+                    <p:dataTable value="#{creaPermisoController.permiso.empleados}" var="empleado"
                                  paginator="true"
-                                 paginatorPosition="top"
+                                 paginatorPosition="bottom"
                                  paginatorAlwaysVisible="false"
                                  rows="5"
                                  paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
-                                 rendered="#{permisoController.tipoEjecutante eq permisoController.EMPLEADO}">
+                                 rendered="#{creaPermisoController.tipoEjecutante eq creaPermisoController.EMPLEADO}">
                         <p:column headerText="Id">
                             <h:outputText value="#{empleado.numId}"/>
                         </p:column>
                         <p:column headerText="Nombre">
                             <h:outputText value="#{empleado.nombresApellidos}"/>
                         </p:column>
+                        <p:column headerText="Borrar">
+                            <p:commandLink update="@form" actionListener="#{creaPermisoController.removeEmpleado}">
+                                <p:graphicImage value="/images/cross.gif"/>
+                                <f:attribute name="itemCambiar" value="#{empleado}" />
+                            </p:commandLink>
+                        </p:column>
                     </p:dataTable>
                     
                     <f:facet name="footer">
-                        <p:commandButton value="#{labels.boton_enviar}" action="#{permisoController.guardarPermisoTrabajo}" update=":form:msgs :form:permisos_proyecto" ajax="false"/>
+                        <p:commandButton value="Guardar" icon="ui-icon-disk" onclick="dlg1.show();" type="button"/>
+                        <p:commandButton value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{creaPermisoController.navSeltipo}" ajax="false"/>
                     </f:facet>
             </p:panelGrid>
             </p:panel>
             
-            
-            
-            <p:panel header="Permisos del Proyecto" id="permisos_proyecto" rendered="#{permisoController.tipoTrabajo eq permisoController.PROYECTO}">
-                <p:dataTable value="#{permisoController.permisosProyecto}" var="permiso"
-                             paginator="true"
-                             rows="5"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Tarea" />
-                        </f:facet>
-                        <h:outputText value="#{permiso.tarea}"/>
-                    </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.usuario_ejecutante}" />
-                        </f:facet>
-                        <h:outputText value="#{permiso.usuariosEjecutante}"/>
-                    </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.borrar}" />
-                        </f:facet>
-                        <p:commandLink update=":form"  process="@this" actionListener="#{permisoController.removePermisoProyecto}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="itemCambiar" value="#{permiso}" />
-                        </p:commandLink>
-                    </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.actualizar}" />
-                        </f:facet>
-                        <p:commandLink update=":form"  process="@this" actionListener="#{permisoController.updatePermisoProyecto}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="itemCambiar" value="#{permiso}" />
-                        </p:commandLink>
-                    </p:column>
+            <p:dialog id="bdlg1" widgetVar="dlg1" modal="true">  
+                <h:panelGrid columns="1">
+                    Está seguro que desea guardar  <br/> 
+                    los datos del permiso de trabajo?
+                    <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{creaPermisoController.guardarPermisoTrabajo}" ajax="false"/>
+                </h:panelGrid>
+            </p:dialog>
 
-                </p:dataTable>
-            
-            </p:panel>
         </h:form>
    </ui:define>
   </ui:composition>

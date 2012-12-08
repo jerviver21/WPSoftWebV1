@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <!--<context-param>
-        <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
-        <param-value>true</param-value>
-    </context-param> -->
-    
+   
     <!-- Configuración de Spring security -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -66,7 +62,7 @@
 
     <!-- CONFIGURACIÓN BÁSICA WEB-->
     <welcome-file-list>
-        <welcome-file>/permisostrabajo/permisos_x_diligenciar.xhtml</welcome-file>
+        <welcome-file>/permisostrabajo/permisos.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>
 
