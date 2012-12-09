@@ -12,11 +12,11 @@ import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
 import com.vbrothers.permisostrabajo.services.ProyectoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
-import com.vbrothers.util.EstadosPermiso;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -75,6 +75,13 @@ public class CreaPermisoController {
 
     //Este mapa permite la selección del subcombo equipos, que depende del sector.
     private Map equiposXgrupo;
+    
+    //Parámetros para la búsquedad de permisos
+    private List<SelectItem> estados;
+    private int estadoBusqueda;
+    private Date fechaDesde;
+    private Date fechaHasta;
+    
  
 
     @PostConstruct
@@ -88,6 +95,7 @@ public class CreaPermisoController {
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
+        setEstados(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS)));
         crearNuevo();
     }
     
@@ -113,14 +121,6 @@ public class CreaPermisoController {
             tipoEjecutante = CONTRATISTA;
         }
     }
-
-    public String navPermisoTrabajo(){
-        if(permiso.getPermiso().getEstadoPermiso().equals(EstadosPermiso.CREADO)){
-            return "/permisostrabajo/creacion_sel_tipo.xhtml";
-        }else{
-            return "/permisostrabajo/resumen.xhtml";
-        }
-    }
     
     public void borrarPermiso(ActionEvent event){
         try {
@@ -134,6 +134,10 @@ public class CreaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar la tarea del permiso de trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+    
+    public String navBusqueda(){
+        return "/permisostrabajo/creacion_busquedad.xhtml";
     }
     
     //----------------------------------------------------------------------------------------------
@@ -214,9 +218,17 @@ public class CreaPermisoController {
     public String navSeltipo(){
         return "/permisostrabajo/creacion_sel_tipo.xhtml";
     }
-
-    
     //-------------------------------------------------------------------------------------------------------
+    //Métodos para controlar eventos de creacion_busqeudad.xhtml
+    public String navPermisos(){
+        return "/permisostrabajo/permisos.xhtml";
+    }
+    
+    public String consultarPermisos(){
+        permisos = permisoService.findPermisos(sesion.getUsuario().getUsr(), estadoBusqueda, fechaDesde, fechaHasta);
+        return "/permisostrabajo/permisos.xhtml";
+    }
+    
 
     /**
      * @return the PermisoTrabajo
@@ -392,6 +404,62 @@ public class CreaPermisoController {
      */
     public void setIdEmpleado(long idEmpleado) {
         this.idEmpleado = idEmpleado;
+    }
+
+    /**
+     * @return the estados
+     */
+    public List<SelectItem> getEstados() {
+        return estados;
+    }
+
+    /**
+     * @param estados the estados to set
+     */
+    public void setEstados(List<SelectItem> estados) {
+        this.estados = estados;
+    }
+
+    /**
+     * @return the estadoBusqueda
+     */
+    public int getEstadoBusqueda() {
+        return estadoBusqueda;
+    }
+
+    /**
+     * @param estadoBusqueda the estadoBusqueda to set
+     */
+    public void setEstadoBusqueda(int estadoBusqueda) {
+        this.estadoBusqueda = estadoBusqueda;
+    }
+
+    /**
+     * @return the fechaDesde
+     */
+    public Date getFechaDesde() {
+        return fechaDesde;
+    }
+
+    /**
+     * @param fechaDesde the fechaDesde to set
+     */
+    public void setFechaDesde(Date fechaDesde) {
+        this.fechaDesde = fechaDesde;
+    }
+
+    /**
+     * @return the fechaHasta
+     */
+    public Date getFechaHasta() {
+        return fechaHasta;
+    }
+
+    /**
+     * @param fechaHasta the fechaHasta to set
+     */
+    public void setFechaHasta(Date fechaHasta) {
+        this.fechaHasta = fechaHasta;
     }
 
 }

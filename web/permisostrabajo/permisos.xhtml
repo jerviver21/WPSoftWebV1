@@ -11,9 +11,10 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:commandLink ajax="false" action="#{creaPermisoController.crearNuevo}">
-                #{labels.crear_nuevo_permiso}
-            </p:commandLink>
+            <p:commandButton ajax="false" action="#{creaPermisoController.crearNuevo}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
+            <p:spacer width="5"/>
+            <p:commandButton icon="ui-icon-search" action="#{creaPermisoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Permiso de Trabajo"/>
+
 
             <p:outputPanel id="permisos">
                 <p:dataTable value="#{creaPermisoController.permisos}" var="permiso"

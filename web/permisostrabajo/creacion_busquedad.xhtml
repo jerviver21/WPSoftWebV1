@@ -1,0 +1,43 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panel header="Diligencia datos de búsqueda">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="estado" value="ESTADO:" />
+                    <h:selectOneMenu id="estado" value="#{creaPermisoController.estadoBusqueda}">
+                        <f:selectItems  value="#{creaPermisoController.estados}"/>
+                    </h:selectOneMenu>
+                    <p:message for="estado"/>
+
+                    <h:outputLabel for="fecha_ini" value="Desde:"/>
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaDesde}"/>
+                    <p:message for="fecha_ini"/>
+                    
+                    <h:outputLabel for="fecha_fin" value="Hasta:"/>
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaHasta}"/>
+                    <p:message for="fecha_fin"/>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Buscar" icon="ui-icon-check" action="#{creaPermisoController.consultarPermisos}" ajax="false"/>
+                        <p:commandButton value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{creaPermisoController.navPermisos}" ajax="false"/>
+                    </f:facet>
+            </p:panelGrid>
+            </p:panel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+
