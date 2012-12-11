@@ -1,0 +1,55 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs"/>
+            
+            <p:commandButton ajax="false" action="#{proyectoController.crearNuevo}" icon="ui-icon-document" value="Crear" title="Crear Proyecto"/>
+            <p:spacer width="5"/>
+            <p:commandButton icon="ui-icon-search" action="#{proyectoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Proyecto"/>
+
+            <p:panel id="proyectos" header="Proyectos">
+                <p:dataTable value="#{proyectoController.proyectos}" var="proyecto"
+                             paginator="true"
+                             paginatorPosition="bottom"
+                             paginatorAlwaysVisible="false"
+                             rows="20"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+                    <p:column headerText="#{labels.numero}" filterBy="#{proyecto.id}">
+                        <p:commandLink ajax="false" value="#{proyecto.id}"
+                                       actionListener="#{proyectoController.actualizar}"
+                                       action="#{proyectoController.navProyecto}">
+                            <f:attribute name="itemCambiar" value="#{proyecto}" />
+                        </p:commandLink>
+                    </p:column>
+                    <p:column headerText="#{labels.num_gestion_cambio}" >
+                        <h:outputText value="#{proyecto.numGestionCambio}"/>
+                    </p:column>
+                    <p:column headerText="#{labels.nombre_proyecto}">
+                        <h:outputText value="#{proyecto.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Estado" filterBy="#{proyecto.estado.nombre}">
+                        <h:outputText value="#{proyecto.estado.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Borrar">
+                        <p:commandLink update="@form" actionListener="#{proyectoController.borrar}">
+                            <p:graphicImage value="/images/cross.gif"/>
+                            <f:attribute name="proyectoCambiar" value="#{proyecto}" />
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

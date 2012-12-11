@@ -1,0 +1,119 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panel header="Diligencie los datos de la Actividad (Permiso de Trabajo)">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="area" value="#{labels.area_sitio}" />
+                    <h:selectOneMenu id="area" value="#{proyectoController.permiso.permiso.sector.id}" valueChangeListener="#{proyectoController.buscarEquiposXSector}">
+                        <f:selectItems  value="#{proyectoController.sectores}" />
+                        <p:ajax update=":form:equipo"/>
+                    </h:selectOneMenu>
+                    <p:message for="area"/>
+                    
+                    <h:outputLabel for="equipo" value="#{labels.equipo_intervenido}" />
+                    <h:selectOneMenu id="equipo" value="#{proyectoController.permiso.permiso.equipo.id}">
+                        <f:selectItems  value="#{proyectoController.equipos}" />
+                        <p:ajax/>
+                    </h:selectOneMenu>
+                    <p:message for="equipo"/>
+                        
+                    <h:outputLabel for="desc_tarea" value="#{labels.tarea}" />
+                    <p:inputTextarea id="desc_tarea" cols="50" value="#{proyectoController.permiso.permiso.tarea}">
+                            <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="desc_tarea"/>
+                        
+                    <h:outputLabel for="fecha_ini" value="Fecha Inicio"/>
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{proyectoController.permiso.permiso.fechaIni}">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                    <p:message for="fecha_ini"/>
+                    
+                     <h:outputLabel for="hora_ini" value="Hora Inicio"/>
+                     <p:inputText id="hora_ini" value="#{proyectoController.permiso.horaIni}">
+                            <p:ajax/>
+                    </p:inputText>
+                    <p:message for="hora_ini"/>
+                    
+                    <h:outputLabel for="fecha_fin" value="Fecha Fin"/>
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{proyectoController.permiso.permiso.fechaFin}">
+                        <p:ajax event="dateSelect"/>
+                    </p:calendar>
+                    <p:message for="fecha_fin"/>
+                    
+                     <h:outputLabel for="hora_fin" value="Hora Fin"/>
+                    <p:inputText id="hora_fin" value="#{proyectoController.permiso.horaFin}">
+                            <p:ajax/>
+                    </p:inputText>
+                    <p:message for="hora_fin"/>
+                    
+                        
+                    <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
+                    <p:selectOneRadio id="tipo_ejecutante" value="#{proyectoController.tipoEjecutante}" valueChangeListener="#{proyectoController.seleccionarTipoEjecutante}">
+                        <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{proyectoController.EMPLEADO}" />
+                        <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{proyectoController.CONTRATISTA}" />
+                        <p:ajax update=":form"/>
+                    </p:selectOneRadio>
+                    <p:message for="tipo_ejecutante"/>
+                        
+                    
+                    <h:outputLabel for="empleado" value="#{labels.empleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    <p:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}">
+                        <f:selectItems  value="#{creaPermisoController.empleados}" />
+                        <p:ajax/>
+                    </p:selectOneMenu>
+                    <p:commandButton actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    
+                    
+                    <h:outputLabel for="contratista" value="#{labels.contratista}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}" />
+                    <p:selectOneMenu id="contratista" value="#{proyectoController.permiso.contratista.id}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}">
+                        <f:selectItems  value="#{proyectoController.contratistas}" />
+                        <p:ajax/>
+                    </p:selectOneMenu>
+                    <p:message for="contratista" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"/>
+                    
+                    <h:outputLabel value="Empleados" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    <p:dataTable value="#{proyectoController.permiso.empleados}" var="empleado"
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 paginatorAlwaysVisible="false"
+                                 rows="5"
+                                 paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}"
+                                 rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}">
+                        <p:column headerText="Id">
+                            <h:outputText value="#{empleado.numId}"/>
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{empleado.nombresApellidos}"/>
+                        </p:column>
+                        <p:column headerText="Borrar">
+                            <p:commandLink update="@form" actionListener="#{proyectoController.removeEmpleado}">
+                                <p:graphicImage value="/images/cross.gif"/>
+                                <f:attribute name="itemCambiar" value="#{empleado}" />
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <f:facet name="footer">
+                        <p:commandButton id="bg1" value="Guardar" icon="ui-icon-disk" action="#{proyectoController.guardarPermiso}" ajax="false"/>
+                        <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}"  ajax="false"/>
+                    </f:facet>
+            </p:panelGrid>
+            </p:panel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

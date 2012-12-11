@@ -18,16 +18,9 @@
                     <p:selectOneRadio id="tipo_permiso" value="#{creaPermisoController.tipoPermiso}" valueChangeListener="#{creaPermisoController.seleccionarTipoPermiso}">
                         <f:selectItem itemLabel="#{labels.correctivo_sin_orden}" itemValue="#{creaPermisoController.CORRECTIVO_SIN_ORDEN}" />
                         <f:selectItem itemLabel="Planificado" itemValue="#{creaPermisoController.ORDEN_TRABAJO}" />
-                        <f:selectItem itemLabel="#{labels.proyecto}" itemValue="#{creaPermisoController.PROYECTO}" />
                         <p:ajax update=":form"/>
                     </p:selectOneRadio>
                     <p:message for="tipo_permiso"/>
-                    <h:outputLabel for="nro_proyecto" value="#{labels.proyecto}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}" />
-                    <p:selectOneMenu id="nro_proyecto" value="#{creaPermisoController.permiso.permiso.proyecto.id}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}">
-                        <f:selectItems  value="#{creaPermisoController.proyectos}" />
-                        <p:ajax/>
-                    </p:selectOneMenu>
-                    <p:message for="nro_proyecto" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.PROYECTO}"/>
                     <h:outputLabel for="num_orden" value="#{labels.nro_orden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
                     <p:inputText id="num_orden" value="#{creaPermisoController.permiso.permiso.numOrden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}">
                         <p:ajax/>

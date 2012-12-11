@@ -1,0 +1,43 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:messages id="msgs" />
+            <p:panel id="form_proyecto" header="#{labels.datos_proyecto}">
+                <p:panelGrid columns="3" id="grid">
+                    <h:outputLabel for="num_gest_cambio" value="#{labels.num_gestion_cambio}" />
+                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}"  />
+                    <p:message for="num_gest_cambio"/>
+                    <h:outputLabel for="nombre_proyecto" value="#{labels.nombre_proyecto}" />
+                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" />
+                    <p:message for="nombre_proyecto"/>
+                    <h:outputLabel for="cuenta_cargada" value="#{labels.cuenta_cargada}" />
+                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" />
+                    <p:message for="cuenta_cargada"/>
+                    <h:outputLabel  for="fecha_ini" value="#{labels.fecha_ini}" />
+                    <p:calendar id="fecha_ini" value="#{proyectoController.proyecto.fechaIni}" pattern="yyyy-MM-dd"/>
+                    <p:message for="fecha_ini"/>
+                    <h:outputLabel  for="fecha_fin" value="#{labels.fecha_fin}" />
+                    <p:calendar id="fecha_fin" value="#{proyectoController.proyecto.fechaFin}" pattern="yyyy-MM-dd"/>
+                    <p:message for="fecha_fin"/>
+                </p:panelGrid>
+                <p:spacer height="10" width="500"/>
+                <f:facet name="footer">
+                    <p:commandButton id="bg1" value="Siguiente" icon="ui-icon-check" action="#{proyectoController.createProyecto}" ajax="false"/>
+                    <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}" ajax="false"/>
+                </f:facet>
+            </p:panel>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

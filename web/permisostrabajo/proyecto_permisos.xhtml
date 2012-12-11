@@ -11,13 +11,9 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:commandButton ajax="false" action="#{creaPermisoController.crearNuevo}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
-            <p:spacer width="5"/>
-            <p:commandButton icon="ui-icon-search" action="#{creaPermisoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Permiso de Trabajo"/>
-
-
-            <p:outputPanel id="permisos">
-                <p:dataTable value="#{creaPermisoController.permisos}" var="permiso"
+            <p:panel id="permisos" header="Actividades del Proyecto">
+                
+                <p:dataTable value="#{proyectoController.proyecto.permisos}" var="permiso"
                              paginator="true"
                              rows="5"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
@@ -29,11 +25,11 @@
                             <f:attribute name="itemCambiar" value="#{permiso}" />
                         </p:commandLink>
                     </p:column>
-                    <p:column headerText="#{labels.nombre}">
+                    <p:column headerText="Actividad">
                         <h:outputText value="#{permiso.tarea}"/>
                     </p:column>
-                    <p:column headerText="#{labels.creador}">
-                        <h:outputText value="#{permiso.usuarioCreacion}"/>
+                    <p:column headerText="Usuario Asignado">
+                        <h:outputText value="#{permiso.usuariosEjecutante}"/>
                     </p:column>
                     <p:column headerText="Estado" filterBy="#{permiso.estadoPermiso.descripcion}">
                         <h:outputText value="#{permiso.estadoPermiso.descripcion}"/>
@@ -50,9 +46,12 @@
                             </h:panelGrid>
                         </p:dialog>
                     </p:column>
-                    
                 </p:dataTable>
-            </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton ajax="false" action="#{proyectoController.crearPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
+                    <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}" ajax="false"/>
+                </f:facet>
+            </p:panel>
         </h:form>
    </ui:define>
   </ui:composition>
