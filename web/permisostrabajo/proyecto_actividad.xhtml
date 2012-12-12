@@ -60,7 +60,9 @@
                     
                         
                     <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
-                    <p:selectOneRadio id="tipo_ejecutante" value="#{proyectoController.tipoEjecutante}" valueChangeListener="#{proyectoController.seleccionarTipoEjecutante}">
+                    <p:selectOneRadio id="tipo_ejecutante" value="#{proyectoController.tipoEjecutante}" 
+                                      valueChangeListener="#{proyectoController.seleccionarTipoEjecutante}"
+                                      disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
                         <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{proyectoController.EMPLEADO}" />
                         <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{proyectoController.CONTRATISTA}" />
                         <p:ajax update=":form"/>
@@ -69,15 +71,21 @@
                         
                     
                     <h:outputLabel for="empleado" value="#{labels.empleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
-                    <p:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}">
+                    <p:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" 
+                                     rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
+                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
                         <f:selectItems  value="#{creaPermisoController.empleados}" />
                         <p:ajax/>
                     </p:selectOneMenu>
-                    <p:commandButton actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    <p:commandButton actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" 
+                                     rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
+                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}"/>
                     
                     
                     <h:outputLabel for="contratista" value="#{labels.contratista}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}" />
-                    <p:selectOneMenu id="contratista" value="#{proyectoController.permiso.contratista.id}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}">
+                    <p:selectOneMenu id="contratista" value="#{proyectoController.permiso.contratista.id}" 
+                                     rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"
+                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
                         <f:selectItems  value="#{proyectoController.contratistas}" />
                         <p:ajax/>
                     </p:selectOneMenu>

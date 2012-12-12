@@ -1,10 +1,12 @@
 
 package com.vbrothers.permisostrabajo.managed;
 
+import com.vbrothers.common.exceptions.EstadoException;
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
+import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.Proyecto;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
 import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
@@ -52,19 +54,11 @@ public class ProyectoController {
     //Atributos para diligenciar datos del Proyecto
     private Proyecto proyecto;
     private List<Proyecto> proyectos;
+    private List<SelectItem> estados;
     
     //Parámetros para búsqueda de proyectos
     private Date fechaDesde;
     private Date fechaHasta;
-    
-    
-    //Parametros de Navegación en el flujo de creación de proyectos
-    int PAG_PROYECTOS = 1;
-    int PAG_PROY_DATOS = 2;
-    int PAG_PROY_PERMISOS = 3;
-    int PAG_DATOS_PERMISO = 4;
-    int PAG_ACTUAL = PAG_PROYECTOS;
-    
     
     //Parametros para agregar las actividades - permisos de trabajo al proyecto
     //parametros de definición de tipo de ejecutante
@@ -78,11 +72,25 @@ public class ProyectoController {
     private List<SelectItem> sectores;
     private List<SelectItem> contratistas;
     private List<SelectItem> empleados;
+    
     //Este mapa permite la selección del subcombo equipos, que depende del sector.
     private Map equiposXgrupo;
     
     //Permite seleccionar varios empleados
     private long idEmpleado;
+    
+    //Parametros de Navegación en el flujo de creación de proyectos
+    int PAG_PROYECTOS = 1;
+    int PAG_PROY_DATOS = 2;
+    int PAG_PROY_PERMISOS = 3;
+    int PAG_DATOS_PERMISO = 4;
+    int PAG_PROY_BUSQUEDA = 5;
+    int PAG_ACTUAL = PAG_PROYECTOS;
+    
+    private int MODO_EDICION = 1;
+    private int MODO_CREACION = 2;
+    int MODO_PROYECTO = getMODO_CREACION();
+    private int MODO_PERMISO = getMODO_CREACION();
 
     
 
@@ -97,7 +105,7 @@ public class ProyectoController {
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
-        
+        estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPROYECTO));
         crearNuevo();
     }
     
@@ -106,15 +114,36 @@ public class ProyectoController {
         proyecto = new Proyecto();
         proyecto.setUsuarioCreacion(sesion.getUsuario().getUsr());
         PAG_ACTUAL = PAG_PROY_DATOS; 
+        MODO_PROYECTO = getMODO_CREACION();
         return "/permisostrabajo/proyecto_datos.xhtml";
+    }
+    
+    public void borrarProyecto(ActionEvent event){
+        try {
+            Proyecto r  = (Proyecto) event.getComponent().getAttributes().get("itemCambiar");
+            proyectoService.borrarProyecto(r);
+            proyectos.remove(r);
+            FacesUtil.addMessage(FacesUtil.INFO, "Proyecto borrado con exito!");
+        } catch (EstadoException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el proyecto");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    public String consultarProyecto(Proyecto proyecto){
+        this.proyecto = proyectoService.findProyecto(proyecto.getId());
+        PAG_ACTUAL = PAG_PROY_PERMISOS;
+        MODO_PROYECTO = getMODO_EDICION();
+        return "/permisostrabajo/proyecto_permisos.xhtml";
     }
 
     //Eventos de la página proyecto_datos.xhtml
     public String createProyecto(){
         try {
-            System.out.println("Antes: ---> "+proyecto.getId());
             proyectoService.edit(proyecto);
-            System.out.println("Después: ---> "+proyecto.getId());
             proyectos.add(proyecto);
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -126,42 +155,22 @@ public class ProyectoController {
         return "/permisostrabajo/proyecto_permisos.xhtml";
     }
     
-    public void borrar(ActionEvent event){
-        try {
-            Proyecto r  = (Proyecto) event.getComponent().getAttributes().get("proyectoCambiar");
-            proyectoService.remove(r);
-            proyectos.remove(r);
-            FacesUtil.addMessage(FacesUtil.INFO, "Proyecto borrado con exito!");
-        } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el proyecto");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }
-        
-    }
-
-    public void actualizar(ActionEvent event){
-        Proyecto r  = (Proyecto) event.getComponent().getAttributes().get("proyectoCambiar");
-        this.proyecto = r;
-    }
-
-    public String navProyecto(){
-        return "/permisostrabajo/proyecto.xhtml";
-    }
-    
-    
     //Métodos para eventos de proyecto_busqueda.xhtml
     
     public String navBusqueda(){
+        PAG_ACTUAL = PAG_PROY_BUSQUEDA;
         return "/permisostrabajo/proyecto_busqueda.xhtml";
     }
     
     public String navProyectos(){
+        PAG_ACTUAL = PAG_PROYECTOS;
         return "/permisostrabajo/proyectos.xhtml";
     }
     
     public String consultarProyectos(){
         proyectos = proyectoService.findProyectos(sesion.getUsuario().getUsr(), fechaDesde, fechaHasta);
-        return "/permisostrabajo/permisos.xhtml";
+        PAG_ACTUAL = PAG_PROYECTOS;
+        return "/permisostrabajo/proyectos.xhtml";
     }
     
     //Métodos para el manejo de eventos de la página proyecto_permisos.xhtml
@@ -170,7 +179,55 @@ public class ProyectoController {
         permiso.setUsr(sesion.getUsuario());
         permiso.getPermiso().setProyecto(proyecto);
         tipoEjecutante = EMPLEADO;
+        PAG_ACTUAL = PAG_DATOS_PERMISO;
+        MODO_PERMISO = getMODO_CREACION();
         return "/permisostrabajo/proyecto_actividad.xhtml";
+    }
+    
+    public String consultarPermiso(PermisoTrabajo p){
+        permiso = permisoService.findPermisoTrabajo(p.getId());
+        if(permiso.getPermiso().isEjecutorContratista()){
+            tipoEjecutante = CONTRATISTA;
+        }else{
+            tipoEjecutante = EMPLEADO;
+        }
+        MODO_PERMISO = getMODO_EDICION();
+        PAG_ACTUAL = PAG_DATOS_PERMISO;
+        return "/permisostrabajo/proyecto_actividad.xhtml";
+    }
+    
+    public void borrarPermiso(PermisoTrabajo p){
+        try {
+            permisoService.deletePermiso(p);
+            proyecto.getPermisos().remove(p);
+            FacesUtil.addMessage(FacesUtil.INFO, "Permiso borrado con exito!");
+        } catch (EstadoException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el proyecto");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+    
+    public String finalizar(){
+        try {
+            proyectoService.edit(proyecto);
+            proyectos = proyectoService.findProyectosActivos();
+        } catch (LlaveDuplicadaException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+        }catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el proyecto");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }      
+        PAG_ACTUAL = PAG_PROYECTOS;
+        FacesUtil.addMessage(FacesUtil.INFO, "Proyecto guardado!"); 
+        return "/permisostrabajo/proyectos.xhtml";
+    }
+    
+    public void selectEstado(ValueChangeEvent event){
+        int estado = (int) (Integer)event.getNewValue();
+        proyecto.setEstado(proyectoService.findEstadoById(estado));
     }
     
     //Métodos para el manejo de eventos de la página proyecto_actividad.xhtml
@@ -208,8 +265,14 @@ public class ProyectoController {
         try {
             permiso.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
             permiso.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
-            permisoService.crearPermiso(permiso);
-            proyecto.getPermisos().add(permiso.getPermiso());
+            if(MODO_PERMISO == MODO_CREACION){
+                permisoService.crearPermiso(permiso);
+                proyecto.getPermisos().add(permiso.getPermiso());
+            }else{
+                proyecto.getPermisos().remove(permiso.getPermiso());
+                permisoService.actualizarPermiso(permiso);
+                proyecto.getPermisos().add(permiso.getPermiso());
+            }
             FacesUtil.addMessage(FacesUtil.INFO, "La actividad fue guardado!");  
         } catch (ParseException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
@@ -217,13 +280,18 @@ public class ProyectoController {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
+        PAG_ACTUAL = PAG_PROY_PERMISOS;
         return "/permisostrabajo/proyecto_permisos.xhtml";
     }
     
     //Eventos para la navegación en el flujo de creación de proyectos
     public String navBotonAtras(){
-        if(PAG_ACTUAL == PAG_PROY_PERMISOS){
+        if(PAG_ACTUAL == PAG_PROY_PERMISOS && MODO_PROYECTO == getMODO_CREACION()){
+            PAG_ACTUAL = PAG_PROY_DATOS;
             return "/permisostrabajo/proyecto_datos.xhtml";
+        }else if(PAG_ACTUAL == PAG_DATOS_PERMISO){
+            PAG_ACTUAL = PAG_PROY_PERMISOS;
+            return "/permisostrabajo/proyecto_permisos.xhtml";
         }
         return  "/permisostrabajo/proyectos.xhtml";
     }
@@ -409,6 +477,62 @@ public class ProyectoController {
      */
     public void setIdEmpleado(long idEmpleado) {
         this.idEmpleado = idEmpleado;
+    }
+
+    /**
+     * @return the estados
+     */
+    public List<SelectItem> getEstados() {
+        return estados;
+    }
+
+    /**
+     * @param estados the estados to set
+     */
+    public void setEstados(List<SelectItem> estados) {
+        this.estados = estados;
+    }
+
+    /**
+     * @return the MODO_PERMISO
+     */
+    public int getMODO_PERMISO() {
+        return MODO_PERMISO;
+    }
+
+    /**
+     * @param MODO_PERMISO the MODO_PERMISO to set
+     */
+    public void setMODO_PERMISO(int MODO_PERMISO) {
+        this.MODO_PERMISO = MODO_PERMISO;
+    }
+
+    /**
+     * @return the MODO_EDICION
+     */
+    public int getMODO_EDICION() {
+        return MODO_EDICION;
+    }
+
+    /**
+     * @param MODO_EDICION the MODO_EDICION to set
+     */
+    public void setMODO_EDICION(int MODO_EDICION) {
+        this.MODO_EDICION = MODO_EDICION;
+    }
+
+    /**
+     * @return the MODO_CREACION
+     */
+    public int getMODO_CREACION() {
+        return MODO_CREACION;
+    }
+
+    /**
+     * @param MODO_CREACION the MODO_CREACION to set
+     */
+    public void setMODO_CREACION(int MODO_CREACION) {
+        this.MODO_CREACION = MODO_CREACION;
     }
 
 

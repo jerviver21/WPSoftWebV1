@@ -21,14 +21,10 @@
                              paginator="true"
                              paginatorPosition="bottom"
                              paginatorAlwaysVisible="false"
-                             rows="20"
+                             rows="6"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
                     <p:column headerText="#{labels.numero}" filterBy="#{proyecto.id}">
-                        <p:commandLink ajax="false" value="#{proyecto.id}"
-                                       actionListener="#{proyectoController.actualizar}"
-                                       action="#{proyectoController.navProyecto}">
-                            <f:attribute name="itemCambiar" value="#{proyecto}" />
-                        </p:commandLink>
+                        <p:commandLink ajax="false" value="#{proyecto.id}"  action="#{proyectoController.consultarProyecto(proyecto)}"/>
                     </p:column>
                     <p:column headerText="#{labels.num_gestion_cambio}" >
                         <h:outputText value="#{proyecto.numGestionCambio}"/>
@@ -40,10 +36,16 @@
                         <h:outputText value="#{proyecto.estado.nombre}"/>
                     </p:column>
                     <p:column headerText="Borrar">
-                        <p:commandLink update="@form" actionListener="#{proyectoController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="proyectoCambiar" value="#{proyecto}" />
-                        </p:commandLink>
+                        <p:commandButton icon="ui-icon-trash" onclick="dlg#{proyecto.id}.show();" type="button"/>
+                        <p:dialog id="bdlg#{proyecto.id}" widgetVar="dlg#{proyecto.id}" modal="true">  
+                            <h:panelGrid columns="1">
+                                Está seguro que desea borrar  <br/> 
+                                el Proyecto No: #{proyecto.id}?
+                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto}" ajax="false">
+                                    <f:attribute name="itemCambiar" value="#{proyecto}" />
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </p:dialog>
                     </p:column>
                 </p:dataTable> 
             </p:panel>

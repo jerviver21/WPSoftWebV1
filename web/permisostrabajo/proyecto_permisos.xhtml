@@ -11,19 +11,77 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:panel id="permisos" header="Actividades del Proyecto">
-                
-                <p:dataTable value="#{proyectoController.proyecto.permisos}" var="permiso"
+            <p:panel header="Datos del Proyecto">
+                <p:panelGrid  style="margin-top:15px">
+                    <f:facet name="header">  
+                        <p:row>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Num. Gestion"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Nombre"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Cuenta"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Desde"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Hasta"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Estado"/></p:column>
+                        </p:row>
+                        
+                    </f:facet> 
+                    <p:row>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.numGestionCambio}">  
+                                <p:inputText value="#{proyectoController.proyecto.numGestionCambio}">
+                                    <p:ajax/>
+                                </p:inputText>  
+                            </p:inplace>  
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.nombre}">  
+                                <p:inputText value="#{proyectoController.proyecto.nombre}">  
+                                    <p:ajax/>
+                                </p:inputText>  
+                            </p:inplace> 
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.numCuentaCargada}">  
+                                <p:inputText value="#{proyectoController.proyecto.numCuentaCargada}">
+                                    <p:ajax/>
+                                </p:inputText>  
+                            </p:inplace> 
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.fIniFormato}">
+                                <p:calendar value="#{proyectoController.proyecto.fechaIni}" pattern="yyyy-MM-dd" >
+                                    <p:ajax event="dateSelect"/>
+                                </p:calendar> 
+                            </p:inplace> 
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.fFinFormato}">  
+                                <p:calendar value="#{proyectoController.proyecto.fechaFin}" pattern="yyyy-MM-dd" >
+                                    <p:ajax event="dateSelect"/>
+                                </p:calendar>
+                            </p:inplace> 
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{proyectoController.proyecto.estado.nombre}">  
+                                <h:selectOneMenu value="#{proyectoController.proyecto.estado.id}" valueChangeListener="#{proyectoController.selectEstado}">  
+                                    <f:selectItems  value="#{proyectoController.estados}" /> 
+                                    <p:ajax update="@form"/>
+                                </h:selectOneMenu>  
+                            </p:inplace> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
+            <p:separator/> 
+            <p:panel header="Actividades del Proyecto">
+            <p:commandButton ajax="false" action="#{proyectoController.crearPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
+            <p:dataTable value="#{proyectoController.proyecto.permisos}" var="permiso"
                              paginator="true"
                              rows="5"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                             paginatorPosition="bottom">
+                             paginatorPosition="bottom"
+                             >
                     <p:column headerText="#{labels.numero}" filterBy="#{permiso.id}">
-                        <p:commandLink ajax="false" value="#{permiso.id}"
-                                       actionListener="#{creaPermisoController.abrirTrazabilidadPermiso}"
-                                       action="#{creaPermisoController.navTrazabilidad}">
-                            <f:attribute name="itemCambiar" value="#{permiso}" />
-                        </p:commandLink>
+                        <p:commandLink ajax="false" value="#{permiso.id}" action="#{proyectoController.consultarPermiso(permiso)}"/>
                     </p:column>
                     <p:column headerText="Actividad">
                         <h:outputText value="#{permiso.tarea}"/>
@@ -40,18 +98,16 @@
                             <h:panelGrid columns="1">
                                 Está seguro que desea borrar  <br/> 
                                 el permiso de trabajo No: #{permiso.id}?
-                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{creaPermisoController.borrarPermiso}" ajax="false">
-                                    <f:attribute name="itemCambiar" value="#{permiso}" />
-                                </p:commandButton>
+                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{proyectoController.borrarPermiso(permiso)}" ajax="false"/>
                             </h:panelGrid>
                         </p:dialog>
                     </p:column>
                 </p:dataTable>
-                <f:facet name="footer">
-                    <p:commandButton ajax="false" action="#{proyectoController.crearPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
-                    <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}" ajax="false"/>
-                </f:facet>
-            </p:panel>
+               </p:panel>
+               <p:separator/> 
+               <p:commandButton value="Finalizar" icon="ui-icon-radio-on" action="#{proyectoController.finalizar}" ajax="false"/>
+               <p:commandButton value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}" ajax="false"/>
+
         </h:form>
    </ui:define>
   </ui:composition>
