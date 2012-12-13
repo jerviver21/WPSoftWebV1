@@ -40,15 +40,18 @@
                     <h:outputLabel for="fecha_ini" value="Fecha Inicio" 
                                    rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
                     <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{creaPermisoController.permiso.permiso.fechaHoraIni}" 
-                                rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}">
-                        <p:ajax event="dateSelect"/>
+                                rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"
+                                mindate="#{creaPermisoController.fechaActual}" required="true">
+                        <p:ajax event="dateSelect" listener="#{creaPermisoController.formatearFechaIni}" update="fecha_fin"/>
                     </p:calendar>
                     <p:message for="fecha_ini" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
                     
                     <h:outputLabel for="fecha_fin" value="Fecha Fin" 
                                    rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
                     <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{creaPermisoController.permiso.permiso.fechaHoraFin}" 
-                                rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}">
+                                rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"
+                                mindate="#{creaPermisoController.fechaIni}" disabled="#{creaPermisoController.permiso.permiso.fechaHoraIni eq null}"
+                                required="true">
                         <p:ajax event="dateSelect"/>
                     </p:calendar>
                     <p:message for="fecha_fin" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
@@ -102,28 +105,16 @@
                             <h:outputText value="#{empleado.nombresApellidos}"/>
                         </p:column>
                         <p:column headerText="Borrar">
-                            <p:commandLink update="@form" actionListener="#{creaPermisoController.removeEmpleado}" 
-                                           disabled="#{creaPermisoController.permiso.permiso.id ne null}">
-                                <p:graphicImage value="/images/cross.gif"/>
-                                <f:attribute name="itemCambiar" value="#{empleado}" />
-                            </p:commandLink>
+                            <p:commandButton icon="ui-icon-trash" update="@form" actionListener="#{creaPermisoController.removeEmpleado(empleado)}" 
+                                           disabled="#{creaPermisoController.permiso.permiso.id ne null}"/>
                         </p:column>
                     </p:dataTable>
                     
                     <f:facet name="footer">
-                        <p:commandButton id="bg1" value="Guardar" icon="ui-icon-disk" onclick="dlg1.show();" type="button"/>
+                        <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{creaPermisoController.guardarPermiso}" ajax="false"/>
                     </f:facet>
             </p:panelGrid>
             </p:panel>
-            
-            <p:dialog id="bdlg1" widgetVar="dlg1" modal="true">  
-                <h:panelGrid columns="1">
-                    Está seguro que desea guardar  <br/> 
-                    los datos del permiso de trabajo?
-                    <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{creaPermisoController.guardarPermiso}" ajax="false"/>
-                </h:panelGrid>
-            </p:dialog>
-
         </h:form>
    </ui:define>
   </ui:composition>

@@ -15,14 +15,17 @@
             <p:panel header="Seleccione el tipo de Permiso de Trabajo">
                 <p:panelGrid columns="3"> 
                     <h:outputLabel for="tipo_permiso" value="" />
-                    <p:selectOneRadio id="tipo_permiso" value="#{creaPermisoController.tipoPermiso}" valueChangeListener="#{creaPermisoController.seleccionarTipoPermiso}">
+                    <p:selectOneRadio id="tipo_permiso" value="#{creaPermisoController.tipoPermiso}"
+                                      valueChangeListener="#{creaPermisoController.seleccionarTipoPermiso}">
                         <f:selectItem itemLabel="#{labels.correctivo_sin_orden}" itemValue="#{creaPermisoController.CORRECTIVO_SIN_ORDEN}" />
                         <f:selectItem itemLabel="Planificado" itemValue="#{creaPermisoController.ORDEN_TRABAJO}" />
                         <p:ajax update=":form"/>
                     </p:selectOneRadio>
                     <p:message for="tipo_permiso"/>
-                    <h:outputLabel for="num_orden" value="#{labels.nro_orden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
-                    <p:inputText id="num_orden" value="#{creaPermisoController.permiso.permiso.numOrden}" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}">
+                    <h:outputLabel for="num_orden" value="#{labels.nro_orden}"
+                                   rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
+                    <p:inputText id="num_orden" value="#{creaPermisoController.permiso.permiso.numOrden}"
+                                 rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}" required="true">
                         <p:ajax/>
                     </p:inputText>
                     <p:message for="num_orden" rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>

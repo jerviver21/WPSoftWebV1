@@ -22,11 +22,11 @@
                     <p:message for="estado"/>
 
                     <h:outputLabel for="fecha_ini" value="Desde:"/>
-                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaDesde}"/>
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaDesde}" readonlyInput="true" required="true"/>
                     <p:message for="fecha_ini"/>
                     
                     <h:outputLabel for="fecha_fin" value="Hasta:"/>
-                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaHasta}"/>
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{creaPermisoController.fechaHasta}" readonlyInput="true" required="true"/>
                     <p:message for="fecha_fin"/>
 
                     <f:facet name="footer">

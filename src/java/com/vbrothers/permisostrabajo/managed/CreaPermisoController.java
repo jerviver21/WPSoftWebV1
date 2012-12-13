@@ -1,9 +1,11 @@
 package com.vbrothers.permisostrabajo.managed;
 
 import com.vbrothers.common.exceptions.EstadoException;
+import com.vbrothers.common.exceptions.ValidacionException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
+import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
@@ -15,6 +17,7 @@ import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +30,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.DateSelectEvent;
 
 /**
  * @author Jerson Viveros
@@ -83,6 +87,11 @@ public class CreaPermisoController {
     String PAG_BUSQUEDA = "/permisostrabajo/creacion_busquedad.xhtml";
     String PAG_DATOS = "/permisostrabajo/creacion_datos.xhtml";
     
+    //Atributos para la Validacion de fechas
+    SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd");
+    private String fechaActual;
+    private String fechaIni;
+    
 
     @PostConstruct
     public void init(){
@@ -95,13 +104,16 @@ public class CreaPermisoController {
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         setEstados(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS)));
+        fechaActual = fd.format(new Date());
         crearNuevoPermiso();
     }
     
     //Métodos para procesar eventos de permisos.xhtml
     public String crearNuevoPermiso(){
-        setPermiso(new PermisoTrabajoTO());
-        permiso.setUsr(sesion.getUsuario());
+        setPermiso(new PermisoTrabajoTO(sesion.getUsuario()));
+        if(permiso.getPermiso().getSector().getId() != null && permiso.getPermiso().getSector().getId() != 0){
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        }
         tipoEjecutante = EMPLEADO;
         return PAG_SEL_TIPO;
     }
@@ -122,6 +134,12 @@ public class CreaPermisoController {
     public String consultarTrazabilidad(PermisoTrabajo p){
         setTraz(gestionPermisoService.findTrazabilidadPermiso(p));
         permiso = permisoService.findPermisoTrabajo(p.getId());
+        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
+        if(permiso.getPermiso().getFechaHoraIni() != null){
+            fechaIni = fd.format(permiso.getPermiso().getFechaHoraIni());
+        }
+        
         if(permiso.getPermiso().getNumOrden() != null){
             tipoPermiso = ORDEN_TRABAJO;
         }else{
@@ -161,14 +179,25 @@ public class CreaPermisoController {
         }
         return PAG_DATOS;
     }
+    
+    public void selectEstado(ValueChangeEvent event){
+        int estado = (int) (Integer)event.getNewValue();
+        permiso.getPermiso().setEstadoPermiso(permisoService.findEstadoById(estado));
+        permisoService.actualizarPermiso(permiso);
+        permisos.remove(permiso.getPermiso());
+        permisos.add(permiso.getPermiso());
+    }
+    
+    
     //Métodos para procesar eventos de creacion_datos.xhtml
     public void addEmpleado(){
         Empleado empleado = empleadoServices.find(idEmpleado);
-        permiso.getEmpleados().add(empleado);
+        if(!permiso.getEmpleados().contains(empleado)){
+            permiso.getEmpleados().add(empleado);
+        }
     }
     
-    public void removeEmpleado(ActionEvent event){
-        Empleado empleado = (Empleado) event.getComponent().getAttributes().get("itemCambiar");
+    public void removeEmpleado(Empleado empleado){
         permiso.getEmpleados().remove(empleado);
     }
     
@@ -192,23 +221,31 @@ public class CreaPermisoController {
         }
     }
     
+    public void formatearFechaIni(DateSelectEvent event){
+        fechaIni = fd.format(permiso.getPermiso().getFechaHoraIni());
+    }
+    
     public String guardarPermiso(){
         try {
-            permiso.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
-            permiso.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
             if(permiso.getPermiso().getId() == null){
                 permisoService.crearPermiso(permiso);
             }else{
+                if(permiso.getPermiso().getEquipo().getId() == null || 
+                        permiso.getPermiso().getEquipo().getId() == 0 ){
+                    permiso.getPermiso().setEquipo(null);
+                }
                 permisoService.actualizarPermiso(permiso);
                 permisos.remove(permiso.getPermiso());
             }
             permisos.add(permiso.getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "El permiso de trabajo fue guardado!");  
-        } catch (ParseException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
+        }  catch (ValidacionException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error de validación: "+e.getMessage());
+            return null;
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
         }
         return PAG_PERMISOS;
     }
@@ -441,5 +478,33 @@ public class CreaPermisoController {
      */
     public void setTraz(List<TrazabilidadPermiso> traz) {
         this.traz = traz;
+    }
+
+    /**
+     * @return the fechaActual
+     */
+    public String getFechaActual() {
+        return fechaActual;
+    }
+
+    /**
+     * @param fechaActual the fechaActual to set
+     */
+    public void setFechaActual(String fechaActual) {
+        this.fechaActual = fechaActual;
+    }
+
+    /**
+     * @return the fechaIni
+     */
+    public String getFechaIni() {
+        return fechaIni;
+    }
+
+    /**
+     * @param fechaIni the fechaIni to set
+     */
+    public void setFechaIni(String fechaIni) {
+        this.fechaIni = fechaIni;
     }
 }

@@ -11,12 +11,10 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
-            <p:commandButton ajax="false" action="#{creaPermisoController.crearNuevoPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
-            <p:spacer width="5"/>
-            <p:commandButton icon="ui-icon-search" action="#{creaPermisoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Permiso de Trabajo"/>
-
-
-            <p:outputPanel id="permisos">
+            <p:panel header="Permisos de Trabajo" id="permisos">
+                <p:commandButton ajax="false" action="#{creaPermisoController.crearNuevoPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
+                <p:spacer width="5"/>
+                <p:commandButton icon="ui-icon-search" action="#{creaPermisoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Permiso de Trabajo"/>
                 <p:dataTable value="#{creaPermisoController.permisos}" var="permiso"
                              paginator="true"
                              rows="5"
@@ -49,7 +47,7 @@
                     </p:column>
                     
                 </p:dataTable>
-            </p:outputPanel>
+            </p:panel>
         </h:form>
    </ui:define>
   </ui:composition>

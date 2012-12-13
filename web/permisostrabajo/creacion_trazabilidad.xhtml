@@ -11,8 +11,37 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
+            
+            <p:panel id="datos_generales" header="Datos Generales del Permiso">
+                <p:panelGrid  style="margin-top:15px">
+                    <f:facet name="header">  
+                        <p:row>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Id"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Tarea"/></p:column>
+                            <p:column style="border-width: 1px;"><p:outputLabel value="Estado"/></p:column>
+                        </p:row>
+                        
+                    </f:facet> 
+                    <p:row>
+                        <p:column style="border-width: 1px;">
+                            <p:outputLabel value="#{creaPermisoController.permiso.permiso.id}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:outputLabel value="#{creaPermisoController.permiso.permiso.tarea}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <p:inplace editor="true" label="#{creaPermisoController.permiso.permiso.estadoPermiso.descripcion}">  
+                                <h:selectOneMenu value="#{creaPermisoController.permiso.permiso.estadoPermiso.id}" valueChangeListener="#{creaPermisoController.selectEstado}">  
+                                    <f:selectItems  value="#{creaPermisoController.estados}" /> 
+                                    <p:ajax update="@form"/>
+                                </h:selectOneMenu>  
+                            </p:inplace> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:panel>
 
-            <p:panel id="proyectos" header="Trazabilidad del permiso de Trabajo">
+            <p:panel id="trazabilidad" header="Trazabilidad del permiso de Trabajo">
                 <p:dataTable value="#{creaPermisoController.traz}" var="traz">
                     <p:column headerText="Operación">
                         <h:outputText value="#{traz.operacion.descripcion}"/>
@@ -22,7 +51,10 @@
                           <f:convertDateTime type="date" pattern="dd-MM-yyyy HH:mm"/>
                         </h:outputText>
                     </p:column>
-                    <p:column headerText="Usuario">
+                    <p:column headerText="Usr-Grupo Asignado">
+                        <h:outputText value="#{traz.usrGrpAsignado}"/>
+                    </p:column>
+                    <p:column headerText="Usr. Ejecutor">
                         <h:outputText value="#{traz.usuario}"/>
                     </p:column>
                     <p:column headerText="Estado">

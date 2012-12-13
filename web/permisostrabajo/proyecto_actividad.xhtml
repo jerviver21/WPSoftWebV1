@@ -15,7 +15,8 @@
             <p:panel header="Diligencie los datos de la Actividad (Permiso de Trabajo)">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="area" value="#{labels.area_sitio}" />
-                    <h:selectOneMenu id="area" value="#{proyectoController.permiso.permiso.sector.id}" valueChangeListener="#{proyectoController.buscarEquiposXSector}">
+                    <h:selectOneMenu id="area" value="#{proyectoController.permiso.permiso.sector.id}" 
+                                     valueChangeListener="#{proyectoController.buscarEquiposXSector}">
                         <f:selectItems  value="#{proyectoController.sectores}" />
                         <p:ajax update=":form:equipo"/>
                     </h:selectOneMenu>

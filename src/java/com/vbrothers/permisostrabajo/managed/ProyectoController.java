@@ -176,7 +176,6 @@ public class ProyectoController {
     }
     
     public String consultarPermiso(PermisoTrabajo p){
-        
         permiso = permisoService.findPermisoTrabajo(p.getId());
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
         permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
@@ -257,7 +256,6 @@ public class ProyectoController {
     public void formatearFechaIniPer(DateSelectEvent event){
         SimpleDateFormat fd1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         fechaIniPer = fd1.format(permiso.getPermiso().getFechaHoraIni());
-        System.out.println(fechaIniPer+" - "+fechaIniProy+" - "+fechaFinProy);
     }
     
     public String guardarPermiso(){
@@ -277,9 +275,6 @@ public class ProyectoController {
             FacesUtil.addMessage(FacesUtil.INFO, "La actividad fue guardado!");  
         } catch (ValidacionException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error de validación: "+e.getMessage());
-            return null;
-        }catch (ParseException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
             return null;
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
