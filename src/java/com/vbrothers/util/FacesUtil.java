@@ -37,6 +37,10 @@ public class FacesUtil {
                 managed, Object.class);
         return ex.getValue(context);
     }
+    
+    public static void restartBean (String bean){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove(bean);
+    }
 
     public static String getPaginaRequest(){
         return ((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getRequestURI();

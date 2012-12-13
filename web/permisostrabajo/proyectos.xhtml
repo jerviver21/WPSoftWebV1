@@ -11,12 +11,11 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs"/>
-            
-            <p:commandButton ajax="false" action="#{proyectoController.crearNuevo}" icon="ui-icon-document" value="Crear" title="Crear Proyecto"/>
-            <p:spacer width="5"/>
-            <p:commandButton icon="ui-icon-search" action="#{proyectoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Proyecto"/>
-
             <p:panel id="proyectos" header="Proyectos">
+                <p:commandButton ajax="false" action="#{proyectoController.crearNuevoProyecto}" icon="ui-icon-document" value="Crear" title="Crear Proyecto"/>
+                <p:spacer width="5"/>
+                <p:commandButton icon="ui-icon-search" action="#{proyectoController.navBusqueda}" value="Buscar" ajax="false" title="Buscar Proyecto"/>
+                <br/>
                 <p:dataTable value="#{proyectoController.proyectos}" var="proyecto"
                              paginator="true"
                              paginatorPosition="bottom"
@@ -41,9 +40,7 @@
                             <h:panelGrid columns="1">
                                 Está seguro que desea borrar  <br/> 
                                 el Proyecto No: #{proyecto.id}?
-                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto}" ajax="false">
-                                    <f:attribute name="itemCambiar" value="#{proyecto}" />
-                                </p:commandButton>
+                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto(proyecto)}" ajax="false"/>
                             </h:panelGrid>
                         </p:dialog>
                     </p:column>

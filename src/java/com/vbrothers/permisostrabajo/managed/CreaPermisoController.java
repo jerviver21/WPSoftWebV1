@@ -53,8 +53,7 @@ public class CreaPermisoController {
     private List<SelectItem> sectores;
     private List<SelectItem> contratistas;
     private List<SelectItem> empleados;
-    //Este mapa permite la selección del subcombo equipos, que depende del sector.
-    private Map equiposXgrupo;
+    private Map equiposXgrupo;//Este mapa permite la selección del subcombo equipos, que depende del sector.
     
     //Parametros de definicion del trabajo
     private final int ORDEN_TRABAJO = 1;
@@ -64,14 +63,10 @@ public class CreaPermisoController {
     private final int CONTRATISTA = 0;
     private final int EMPLEADO = 1;
     private int tipoEjecutante = EMPLEADO;
+    private long idEmpleado;//Permite seleccionar varios empleados
     
     /*Permite listar los permisos creados por el usuario*/
     private List<PermisoTrabajo> permisos;
-
-    //Permite seleccionar varios empleados
-    private long idEmpleado;
-
-    
     
     //Parámetros para la búsquedad de permisos
     private List<SelectItem> estados;
@@ -82,9 +77,11 @@ public class CreaPermisoController {
     //Datos de trazabilidad
     private List<TrazabilidadPermiso> traz;
     
-    private int MODO = 1;
-    public static final int MODO_CREACION = 1;
-    public static final int MODO_EDICION = 2;
+    String PAG_PERMISOS = "/permisostrabajo/permisos.xhtml";
+    String PAG_SEL_TIPO = "/permisostrabajo/creacion_sel_tipo.xhtml";
+    String PAG_TRAZA = "/permisostrabajo/creacion_trazabilidad.xhtml";
+    String PAG_BUSQUEDA = "/permisostrabajo/creacion_busquedad.xhtml";
+    String PAG_DATOS = "/permisostrabajo/creacion_datos.xhtml";
     
 
     @PostConstruct
@@ -98,21 +95,19 @@ public class CreaPermisoController {
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         setEstados(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS)));
-        crearNuevo();
+        crearNuevoPermiso();
     }
     
     //Métodos para procesar eventos de permisos.xhtml
-    public String crearNuevo(){
+    public String crearNuevoPermiso(){
         setPermiso(new PermisoTrabajoTO());
         permiso.setUsr(sesion.getUsuario());
         tipoEjecutante = EMPLEADO;
-        MODO = MODO_CREACION;
-        return "/permisostrabajo/creacion_sel_tipo.xhtml";
+        return PAG_SEL_TIPO;
     }
     
-    public void borrarPermiso(ActionEvent event){
+    public void borrarPermiso(PermisoTrabajo r){
         try {
-            PermisoTrabajo r  = (PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar");
             permisoService.deletePermiso(r);
             permisos.remove(r);
         } catch (EstadoException e) {
@@ -124,8 +119,7 @@ public class CreaPermisoController {
         }
     }
     
-    public void abrirTrazabilidadPermiso(ActionEvent event){
-        PermisoTrabajo p = (PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar");
+    public String consultarTrazabilidad(PermisoTrabajo p){
         setTraz(gestionPermisoService.findTrazabilidadPermiso(p));
         permiso = permisoService.findPermisoTrabajo(p.getId());
         if(permiso.getPermiso().getNumOrden() != null){
@@ -138,25 +132,16 @@ public class CreaPermisoController {
         }else{
             tipoEjecutante = EMPLEADO;
         }
-        MODO = MODO_EDICION;
+        return PAG_TRAZA;
     }
     
     public String navBusqueda(){
-        return "/permisostrabajo/creacion_busquedad.xhtml";
+        return PAG_BUSQUEDA;
     }
-    
-    public String navTrazabilidad(){
-        System.out.println("/permisostrabajo/creacion_trazabilidad.xhtml");
-        return "/permisostrabajo/creacion_trazabilidad.xhtml";
-    }
-    
-    //----------------------------------------------------------------------------------------------
     //Métodos para procesar eventos de creacion_sel_tipo.xhtml
     
     public void seleccionarTipoPermiso(ValueChangeEvent event){
         setTipoPermiso((int) (Integer)event.getNewValue());
-        permiso.setHoraIni(null);
-        permiso.setHoraFin(null);
         permiso.getPermiso().setProyecto(null);
         if(getTipoPermiso() == getCORRECTIVO_SIN_ORDEN()){
             permiso.getPermiso().setNumOrden(null);
@@ -164,10 +149,18 @@ public class CreaPermisoController {
     }
     
     public String navDatosPermiso(){
-        return "/permisostrabajo/creacion_datos.xhtml";
+        return PAG_DATOS;
     }
     
-    //---------------------------------------------------------------------------------------------
+    //Métodos para procesar eventos de creacion_trazabilidad.xhtml
+    public String consultarDatosPermiso(){
+        if(permiso.getPermiso().getProyecto() != null){
+            ProyectoController pc = (ProyectoController)FacesUtil.getManagedBean("#{proyectoController}");
+            pc.consultarProyecto(permiso.getPermiso().getProyecto());
+            return pc.consultarPermiso(permiso.getPermiso());
+        }
+        return PAG_DATOS;
+    }
     //Métodos para procesar eventos de creacion_datos.xhtml
     public void addEmpleado(){
         Empleado empleado = empleadoServices.find(idEmpleado);
@@ -199,17 +192,17 @@ public class CreaPermisoController {
         }
     }
     
-    public String guardarPermisoTrabajo(){
+    public String guardarPermiso(){
         try {
             permiso.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
             permiso.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
-            if(MODO == MODO_CREACION){
+            if(permiso.getPermiso().getId() == null){
                 permisoService.crearPermiso(permiso);
             }else{
                 permisoService.actualizarPermiso(permiso);
+                permisos.remove(permiso.getPermiso());
             }
-            
-            permisos = permisoService.findPermisosEnProceso(sesion.getUsuario().getUsr());
+            permisos.add(permiso.getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "El permiso de trabajo fue guardado!");  
         } catch (ParseException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
@@ -217,23 +210,14 @@ public class CreaPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
-        return "/permisostrabajo/permisos.xhtml";
+        return PAG_PERMISOS;
     }
-    
-    public String navSeltipo(){
-        return "/permisostrabajo/creacion_sel_tipo.xhtml";
-    }
-    //-------------------------------------------------------------------------------------------------------
     //Métodos para controlar eventos de creacion_busqeudad.xhtml
-    public String navPermisos(){
-        return "/permisostrabajo/permisos.xhtml";
-    }
-    
-    public String consultarPermisos(){
+    public String buscarPermisos(){
         permisos = permisoService.findPermisos(sesion.getUsuario().getUsr(), estadoBusqueda, fechaDesde, fechaHasta);
         return "/permisostrabajo/permisos.xhtml";
     }
-    
+
 
     /**
      * @return the PermisoTrabajo
@@ -458,33 +442,4 @@ public class CreaPermisoController {
     public void setTraz(List<TrazabilidadPermiso> traz) {
         this.traz = traz;
     }
-
-    /**
-     * @return the MODO
-     */
-    public int getMODO() {
-        return MODO;
-    }
-
-    /**
-     * @param MODO the MODO to set
-     */
-    public void setMODO(int MODO) {
-        this.MODO = MODO;
-    }
-
-    /**
-     * @return the MODO_CREACION
-     */
-    public int getMODO_CREACION() {
-        return MODO_CREACION;
-    }
-
-    /**
-     * @return the MODO_EDICION
-     */
-    public int getMODO_EDICION() {
-        return MODO_EDICION;
-    }
-
 }

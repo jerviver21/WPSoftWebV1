@@ -1,11 +1,12 @@
-
 package com.vbrothers.permisostrabajo.managed;
 
 import com.vbrothers.common.exceptions.EstadoException;
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vbrothers.common.exceptions.ValidacionException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
+import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.Proyecto;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
@@ -17,6 +18,7 @@ import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,11 +31,11 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.DateSelectEvent;
 
 /**
  * @author Jerson Viveros Aguirre
  */
-
 @ManagedBean(name="proyectoController")
 @SessionScoped
 public class ProyectoController {
@@ -42,8 +44,6 @@ public class ProyectoController {
     CreacionPermisoServicesLocal permisoService;
     @EJB
     ProyectoServicesLocal proyectoService;
-    @EJB
-    EmpleadoServicesLocal empleadoService;
     @EJB
     EmpleadoServicesLocal empleadoServices;  
     @EJB
@@ -65,6 +65,7 @@ public class ProyectoController {
     private final int CONTRATISTA = 0;
     private final int EMPLEADO = 1;
     private int tipoEjecutante = EMPLEADO;
+    private long idEmpleado;//Permite seleccionar varios empleados
     
     /*Permite la creación y consulta de permisos de trabajo*/
     private PermisoTrabajoTO permiso;
@@ -72,61 +73,52 @@ public class ProyectoController {
     private List<SelectItem> sectores;
     private List<SelectItem> contratistas;
     private List<SelectItem> empleados;
+    private Map equiposXgrupo; //Este mapa permite la selección del subcombo equipos, que depende del sector.
     
-    //Este mapa permite la selección del subcombo equipos, que depende del sector.
-    private Map equiposXgrupo;
+    //Paginas de Navegación en el flujo de creación de proyectos
+    String PAG_PROYECTOS = "/permisostrabajo/proyectos.xhtml";
+    String PAG_PROY_DATOS = "/permisostrabajo/proyecto_datos.xhtml";
+    String PAG_PROY_PERMISOS = "/permisostrabajo/proyecto_permisos.xhtml";
+    String PAG_DATOS_PERMISO = "/permisostrabajo/proyecto_actividad.xhtml";
+    String PAG_PROY_BUSQUEDA = "/permisostrabajo/proyecto_busqueda.xhtml";
     
-    //Permite seleccionar varios empleados
-    private long idEmpleado;
-    
-    //Parametros de Navegación en el flujo de creación de proyectos
-    int PAG_PROYECTOS = 1;
-    int PAG_PROY_DATOS = 2;
-    int PAG_PROY_PERMISOS = 3;
-    int PAG_DATOS_PERMISO = 4;
-    int PAG_PROY_BUSQUEDA = 5;
-    int PAG_ACTUAL = PAG_PROYECTOS;
-    
-    private int MODO_EDICION = 1;
-    private int MODO_CREACION = 2;
-    int MODO_PROYECTO = getMODO_CREACION();
-    private int MODO_PERMISO = getMODO_CREACION();
-
-    
+    //Validaciones de Fechas
+    SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd");
+    private String fechaActual;
+    private String fechaIniProy;
+    private String fechaFinProy;
+    private String fechaIniPer;
 
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        setProyectos(proyectoService.findAll());
-        
+        proyectos = proyectoService.findProyectosActivos(sesion.getUsuario().getUsr());
         equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPROYECTO));
-        crearNuevo();
+        fechaActual = fd.format(new Date());
+        crearNuevoProyecto();
     }
     
     //Eventos de la página proyectos.xhtml
-    public String crearNuevo(){
+    public String crearNuevoProyecto(){
         proyecto = new Proyecto();
         proyecto.setUsuarioCreacion(sesion.getUsuario().getUsr());
-        PAG_ACTUAL = PAG_PROY_DATOS; 
-        MODO_PROYECTO = getMODO_CREACION();
-        return "/permisostrabajo/proyecto_datos.xhtml";
+        return PAG_PROY_DATOS;
     }
     
-    public void borrarProyecto(ActionEvent event){
+    public void borrarProyecto(Proyecto r){
         try {
-            Proyecto r  = (Proyecto) event.getComponent().getAttributes().get("itemCambiar");
             proyectoService.borrarProyecto(r);
             proyectos.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO, "Proyecto borrado con exito!");
         } catch (EstadoException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            Log.getLogger().info(e.getMessage());
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el proyecto");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -135,13 +127,17 @@ public class ProyectoController {
 
     public String consultarProyecto(Proyecto proyecto){
         this.proyecto = proyectoService.findProyecto(proyecto.getId());
-        PAG_ACTUAL = PAG_PROY_PERMISOS;
-        MODO_PROYECTO = getMODO_EDICION();
-        return "/permisostrabajo/proyecto_permisos.xhtml";
+        fechaIniProy = fd.format(proyecto.getFechaIni());
+        fechaFinProy = fd.format(proyecto.getFechaFin());
+        return PAG_PROY_PERMISOS;
+    }
+    
+    public String navBusqueda(){
+        return PAG_PROY_BUSQUEDA;
     }
 
     //Eventos de la página proyecto_datos.xhtml
-    public String createProyecto(){
+    public String guardarProyecto(){
         try {
             proyectoService.edit(proyecto);
             proyectos.add(proyecto);
@@ -151,55 +147,52 @@ public class ProyectoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el proyecto");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
-        PAG_ACTUAL = PAG_PROY_PERMISOS;
-        return "/permisostrabajo/proyecto_permisos.xhtml";
+        return PAG_PROY_PERMISOS;
     }
     
-    //Métodos para eventos de proyecto_busqueda.xhtml
-    
-    public String navBusqueda(){
-        PAG_ACTUAL = PAG_PROY_BUSQUEDA;
-        return "/permisostrabajo/proyecto_busqueda.xhtml";
+    public void formatearFechaIni(DateSelectEvent event){
+        fechaIniProy = fd.format(proyecto.getFechaIni());
     }
     
-    public String navProyectos(){
-        PAG_ACTUAL = PAG_PROYECTOS;
-        return "/permisostrabajo/proyectos.xhtml";
+    public void formatearFechaFin(DateSelectEvent event){
+        fechaFinProy = fd.format(proyecto.getFechaFin());
     }
     
-    public String consultarProyectos(){
+    //Métodos para eventos de proyecto_busqueda.xhtml    
+    public String buscarProyectos(){
         proyectos = proyectoService.findProyectos(sesion.getUsuario().getUsr(), fechaDesde, fechaHasta);
-        PAG_ACTUAL = PAG_PROYECTOS;
-        return "/permisostrabajo/proyectos.xhtml";
+        return PAG_PROYECTOS;
     }
     
     //Métodos para el manejo de eventos de la página proyecto_permisos.xhtml
-    public String crearPermiso(){
-        setPermiso(new PermisoTrabajoTO());
-        permiso.setUsr(sesion.getUsuario());
+    public String crearNuevoPermiso(){
+        setPermiso(new PermisoTrabajoTO(sesion.getUsuario()));
         permiso.getPermiso().setProyecto(proyecto);
+        if(permiso.getPermiso().getSector().getId() != null && permiso.getPermiso().getSector().getId() != 0){
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        }
         tipoEjecutante = EMPLEADO;
-        PAG_ACTUAL = PAG_DATOS_PERMISO;
-        MODO_PERMISO = getMODO_CREACION();
-        return "/permisostrabajo/proyecto_actividad.xhtml";
+        return PAG_DATOS_PERMISO;
     }
     
     public String consultarPermiso(PermisoTrabajo p){
+        
         permiso = permisoService.findPermisoTrabajo(p.getId());
+        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
         if(permiso.getPermiso().isEjecutorContratista()){
             tipoEjecutante = CONTRATISTA;
         }else{
             tipoEjecutante = EMPLEADO;
         }
-        MODO_PERMISO = getMODO_EDICION();
-        PAG_ACTUAL = PAG_DATOS_PERMISO;
-        return "/permisostrabajo/proyecto_actividad.xhtml";
+        return PAG_DATOS_PERMISO;
     }
     
     public void borrarPermiso(PermisoTrabajo p){
         try {
             permisoService.deletePermiso(p);
             proyecto.getPermisos().remove(p);
+            FacesUtil.restartBean("creaPermisoController");
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso borrado con exito!");
         } catch (EstadoException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -220,9 +213,8 @@ public class ProyectoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el proyecto");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }      
-        PAG_ACTUAL = PAG_PROYECTOS;
         FacesUtil.addMessage(FacesUtil.INFO, "Proyecto guardado!"); 
-        return "/permisostrabajo/proyectos.xhtml";
+        return PAG_PROYECTOS;
     }
     
     public void selectEstado(ValueChangeEvent event){
@@ -233,11 +225,12 @@ public class ProyectoController {
     //Métodos para el manejo de eventos de la página proyecto_actividad.xhtml
     public void addEmpleado(){
         Empleado empleado = empleadoServices.find(idEmpleado);
-        permiso.getEmpleados().add(empleado);
+        if(!permiso.getEmpleados().contains(empleado)){
+            permiso.getEmpleados().add(empleado);
+        }
     }
     
-    public void removeEmpleado(ActionEvent event){
-        Empleado empleado = (Empleado) event.getComponent().getAttributes().get("itemCambiar");
+    public void removeEmpleado(Empleado empleado){
         permiso.getEmpleados().remove(empleado);
     }
     
@@ -261,39 +254,39 @@ public class ProyectoController {
         }
     }
     
+    public void formatearFechaIniPer(DateSelectEvent event){
+        SimpleDateFormat fd1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        fechaIniPer = fd1.format(permiso.getPermiso().getFechaHoraIni());
+        System.out.println(fechaIniPer+" - "+fechaIniProy+" - "+fechaFinProy);
+    }
+    
     public String guardarPermiso(){
         try {
-            permiso.getPermiso().setEjecutorContratista(tipoEjecutante == CONTRATISTA ? true : false);
-            permiso.getPermiso().setUsuarioCreacion(sesion.getUsuario().getUsr());
-            if(MODO_PERMISO == MODO_CREACION){
-                permisoService.crearPermiso(permiso);
-                proyecto.getPermisos().add(permiso.getPermiso());
+            if(permiso.getPermiso().getId() == null){
+                permisoService.crearPermiso(permiso);              
             }else{
-                proyecto.getPermisos().remove(permiso.getPermiso());
+                if(permiso.getPermiso().getEquipo().getId() == null || 
+                        permiso.getPermiso().getEquipo().getId() == 0 ){
+                    permiso.getPermiso().setEquipo(null);
+                }
                 permisoService.actualizarPermiso(permiso);
-                proyecto.getPermisos().add(permiso.getPermiso());
+                proyecto.getPermisos().remove(permiso.getPermiso());
             }
+            proyecto.getPermisos().add(permiso.getPermiso());
+            FacesUtil.restartBean("creaPermisoController");
             FacesUtil.addMessage(FacesUtil.INFO, "La actividad fue guardado!");  
-        } catch (ParseException e) {
+        } catch (ValidacionException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error de validación: "+e.getMessage());
+            return null;
+        }catch (ParseException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El formato de hora es incorrecto, debe ser  HH:mm");
+            return null;
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
         }
-        PAG_ACTUAL = PAG_PROY_PERMISOS;
-        return "/permisostrabajo/proyecto_permisos.xhtml";
-    }
-    
-    //Eventos para la navegación en el flujo de creación de proyectos
-    public String navBotonAtras(){
-        if(PAG_ACTUAL == PAG_PROY_PERMISOS && MODO_PROYECTO == getMODO_CREACION()){
-            PAG_ACTUAL = PAG_PROY_DATOS;
-            return "/permisostrabajo/proyecto_datos.xhtml";
-        }else if(PAG_ACTUAL == PAG_DATOS_PERMISO){
-            PAG_ACTUAL = PAG_PROY_PERMISOS;
-            return "/permisostrabajo/proyecto_permisos.xhtml";
-        }
-        return  "/permisostrabajo/proyectos.xhtml";
+        return PAG_PROY_PERMISOS;
     }
     
 
@@ -494,47 +487,31 @@ public class ProyectoController {
     }
 
     /**
-     * @return the MODO_PERMISO
+     * @return the fechaActual
      */
-    public int getMODO_PERMISO() {
-        return MODO_PERMISO;
+    public String getFechaActual() {
+        return fechaActual;
     }
 
     /**
-     * @param MODO_PERMISO the MODO_PERMISO to set
+     * @return the fechaIniProy
      */
-    public void setMODO_PERMISO(int MODO_PERMISO) {
-        this.MODO_PERMISO = MODO_PERMISO;
+    public String getFechaIniProy() {
+        return fechaIniProy;
     }
 
     /**
-     * @return the MODO_EDICION
+     * @return the fechaFinProy
      */
-    public int getMODO_EDICION() {
-        return MODO_EDICION;
+    public String getFechaFinProy() {
+        return fechaFinProy;
     }
 
     /**
-     * @param MODO_EDICION the MODO_EDICION to set
+     * @return the fechaIniPer
      */
-    public void setMODO_EDICION(int MODO_EDICION) {
-        this.MODO_EDICION = MODO_EDICION;
+    public String getFechaIniPer() {
+        return fechaIniPer;
     }
-
-    /**
-     * @return the MODO_CREACION
-     */
-    public int getMODO_CREACION() {
-        return MODO_CREACION;
-    }
-
-    /**
-     * @param MODO_CREACION the MODO_CREACION to set
-     */
-    public void setMODO_CREACION(int MODO_CREACION) {
-        this.MODO_CREACION = MODO_CREACION;
-    }
-
-
 
 }

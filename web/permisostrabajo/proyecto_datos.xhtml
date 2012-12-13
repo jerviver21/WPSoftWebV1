@@ -10,29 +10,36 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:messages id="msgs" />
+            <p:growl id="msgs" />
             <p:panel id="form_proyecto" header="#{labels.datos_proyecto}">
                 <p:panelGrid columns="3" id="grid">
                     <h:outputLabel for="num_gest_cambio" value="#{labels.num_gestion_cambio}" />
-                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}"  />
+                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}" required="true" />
                     <p:message for="num_gest_cambio"/>
                     <h:outputLabel for="nombre_proyecto" value="#{labels.nombre_proyecto}" />
-                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" />
+                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" required="true"/>
                     <p:message for="nombre_proyecto"/>
                     <h:outputLabel for="cuenta_cargada" value="#{labels.cuenta_cargada}" />
-                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" />
+                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" required="true"/>
                     <p:message for="cuenta_cargada"/>
                     <h:outputLabel  for="fecha_ini" value="#{labels.fecha_ini}" />
-                    <p:calendar id="fecha_ini" value="#{proyectoController.proyecto.fechaIni}" pattern="yyyy-MM-dd"/>
+                    <p:calendar id="fecha_ini" value="#{proyectoController.proyecto.fechaIni}" 
+                                mindate="#{proyectoController.fechaActual}" pattern="yyyy-MM-dd" required="true">
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIni}" update="fecha_fin"/>
+                    </p:calendar>
                     <p:message for="fecha_ini"/>
+                    
                     <h:outputLabel  for="fecha_fin" value="#{labels.fecha_fin}" />
-                    <p:calendar id="fecha_fin" value="#{proyectoController.proyecto.fechaFin}" pattern="yyyy-MM-dd"/>
+                    <p:calendar id="fecha_fin" value="#{proyectoController.proyecto.fechaFin}" 
+                                mindate="#{proyectoController.fechaIniProy}" pattern="yyyy-MM-dd" 
+                                required="true" disabled="#{proyectoController.proyecto.fechaIni eq null}">
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaFin}" update="fecha_fin"/>
+                    </p:calendar>
                     <p:message for="fecha_fin"/>
                 </p:panelGrid>
                 <p:spacer height="10" width="500"/>
                 <f:facet name="footer">
-                    <p:commandButton id="bg1" value="Siguiente" icon="ui-icon-check" action="#{proyectoController.createProyecto}" ajax="false"/>
-                    <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}" ajax="false"/>
+                    <p:commandButton id="bg1" value="Siguiente" icon="ui-icon-check" action="#{proyectoController.guardarProyecto}" ajax="false"/>
                 </f:facet>
             </p:panel>
         </h:form>

@@ -23,76 +23,68 @@
                     
                     <h:outputLabel for="equipo" value="#{labels.equipo_intervenido}" />
                     <h:selectOneMenu id="equipo" value="#{proyectoController.permiso.permiso.equipo.id}">
+                        <f:selectItem itemValue="#{null}" itemLabel=""/>
                         <f:selectItems  value="#{proyectoController.equipos}" />
                         <p:ajax/>
                     </h:selectOneMenu>
                     <p:message for="equipo"/>
                         
                     <h:outputLabel for="desc_tarea" value="#{labels.tarea}" />
-                    <p:inputTextarea id="desc_tarea" cols="50" value="#{proyectoController.permiso.permiso.tarea}">
+                    <p:inputTextarea id="desc_tarea" cols="50" value="#{proyectoController.permiso.permiso.tarea}" required="true">
                             <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="desc_tarea"/>
                         
                     <h:outputLabel for="fecha_ini" value="Fecha Inicio"/>
-                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd" value="#{proyectoController.permiso.permiso.fechaIni}">
-                        <p:ajax event="dateSelect"/>
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.permiso.fechaHoraIni}" 
+                                mindate="#{proyectoController.fechaIniProy}" maxdate="#{proyectoController.fechaFinProy}" required="true">
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIniPer}" update="fecha_fin"/>
                     </p:calendar>
                     <p:message for="fecha_ini"/>
                     
-                     <h:outputLabel for="hora_ini" value="Hora Inicio"/>
-                     <p:inputText id="hora_ini" value="#{proyectoController.permiso.horaIni}">
-                            <p:ajax/>
-                    </p:inputText>
-                    <p:message for="hora_ini"/>
-                    
                     <h:outputLabel for="fecha_fin" value="Fecha Fin"/>
-                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd" value="#{proyectoController.permiso.permiso.fechaFin}">
-                        <p:ajax event="dateSelect"/>
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.permiso.fechaHoraFin}" required="true"
+                                mindate="#{proyectoController.fechaIniPer}" maxdate="#{proyectoController.fechaFinProy}"
+                                disabled="#{proyectoController.permiso.permiso.fechaHoraIni eq null}">
+                       <p:ajax event="dateSelect"/>
                     </p:calendar>
                     <p:message for="fecha_fin"/>
-                    
-                     <h:outputLabel for="hora_fin" value="Hora Fin"/>
-                    <p:inputText id="hora_fin" value="#{proyectoController.permiso.horaFin}">
-                            <p:ajax/>
-                    </p:inputText>
-                    <p:message for="hora_fin"/>
                     
                         
                     <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
                     <p:selectOneRadio id="tipo_ejecutante" value="#{proyectoController.tipoEjecutante}" 
                                       valueChangeListener="#{proyectoController.seleccionarTipoEjecutante}"
-                                      disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
+                                      disabled="#{proyectoController.permiso.permiso.id ne null}">
                         <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{proyectoController.EMPLEADO}" />
                         <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{proyectoController.CONTRATISTA}" />
-                        <p:ajax update=":form"/>
+                        <p:ajax update="@form"/>
                     </p:selectOneRadio>
                     <p:message for="tipo_ejecutante"/>
                         
                     
-                    <h:outputLabel for="empleado" value="#{labels.empleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    <h:outputLabel id="l_empleado" for="empleado" value="#{labels.empleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
                     <p:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
-                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
+                                     disabled="#{proyectoController.permiso.permiso.id ne null}">
                         <f:selectItems  value="#{creaPermisoController.empleados}" />
                         <p:ajax/>
                     </p:selectOneMenu>
-                    <p:commandButton actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" 
+                    <p:commandButton id="b_empleado" actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
-                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}"/>
+                                     disabled="#{proyectoController.permiso.permiso.id ne null}"/>
                     
                     
-                    <h:outputLabel for="contratista" value="#{labels.contratista}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}" />
+                    <h:outputLabel id="l_contratista" for="contratista" value="#{labels.contratista}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}" />
                     <p:selectOneMenu id="contratista" value="#{proyectoController.permiso.contratista.id}" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"
-                                     disabled="#{proyectoController.MODO_PERMISO eq proyectoController.MODO_EDICION}">
+                                     disabled="#{proyectoController.permiso.permiso.id ne null}">
                         <f:selectItems  value="#{proyectoController.contratistas}" />
                         <p:ajax/>
                     </p:selectOneMenu>
-                    <p:message for="contratista" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"/>
+                    <p:message id="m_contratista" for="contratista" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"/>
                     
-                    <h:outputLabel value="Empleados" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
-                    <p:dataTable value="#{proyectoController.permiso.empleados}" var="empleado"
+                    <h:outputLabel id="l_empleados" value="Empleados" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
+                    <p:dataTable id="empleados" value="#{proyectoController.permiso.empleados}" var="empleado"
                                  paginator="true"
                                  paginatorPosition="bottom"
                                  paginatorAlwaysVisible="false"
@@ -106,16 +98,13 @@
                             <h:outputText value="#{empleado.nombresApellidos}"/>
                         </p:column>
                         <p:column headerText="Borrar">
-                            <p:commandLink update="@form" actionListener="#{proyectoController.removeEmpleado}">
-                                <p:graphicImage value="/images/cross.gif"/>
-                                <f:attribute name="itemCambiar" value="#{empleado}" />
-                            </p:commandLink>
+                            <p:commandButton icon="ui-icon-trash" update="@form" actionListener="#{proyectoController.removeEmpleado(empleado)}" 
+                                           disabled="#{proyectoController.permiso.permiso.id ne null}"/>
                         </p:column>
                     </p:dataTable>
                     
                     <f:facet name="footer">
                         <p:commandButton id="bg1" value="Guardar" icon="ui-icon-disk" action="#{proyectoController.guardarPermiso}" ajax="false"/>
-                        <p:commandButton id="ba1" value="Atras" icon="ui-icon-arrowreturnthick-1-w" action="#{proyectoController.navBotonAtras}"  ajax="false"/>
                     </f:facet>
             </p:panelGrid>
             </p:panel>
