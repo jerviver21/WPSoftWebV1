@@ -16,7 +16,6 @@ import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +26,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import org.primefaces.event.DateSelectEvent;
@@ -97,7 +95,7 @@ public class CreaPermisoController {
     public void init(){
         locator = ServiceLocator.getInstance();
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        permisos = permisoService.findPermisosEnProceso(sesion.getUsuario().getUsr());
+        permisos = permisoService.findPermisosEnProceso(sesion.getUsuario());
         equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
@@ -251,7 +249,7 @@ public class CreaPermisoController {
     }
     //Métodos para controlar eventos de creacion_busqeudad.xhtml
     public String buscarPermisos(){
-        permisos = permisoService.findPermisos(sesion.getUsuario().getUsr(), estadoBusqueda, fechaDesde, fechaHasta);
+        permisos = permisoService.findPermisos(sesion.getUsuario(), estadoBusqueda, fechaDesde, fechaHasta);
         return "/permisostrabajo/permisos.xhtml";
     }
 

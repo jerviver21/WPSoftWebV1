@@ -93,7 +93,7 @@ public class ProyectoController {
     public void init(){
         locator = ServiceLocator.getInstance();
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        proyectos = proyectoService.findProyectosActivos(sesion.getUsuario().getUsr());
+        proyectos = proyectoService.findProyectosActivos(sesion.getUsuario());
         equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
@@ -160,7 +160,7 @@ public class ProyectoController {
     
     //Métodos para eventos de proyecto_busqueda.xhtml    
     public String buscarProyectos(){
-        proyectos = proyectoService.findProyectos(sesion.getUsuario().getUsr(), fechaDesde, fechaHasta);
+        proyectos = proyectoService.findProyectos(sesion.getUsuario(), fechaDesde, fechaHasta);
         return PAG_PROYECTOS;
     }
     
