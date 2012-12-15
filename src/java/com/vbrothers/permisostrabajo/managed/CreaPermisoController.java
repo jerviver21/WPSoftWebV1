@@ -9,9 +9,8 @@ import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
-import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
-import com.vbrothers.permisostrabajo.services.GestionPermisoServiceLocal;
+import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
@@ -39,9 +38,7 @@ import org.primefaces.event.DateSelectEvent;
 public class CreaPermisoController {
     ServiceLocator locator;
     @EJB
-    CreacionPermisoServicesLocal permisoService;
-    @EJB
-    GestionPermisoServiceLocal gestionPermisoService;
+    PermisoServicesLocal permisoService;
     @EJB
     EmpleadoServicesLocal empleadoServices;  
     @EJB
@@ -130,8 +127,8 @@ public class CreaPermisoController {
     }
     
     public String consultarTrazabilidad(PermisoTrabajo p){
-        setTraz(gestionPermisoService.findTrazabilidadPermiso(p));
-        permiso = permisoService.findPermisoTrabajo(p.getId());
+        setTraz(permisoService.findTrazabilidadPermiso(p));
+        permiso = permisoService.findPermisoForCreacion(p.getId());
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
         permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
         if(permiso.getPermiso().getFechaHoraIni() != null){
@@ -178,10 +175,15 @@ public class CreaPermisoController {
         return PAG_DATOS;
     }
     
-    public void selectEstado(ValueChangeEvent event){
+    public void cambiarEstado(ValueChangeEvent event){
         int estado = (int) (Integer)event.getNewValue();
-        permiso.getPermiso().setEstadoPermiso(permisoService.findEstadoById(estado));
-        permisoService.actualizarPermiso(permiso);
+        if(permiso.getPermiso().getEstadoPermiso().getId() != estado){
+            if(permiso.getPermiso().getEquipo().getId() == null ||  permiso.getPermiso().getEquipo().getId() == 0 ){
+                permiso.getPermiso().setEquipo(null);
+            }
+            permisoService.cambiarEstado(permiso.getPermiso(), estado);
+            
+        }
         permisos.remove(permiso.getPermiso());
         permisos.add(permiso.getPermiso());
     }
@@ -228,8 +230,7 @@ public class CreaPermisoController {
             if(permiso.getPermiso().getId() == null){
                 permisoService.crearPermiso(permiso);
             }else{
-                if(permiso.getPermiso().getEquipo().getId() == null || 
-                        permiso.getPermiso().getEquipo().getId() == 0 ){
+                if(permiso.getPermiso().getEquipo().getId() == null || permiso.getPermiso().getEquipo().getId() == 0 ){
                     permiso.getPermiso().setEquipo(null);
                 }
                 permisoService.actualizarPermiso(permiso);

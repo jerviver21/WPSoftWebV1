@@ -10,14 +10,13 @@ import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.Proyecto;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
-import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
+import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
 import com.vbrothers.permisostrabajo.services.ProyectoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +27,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import org.primefaces.event.DateSelectEvent;
@@ -41,7 +39,7 @@ import org.primefaces.event.DateSelectEvent;
 public class ProyectoController {
     ServiceLocator locator;
     @EJB
-    CreacionPermisoServicesLocal permisoService;
+    PermisoServicesLocal permisoService;
     @EJB
     ProyectoServicesLocal proyectoService;
     @EJB
@@ -176,7 +174,7 @@ public class ProyectoController {
     }
     
     public String consultarPermiso(PermisoTrabajo p){
-        permiso = permisoService.findPermisoTrabajo(p.getId());
+        permiso = permisoService.findPermisoForCreacion(p.getId());
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
         permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
         if(permiso.getPermiso().isEjecutorContratista()){

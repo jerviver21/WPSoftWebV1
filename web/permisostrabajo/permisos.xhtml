@@ -21,10 +21,7 @@
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                              paginatorPosition="bottom">
                     <p:column headerText="#{labels.numero}" filterBy="#{permiso.id}">
-                        <p:commandLink ajax="false" value="#{permiso.id}"
-                                       action="#{creaPermisoController.consultarTrazabilidad(permiso)}">
-                            <f:attribute name="itemCambiar" value="#{permiso}" />
-                        </p:commandLink>
+                        <p:commandLink ajax="false" value="#{permiso.id}" action="#{creaPermisoController.consultarTrazabilidad(permiso)}"/>
                     </p:column>
                     <p:column headerText="#{labels.nombre}">
                         <h:outputText value="#{permiso.tarea}"/>

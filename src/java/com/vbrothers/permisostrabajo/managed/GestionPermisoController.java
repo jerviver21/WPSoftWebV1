@@ -1,21 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.vbrothers.permisostrabajo.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vbrothers.herramientas.services.PeligrosServicesLocal;
+import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
 import com.vbrothers.permisostrabajo.dominio.PeligrosTarea;
-import com.vbrothers.permisostrabajo.dominio.Sector;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
 import com.vbrothers.permisostrabajo.dominio.RiesgosPeligroTarea;
+import com.vbrothers.permisostrabajo.dominio.Sector;
 import com.vbrothers.permisostrabajo.dominio.Tarea;
-import com.vbrothers.permisostrabajo.services.CreacionPermisoServicesLocal;
-import com.vbrothers.herramientas.services.SectoresServicesLocal;
-import com.vbrothers.herramientas.services.PeligrosServicesLocal;
+import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
+import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
@@ -32,63 +27,73 @@ import javax.faces.model.SelectItem;
 /**
  * @author Jerson Viveros
  */
-@ManagedBean(name="permisoDiligenciadorController")
+@ManagedBean(name="gestionPermisoController")
 @SessionScoped
-public class DiligenciaPermisoController {
+public class GestionPermisoController {
     ServiceLocator locator;
-    private PermisoTrabajoTO permisoDiligenciar;
+    @EJB
+    SectoresServicesLocal sectoresServices;
+    @EJB
+    PermisoServicesLocal permisoServices;
+    @EJB
+    PeligrosServicesLocal peligroServices;
+    
+    SessionController sesion;
+    
+    //Permite la gestion del permiso en todas sus etapas
+    private PermisoTrabajoTO permiso;
+    
+    //Permite listar los permisos de trabajo pendientes
     private List<PermisoTrabajo> permisosPendientes;
+    
+    //Permiten diligenciar los datos generales del permiso
     private List<SelectItem> sectores;
     private List<SelectItem> disciplinas;
+    private int idSector = 1;//Para poder agregar varios sectores afectados
+    
+    //Permite diligenciar los riesgos del permiso
     private List<SelectItem> peligros;
-
     private Tarea tarea;
     private PeligrosTarea peligro;
     private String riesgo;
     private boolean renderRiesgo = false;
-
-    //Ids para combos
-    private int idSector = 1;
-    private int idPeligro = 1;
-
-    @EJB
-    SectoresServicesLocal sectoresServices;
-
-    @EJB
-    CreacionPermisoServicesLocal permisoServices;
-
-    @EJB
-    PeligrosServicesLocal peligroServices;
+    private int idPeligro = 1;//Permite agregar varios riesgos
+    
+    //Datos de trazabilidad
+    private List<TrazabilidadPermiso> traz;
+    
+    String PAG_PERMISOS = "/permisostrabajo/mis_permisos.xhtml";
+    String PAG_TRAZABILIDAD = "/permisostrabajo/gestion_trazabilidad.xhtml";
+    String PAG_DATOS = "/permisostrabajo/gestion_datos.xhtml";
 
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
-        permisoDiligenciar = new PermisoTrabajoTO();
-        permisoDiligenciar.setPermiso(new PermisoTrabajo());
+        sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
+        setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
+        setSectores(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR)));
+        setDisciplinas(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_DISCIPLINA)));
+        setPeligros(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_PELIGRO)));
+        permiso = new PermisoTrabajoTO(sesion.getUsuario());
         tarea = new Tarea();
-
-        SessionController sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        /*setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
-        setSectores(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_SECTOR)));
-        setDisciplinas(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_DISCIPLINA)));
-        setPeligros(FacesUtil.getSelectsItem(locator.getReferenceTable(ServiceLocator.COMB_ID_PELIGRO)));*/
-        permisoDiligenciar.setUsr(sesion.getUsuario());
-    }
-
-    public void mostrarPermiso(ActionEvent event){
-        SessionController sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        PermisoTrabajo r  = (PermisoTrabajo) event.getComponent().getAttributes().get("itemCambiar");
-        permisoDiligenciar = permisoServices.findPermisoTrabajo(r.getId());
-        permisoDiligenciar.setUsr(sesion.getUsuario());
     }
     
-    public String navDiligenciar(){
-        return "/permisostrabajo/permiso_diligenciar.xhtml";
+    //Métodos para el manejo de eventos de la página mis_permisos.xhtml
+    public String consultarTrazabilidad(PermisoTrabajo r){
+        permiso = permisoServices.findPermisoForGestion(r.getId());
+        setTraz(permisoServices.findTrazabilidadPermiso(r));
+        return PAG_TRAZABILIDAD;
     }
+    
+    //Métodos para el manejo de eventos de la página gestion_trazabilidad.xhtml
+    public String gestionarPermiso(){
+        return PAG_DATOS;
+    }
+
     
     public void guardar(){
         /*try {
-            permisoServices.guardarPermiso(getPermisoDiligenciar());
+            permisoServices.guardarPermiso(getPermiso());
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (Exception e) {
@@ -99,7 +104,7 @@ public class DiligenciaPermisoController {
 
     public String solicitarAprobacion(){
         /*try {
-            permisoServices.solicitarAprobacion(getPermisoDiligenciar());
+            permisoServices.solicitarAprobacion(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Solicitud de aprobación enviada!!");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -114,7 +119,7 @@ public class DiligenciaPermisoController {
 
     public String aprobar(){
         /*try {
-            permisoServices.aprobarPermiso(getPermisoDiligenciar());
+            permisoServices.aprobarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso aprobado");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -129,7 +134,7 @@ public class DiligenciaPermisoController {
 
     public String noAprobar(){
         /*try {
-            permisoServices.noAprobarPermiso(getPermisoDiligenciar());
+            permisoServices.noAprobarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso no aprobado");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -144,7 +149,7 @@ public class DiligenciaPermisoController {
 
     public String terminar(){
         /*try {
-            permisoServices.terminarPermiso(getPermisoDiligenciar());
+            permisoServices.terminarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso terminado");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -160,7 +165,7 @@ public class DiligenciaPermisoController {
 
     public String cancelar(){
         /*try {
-            permisoServices.cancelarPermiso(getPermisoDiligenciar());
+            permisoServices.cancelarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso cancelado");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -175,7 +180,7 @@ public class DiligenciaPermisoController {
 
     public String finalizar(){
         /*try {
-            permisoServices.finalizarPermiso(getPermisoDiligenciar());
+            permisoServices.finalizarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso cancelado");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
@@ -238,7 +243,7 @@ public class DiligenciaPermisoController {
     public void borrarTarea(ActionEvent event){
         try {
             Tarea r  = (Tarea) event.getComponent().getAttributes().get("itemCambiar");
-            permisoDiligenciar.getTareasVista().remove(r);
+            permiso.getTareasVista().remove(r);
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -247,9 +252,9 @@ public class DiligenciaPermisoController {
 
     public void addTarea(){
         Tarea t = new Tarea();
-        t.setConsecutivo(permisoDiligenciar.getTareasVista().size());
-        t.setPermiso(permisoDiligenciar.getPermiso());
-        permisoDiligenciar.getTareasVista().add(getTarea());
+        t.setConsecutivo(permiso.getTareasVista().size());
+        t.setPermiso(permiso.getPermiso());
+        permiso.getTareasVista().add(getTarea());
     }
 
     public void setTarea(ActionEvent event){
@@ -261,7 +266,7 @@ public class DiligenciaPermisoController {
     public void borrarSectorAfectado(ActionEvent event){
         try {
             Sector r  = (Sector) event.getComponent().getAttributes().get("itemCambiar");
-            getPermisoDiligenciar().getPermiso().getSectoresAfectados().remove(r);
+            getPermiso().getPermiso().getSectoresAfectados().remove(r);
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -270,26 +275,24 @@ public class DiligenciaPermisoController {
 
     public void agregarSectorAfectado(){
         Sector r = sectoresServices.find(idSector);
-        if(!permisoDiligenciar.getPermiso().getSectoresAfectados().contains(r)){
-            getPermisoDiligenciar().getPermiso().getSectoresAfectados().add(r);
+        if(!permiso.getPermiso().getSectoresAfectados().contains(r)){
+            getPermiso().getPermiso().getSectoresAfectados().add(r);
         }
     }
-
-
 
 
     /**
      * @return the permisoPendiente
      */
-    public PermisoTrabajoTO getPermisoDiligenciar() {
-        return permisoDiligenciar;
+    public PermisoTrabajoTO getPermiso() {
+        return permiso;
     }
 
     /**
      * @param permisoPendiente the permisoPendiente to set
      */
-    public void setPermisoDiligenciar(PermisoTrabajoTO permisoPendiente) {
-        this.permisoDiligenciar = permisoPendiente;
+    public void setPermiso(PermisoTrabajoTO permisoPendiente) {
+        this.permiso = permisoPendiente;
     }
 
     /**
@@ -432,23 +435,18 @@ public class DiligenciaPermisoController {
         this.renderRiesgo = renderRiesgo;
     }
 
+    /**
+     * @return the traz
+     */
+    public List<TrazabilidadPermiso> getTraz() {
+        return traz;
+    }
 
-    /*public String desbloquear(){
-        try {
-            permisoServices.desbloquearPermiso(getPermisoDiligenciar());
-            FacesUtil.addMessage(FacesUtil.INFO, "Permiso diligenciado con exito!!");
-        } catch (LlaveDuplicadaException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
-            return null;
-        }catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-            return null;
-        }
-        return "/permisostrabajo/permiso_diligenciar.xhtml";
-    }*/
-    
-
-    
+    /**
+     * @param traz the traz to set
+     */
+    public void setTraz(List<TrazabilidadPermiso> traz) {
+        this.traz = traz;
+    }
 
 }

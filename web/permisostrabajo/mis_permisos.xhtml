@@ -2,8 +2,7 @@
      xmlns:h="http://java.sun.com/jsf/html"
      xmlns:p="http://primefaces.org/ui"
      xmlns:f="http://java.sun.com/jsf/core"
-     xmlns:ui="http://java.sun.com/jsf/facelets"
-     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+     xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
 <ui:composition template="../plantilla1.xhtml">
     <ui:define name="navegador">
@@ -14,48 +13,25 @@
             <p:messages id="msgs" />
 
             <p:panel id="permisosPendientes" header="Permisos de Trabajo Pendientes Asignados">
-                <p:dataTable value="#{permisoDiligenciadorController.permisosPendientes}" var="permiso"
-                             paginator="true"
-                             rows="10"
+                <p:dataTable value="#{gestionPermisoController.permisosPendientes}" var="permiso"
+                             paginator="true"  paginatorAlwaysVisible="false"  paginatorPosition="bottom" rows="10"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.numero}" />
-                        </f:facet>
-                        <p:commandLink ajax="false" value="#{permiso.id}"
-                                       actionListener="#{permisoDiligenciadorController.mostrarPermiso}"
-                                       action="#{permisoDiligenciadorController.navDiligenciar}">
-                            <f:attribute name="itemCambiar" value="#{permiso}" />
-                        </p:commandLink>
+                    <p:column headerText="#{labels.numero}">
+                        <p:commandLink ajax="false" value="#{permiso.id}" action="#{gestionPermisoController.consultarTrazabilidad(permiso)}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Titulo" />
-                        </f:facet>
+                    <p:column headerText="Titulo">
                         <h:outputText value="#{permiso.tarea}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Ejecutante" />
-                        </f:facet>
+                    <p:column headerText="Ejecutante">
                         <h:outputText value="#{permiso.usuariosEjecutante}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Fecha Inicio" />
-                        </f:facet>
-                        <h:outputText value="#{permiso.fechaIni}"/>
+                    <p:column headerText="Fecha Inicio">
+                        <h:outputText value="#{permiso.fechaHoraIni}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Fecha Fin" />
-                        </f:facet>
-                        <h:outputText value="#{permiso.fechaFin}"/>
+                    <p:column headerText="Fecha Fin">
+                        <h:outputText value="#{permiso.fechaHoraFin}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Estado" />
-                        </f:facet>
+                    <p:column headerText="Estado">
                         <h:outputText value="#{permiso.estadoPermiso.descripcion}"/>
                     </p:column>
                     
