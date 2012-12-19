@@ -19,7 +19,7 @@
                     <h:selectOneMenu id="area" value="#{creaPermisoController.permiso.permiso.sector.id}" 
                                      valueChangeListener="#{creaPermisoController.buscarEquiposXSector}">
                         <f:selectItems  value="#{creaPermisoController.sectores}" />
-                        <p:ajax update=":form:equipo"/>
+                        <p:ajax update=":form:equipo :form:area"/>
                     </h:selectOneMenu>
                     <p:message for="area"/>
                     

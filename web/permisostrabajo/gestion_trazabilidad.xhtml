@@ -16,21 +16,29 @@
                 <p:panelGrid  style="margin-top:15px">
                     <f:facet name="header">  
                         <p:row>
-                            <p:column style="border-width: 1px;"><p:outputLabel value="Id"/></p:column>
-                            <p:column style="border-width: 1px;"><p:outputLabel value="Tarea"/></p:column>
-                            <p:column style="border-width: 1px;"><p:outputLabel value="Estado"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Id"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Tarea"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Solicitante"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Sector"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Estado"/></p:column>
                         </p:row>
                         
                     </f:facet> 
                     <p:row>
                         <p:column style="border-width: 1px;">
-                            <p:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <p:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <p:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -56,7 +64,6 @@
                         <h:outputText value="#{traz.estadoTraz.descripcion}"/>
                     </p:column>
                     <f:facet name="footer">
-                        <!--  Sólo se permite la edición cuando está en estado creado Estado de Permiso 1 -->
                         <p:commandButton icon="ui-icon-pencil" value="Gestionar"  action="#{gestionPermisoController.gestionarPermiso}"/>
                     </f:facet>
                 </p:dataTable>

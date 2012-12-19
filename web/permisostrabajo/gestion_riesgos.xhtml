@@ -1,14 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            sdfsfsdfsdf
+
+            <p:dialog id="peligros_permiso" header="Peligros" widgetVar="dlg_peligros" modal="true" width="800" height="500">
+                <p:panelGrid style="width: 100%">
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel for="peligro" value="Peligros:" />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu id="peligro" value="#{gestionPermisoController.idPeligro}">
+                                <f:selectItems  value="#{gestionPermisoController.peligros}" />
+                                <p:ajax/>
+                            </h:selectOneMenu>
+                        </p:column>
+
+                        <p:column>
+                            <p:commandLink update=":form:peligros" actionListener="#{gestionPermisoController.addPeligro}" value="Adicionar Peligro" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:dataTable id="peligros" value="#{gestionPermisoController.tarea.peligros}" var="peligro"
+                             paginator="true"
+                             rows="2"
+                             paginatorTemplate="{PreviousPageLink} {NextPageLink}"
+                             paginatorAlwaysVisible="false"
+                             paginatorPosition="top"
+                             >
+                                <p:column headerText="Peligro">
+                                    <h:outputText value="#{peligro.peligro.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Riesgos">
+                                    <p:dataGrid var="riesgo" value="#{peligro.riesgos}"  columns="1" 
+                                            paginatorPosition="top"
+                                            paginator="true"
+                                            rows="2"
+                                            paginatorTemplate="{PreviousPageLink} {NextPageLink}"
+                                            paginatorAlwaysVisible="false">
+                                        <p:column>
+                                           <h:outputText value="#{riesgo.consecutivo}"/>
+                                           <p:spacer width="20"/>
+                                           <h:outputText value="#{riesgo.nombre}"/>
+                                           <p:spacer width="20"/>
+                                           <p:commandLink ajax="false" actionListener="#{gestionPermisoController.borrarRiesgo}" oncomplete="dlg_peligros.show()">
+                                                <p:graphicImage value="/images/cross.gif"/>
+                                                <f:attribute name="itemCambiar1" value="#{peligro}"/>
+                                                <f:attribute name="itemCambiar2" value="#{riesgo}"/>
+                                           </p:commandLink>
+                                        </p:column>
+                                    </p:dataGrid>
+                                </p:column>
+                                <p:column>
+                                    <p:commandLink update="@form" oncomplete="dlg_peligros.show()" actionListener="#{gestionPermisoController.setPeligro}" value="Agregar Riesgos">
+                                      <f:attribute name="itemCambiar" value="#{peligro}"/>
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:column>
+                    </p:row>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Guardar" actionListener="#{gestionPermisoController.guardar}" oncomplete="dlg_peligros.hide()" update="@form"/>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+
+                <p:spacer height="20" width="100"/>
+                <br/>
+
+                <p:panelGrid  columns="3" rendered="#{gestionPermisoController.renderRiesgo}" id="priesgo">
+                    <f:facet name="header">
+                        <h:outputText value="Riesgo Asociado al Peligro:"/>
+                    </f:facet>
+                    <h:outputText value="Descripcion del Riesgo:"/>
+                    <p:inputText value="#{gestionPermisoController.riesgo}">
+                         <p:ajax/>
+                    </p:inputText>
+                    <p:commandButton value="Guardar Riesgo" actionListener="#{gestionPermisoController.addRiesgo}" oncomplete="dlg_peligros.show()" update="@form"/>
+
+                </p:panelGrid>
+
+            </p:dialog>
+
+            <p:commandButton value="Solicitar Aprobación" action="#{gestionPermisoController.solicitarAprobacion}" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.SOLICITAR_APROBACION }"/>
+            <p:commandButton value="Aprobar" oncomplete="dlg_nota.show()" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+            <p:commandButton value="No Aprobar" oncomplete="dlg_nota.show()" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+            <p:commandButton value="Terminar" oncomplete="dlg_nota.show()" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
+            <p:commandButton value="Cancelar" oncomplete="dlg_nota.show()" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
+            <p:commandButton value="Cancelar" oncomplete="dlg_nota.show()" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
+
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
+
+                <p:panelGrid  columns="2">
+                    <f:facet name="header">
+                        <h:outputText value="Observaciones:"/>
+                    </f:facet>
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Aprobar" action="#{gestionPermisoController.aprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+                        <p:commandButton value="No Aprobar" action="#{gestionPermisoController.noAprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+                        <p:commandButton value="Terminar" action="#{gestionPermisoController.terminar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
+                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.cancelar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
+                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.finalizar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
+                    </f:facet>
+                </p:panelGrid>
+                <p:spacer height="20" width="100"/>
+            </p:dialog>
+
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
 </html>
+

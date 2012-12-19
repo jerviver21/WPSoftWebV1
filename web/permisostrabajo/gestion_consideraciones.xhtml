@@ -1,14 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            
+            <p:panel header="Disciplina">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="disciplina" value="Disciplina:" />
+                    <h:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.permiso.disciplina.id}" 
+                                     valueChangeListener="#{gestionPermisoController.cambiarDisc}">
+                        <f:selectItems  value="#{gestionPermisoController.disciplinas}" />
+                        <p:ajax update="@form"/>
+                    </h:selectOneMenu>
+                    <p:message for="disciplina"/>
+
+                    <h:outputLabel for="otra" value="Cual: *" />
+                    <p:inputText id="otra" value="#{gestionPermisoController.permiso.permiso.otraDisciplina}" 
+                                 disabled="#{gestionPermisoController.permiso.permiso.disciplina.id ne -1}" required="true"/>
+                    <p:message for="otra"/>
+                </p:panelGrid>
+            </p:panel>
+            
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
 </html>
+

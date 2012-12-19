@@ -1,8 +1,10 @@
 package com.vbrothers.permisostrabajo.managed;
 
+import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
+import com.vbrothers.permisostrabajo.dominio.Disciplina;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
 import com.vbrothers.permisostrabajo.dominio.PeligrosTarea;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
@@ -22,6 +24,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 /**
@@ -51,9 +54,12 @@ public class GestionPermisoController {
     private List<SelectItem> disciplinas;
     private int idSector = 1;//Para poder agregar varios sectores afectados
     
+    //Permite diligenciar los pasos del permiso
+    private Tarea tarea;
+    private boolean habMasTareas = false;
+    
     //Permite diligenciar los riesgos del permiso
     private List<SelectItem> peligros;
-    private Tarea tarea;
     private PeligrosTarea peligro;
     private String riesgo;
     private boolean renderRiesgo = false;
@@ -65,7 +71,8 @@ public class GestionPermisoController {
     String PAG_PERMISOS = "/permisostrabajo/mis_permisos.xhtml";
     String PAG_TRAZABILIDAD = "/permisostrabajo/gestion_trazabilidad.xhtml";
     String PAG_DATOS = "/permisostrabajo/gestion_datos.xhtml";
-
+    String PAG_RIESGOS = "/permisostrabajo/gestion_riesgos.xhtml";
+    String PAG_CONSIDERACIONES = "/permisostrabajo/gestion_consideraciones.xhtml";
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
@@ -81,29 +88,156 @@ public class GestionPermisoController {
     //Métodos para el manejo de eventos de la página mis_permisos.xhtml
     public String consultarTrazabilidad(PermisoTrabajo r){
         permiso = permisoServices.findPermisoForGestion(r.getId());
+        permiso.setUsr(sesion.getUsuario());
         setTraz(permisoServices.findTrazabilidadPermiso(r));
         return PAG_TRAZABILIDAD;
     }
     
     //Métodos para el manejo de eventos de la página gestion_trazabilidad.xhtml
     public String gestionarPermiso(){
-        return PAG_DATOS;
+        return PAG_CONSIDERACIONES;
+    }
+    
+    //Métodos para el control de eventos de la página gestion_datos.xhtml
+    public void borrarSectorAfectado(Sector sector){
+       getPermiso().getPermiso().getSectoresAfectados().remove(sector);
+    }
+
+    public void agregarSectorAfectado(){
+        Sector r = sectoresServices.find(idSector);
+        if(!permiso.getPermiso().getSectoresAfectados().contains(r)){
+            getPermiso().getPermiso().getSectoresAfectados().add(r);
+        }
+    }
+    
+    public void cambiarDisc(ValueChangeEvent event){
+        permiso.getPermiso().setDisciplina(new Disciplina((int) (Integer)event.getNewValue()));
+        System.out.println("---> "+permiso.getPermiso().getDisciplina().getId());
+    }
+    
+    public void diligenciarPaso(){
+        habMasTareas = true;
+        for (int i = 0; i < permiso.getTareasVista().size(); i++) {
+            Tarea t = permiso.getTareasVista().get(i);
+            if(t.getDatos() == null || t.getDatos().equals("")){
+                permiso.getTareasVista().remove(i);
+                i--;
+            }
+        }
+        for (int i = 0; i < permiso.getTareasVista().size(); i++) {
+            Tarea t = permiso.getTareasVista().get(i);
+            t.setConsecutivo(i+1);
+        }
+        while(permiso.getTareasVista().size() < 6){
+            Tarea t = new Tarea();
+            t.setConsecutivo(permiso.getTareasVista().size()+1);
+            t.setPermiso(permiso.getPermiso());
+            permiso.getTareasVista().add(t);
+            habMasTareas = false;
+        }
+    }
+
+    public void addTarea(){
+        Tarea t = new Tarea();
+        t.setConsecutivo(permiso.getTareasVista().size()+1);
+        t.setPermiso(permiso.getPermiso());
+        permiso.getTareasVista().add(t);
+    }
+
+    public void borrarTarea(Tarea tarea){
+        try {
+            for (int i = 0; i < permiso.getTareasVista().size(); i++) {
+                if(tarea.getConsecutivo() == permiso.getTareasVista().get(i).getConsecutivo()){
+                    permiso.getTareasVista().remove(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < permiso.getTareasVista().size(); i++) {
+                Tarea t = permiso.getTareasVista().get(i);
+                t.setConsecutivo(i+1);
+            }
+            while(permiso.getTareasVista().size() < 6){
+                Tarea t = new Tarea();
+                t.setConsecutivo(permiso.getTareasVista().size()+1);
+                t.setPermiso(permiso.getPermiso());
+                permiso.getTareasVista().add(t);
+                habMasTareas = false;
+                System.out.println("Hab mas tareas: "+habMasTareas);
+            }
+        } catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+    
+    public String gestionarPeligros(Tarea tarea){
+        setTarea(tarea);
+        return PAG_RIESGOS;
+    }
+    
+    public String agregarConsideraciones(){
+        Tarea t = permiso.getTareasVista().get(0);
+        if(t.getDatos() == null || t.getDatos().equals("")){
+            FacesUtil.addMessage(FacesUtil.ERROR, "Debe agregar al menos un paso para diligenciar el permiso");
+            return null;
+        }
+        return PAG_CONSIDERACIONES;
+    }
+    
+    //Métodos para el control de eventos de la página gestion_riesgos.xhtml
+    public void setPeligro(ActionEvent event){
+        setPeligro((PeligrosTarea) event.getComponent().getAttributes().get("itemCambiar"));
+        renderRiesgo = true;
+    }
+
+    public void addPeligro(){
+        Peligro p1 = peligroServices.find(idPeligro);
+        PeligrosTarea pt = new PeligrosTarea();
+        pt.setPeligro(p1);
+        pt.setTarea(tarea);
+        tarea.getPeligros().add(pt);
+    }
+    
+     public void borrarRiesgo(ActionEvent event){
+        try {
+            PeligrosTarea p  = (PeligrosTarea) event.getComponent().getAttributes().get("itemCambiar1");
+            RiesgosPeligroTarea r  = (RiesgosPeligroTarea) event.getComponent().getAttributes().get("itemCambiar2");
+            int i = 0;
+            for (RiesgosPeligroTarea rm : p.getRiesgos()){
+                if(rm.getConsecutivo() == r.getConsecutivo()){
+                    p.getRiesgos().remove(i);
+                    break;
+                }
+                i++;
+            }
+        } catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el riesgo!");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    public void addRiesgo(){
+        RiesgosPeligroTarea riesgoPeligro = new RiesgosPeligroTarea();
+        riesgoPeligro.setConsecutivo(peligro.getRiesgos().size() + 1);
+        riesgoPeligro.setNombre(riesgo);
+        riesgoPeligro.setPeligrosTarea(peligro);
+        peligro.getRiesgos().add(riesgoPeligro);
+        renderRiesgo = false;
+        riesgo = "";
     }
 
     
     public void guardar(){
-        /*try {
-            permisoServices.guardarPermiso(getPermiso());
-        } catch (LlaveDuplicadaException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
-        }catch (Exception e) {
+        try {
+            permisoServices.guardarPasos(getPermiso());
+        } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }*/
+        }
     }
 
     public String solicitarAprobacion(){
-        /*try {
+        try {
             permisoServices.solicitarAprobacion(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Solicitud de aprobación enviada!!");
         } catch (LlaveDuplicadaException e) {
@@ -113,8 +247,8 @@ public class GestionPermisoController {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }*/
-        return "/permisostrabajo/permisos_diligenciar.xhtml";
+        }
+        return PAG_PERMISOS;
     }
 
     public String aprobar(){
@@ -192,94 +326,6 @@ public class GestionPermisoController {
         }*/
         return "/permisostrabajo/permisos_diligenciar.xhtml";
     }
-
-
-    //Métodos de control de visualización de Riesgos
-    public void borrarRiesgo(ActionEvent event){
-        try {
-            PeligrosTarea p  = (PeligrosTarea) event.getComponent().getAttributes().get("itemCambiar1");
-            RiesgosPeligroTarea r  = (RiesgosPeligroTarea) event.getComponent().getAttributes().get("itemCambiar2");
-            int i = 0;
-            for (RiesgosPeligroTarea rm : p.getRiesgos()){
-                if(rm.getConsecutivo() == r.getConsecutivo()){
-                    p.getRiesgos().remove(i);
-                    break;
-                }
-                i++;
-            }
-        } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el riesgo!");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
-    public void addRiesgo(){
-        RiesgosPeligroTarea riesgoPeligro = new RiesgosPeligroTarea();
-        riesgoPeligro.setConsecutivo(peligro.getRiesgos().size() + 1);
-        riesgoPeligro.setNombre(riesgo);
-        riesgoPeligro.setPeligrosTarea(peligro);
-        peligro.getRiesgos().add(riesgoPeligro);
-        renderRiesgo = false;
-        riesgo = "";
-    }
-
-
-    //Métodos de control de visualización de Peligros
-    public void setPeligro(ActionEvent event){
-        setPeligro((PeligrosTarea) event.getComponent().getAttributes().get("itemCambiar"));
-        renderRiesgo = true;
-    }
-
-    public void addPeligro(){
-        Peligro p1 = peligroServices.find(idPeligro);
-        PeligrosTarea pt = new PeligrosTarea();
-        pt.setPeligro(p1);
-        pt.setTarea(tarea);
-        tarea.getPeligros().add(pt);
-    }
-    
-    
-    //Métodos de control de visualización de tareas del permiso de trabajo
-    public void borrarTarea(ActionEvent event){
-        try {
-            Tarea r  = (Tarea) event.getComponent().getAttributes().get("itemCambiar");
-            permiso.getTareasVista().remove(r);
-        } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
-    public void addTarea(){
-        Tarea t = new Tarea();
-        t.setConsecutivo(permiso.getTareasVista().size());
-        t.setPermiso(permiso.getPermiso());
-        permiso.getTareasVista().add(getTarea());
-    }
-
-    public void setTarea(ActionEvent event){
-        setTarea((Tarea) event.getComponent().getAttributes().get("itemCambiar"));
-        System.out.println("Mi tarea: "+getTarea().getDatos());
-    }
-
-    //Métodos de control de visualización sectores
-    public void borrarSectorAfectado(ActionEvent event){
-        try {
-            Sector r  = (Sector) event.getComponent().getAttributes().get("itemCambiar");
-            getPermiso().getPermiso().getSectoresAfectados().remove(r);
-        } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
-    public void agregarSectorAfectado(){
-        Sector r = sectoresServices.find(idSector);
-        if(!permiso.getPermiso().getSectoresAfectados().contains(r)){
-            getPermiso().getPermiso().getSectoresAfectados().add(r);
-        }
-    }
-
 
     /**
      * @return the permisoPendiente
@@ -447,6 +493,20 @@ public class GestionPermisoController {
      */
     public void setTraz(List<TrazabilidadPermiso> traz) {
         this.traz = traz;
+    }
+
+    /**
+     * @return the habMasTareas
+     */
+    public boolean isHabMasTareas() {
+        return habMasTareas;
+    }
+
+    /**
+     * @param habMasTareas the habMasTareas to set
+     */
+    public void setHabMasTareas(boolean habMasTareas) {
+        this.habMasTareas = habMasTareas;
     }
 
 }

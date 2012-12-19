@@ -158,8 +158,8 @@ public class FacesUtil {
             while (idMenuPadre != MENU_RAIZ){
                 Submenu submenuPadre = menus.get(idMenuPadre);
                 if(submenuPadre == null){
-                    submenu.setId("submp_"+contador);
                     submenuPadre = new Submenu();
+                    submenuPadre.setId("submp_"+contador);
                     nombre = menuPadre.getNombre();
                     submenuPadre.setLabel(nombre);
                     menus.put(idMenuPadre, submenuPadre);
