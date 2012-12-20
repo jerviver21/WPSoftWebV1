@@ -61,6 +61,8 @@ public class SessionController {
         setModel(FacesUtil.getMenu(getUsuario().getRecursosUsr()));
     }
     
+    
+    
 
     /**
      * @return the model

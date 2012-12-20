@@ -29,6 +29,26 @@
                     <p:message for="otra"/>
                 </p:panelGrid>
             </p:panel>
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
+
+                <p:panelGrid  columns="2">
+                    <f:facet name="header">
+                        <h:outputText value="Observaciones:"/>
+                    </f:facet>
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Aprobar" action="#{gestionPermisoController.aprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+                        <p:commandButton value="No Aprobar" action="#{gestionPermisoController.noAprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
+                        <p:commandButton value="Terminar" action="#{gestionPermisoController.terminar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
+                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.cancelar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
+                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.finalizar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
+                    </f:facet>
+                </p:panelGrid>
+                <p:spacer height="20" width="100"/>
+            </p:dialog>
             
         </h:form>
    </ui:define>

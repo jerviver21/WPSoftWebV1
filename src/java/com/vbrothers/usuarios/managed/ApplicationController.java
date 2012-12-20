@@ -48,6 +48,10 @@ public class ApplicationController {
         ROL_JEFE_SECTOR = locator.getParameter("rolAutArea");
         ROL_GERENTE = locator.getParameter("rolGerente");
     }
+    
+    public String preCargar(){
+        return null;
+    }
 
     /**
      * @return the ROL_ADMIN

@@ -3,15 +3,26 @@
      xmlns:f="http://java.sun.com/jsf/core"
      xmlns:ui="http://java.sun.com/jsf/facelets"
      xmlns:c="http://java.sun.com/jsp/jstl/core"
-     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+     xmlns:sec="http://www.springframework.org/security/facelets/tags"
+     xmlns:p="http://primefaces.org/ui">
 
-    <h:head>
-        <title>Sistema Gestion V1</title>
-        <link rel="stylesheet" type="text/css" href="/wpsoft/styles/principal.css"/>
-        <f:view locale="#{generalController.locale}" />
+    <h:head id="head1">
+        <title id="title">Sistema Gestion V1</title>
+        <link id="link1" rel="stylesheet" type="text/css" href="/wpsoft/styles/principal.css"/>
+        <script type="text/javascript">
+            //Funcion para componentes de arrastrar y soltar
+            function handleDrop(event, ui) {
+                var data = ui.draggable;
+                data.fadeOut('fast');
+            }
+        </script>
+        <f:view id="view1" locale="#{generalController.locale}" />
 
      </h:head>
-    <h:body>
+     <h:body id="body1" onload="precargar();">
+         <h:form>
+             <p:remoteCommand name="precargar" action="#{applicationController.preCargar}"/>
+         </h:form>
         <div class="column_detail one" id="main-content" role="main">
 
             
@@ -19,16 +30,16 @@
 	<div class="portlet-layout">
             
             <nav class="site-breadcrumbs" id="breadcrumbs">
-                <ui:insert name="navegador"></ui:insert>
+                <ui:insert id="nav" name="navegador"></ui:insert>
             </nav>
             <div class="banner">
                 <sec:ifAnyGranted roles="ROLE_USER, MASTER">
-                    <a href="/wpsoft/j_spring_security_logout">Cerrar Sesión</a>
+                    <a id="ref1" href="/wpsoft/j_spring_security_logout">Cerrar Sesión</a>
                 </sec:ifAnyGranted>
             </div>
             <div class="portlet-layout">
                 <div class="portlet-column portlet-column-only" id="column-1">
-                    <ui:insert name="contenido"></ui:insert>
+                    <ui:insert id="cont" name="contenido"></ui:insert>
                 </div>
             </div>
             <div class="texture left"></div>
