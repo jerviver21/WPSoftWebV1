@@ -63,6 +63,7 @@ public class GestionPermisoController implements Serializable{
     private List<SelectItem> peligros;
     private Peligro peligro;
     private String control;
+    private String riesgo;
     
     
     //Datos de trazabilidad
@@ -218,7 +219,7 @@ public class GestionPermisoController implements Serializable{
         cpt.setControl(control);
         cpt.setPeligrosTarea(pt);
         pt.getControles().add(cpt);
-        
+        control = "";
     }
     
     public void borrarControl(PeligrosTarea pt, ControlesPeligroTarea ctr){
@@ -229,6 +230,27 @@ public class GestionPermisoController implements Serializable{
             }
         }
     }
+    
+    public void agregarRiesgo(PeligrosTarea pt){
+        RiesgosPeligroTarea rpt = new RiesgosPeligroTarea();
+        rpt.setNombre(riesgo);
+        rpt.setPeligrosTarea(pt);
+        pt.getRiesgos().add(rpt);
+        riesgo = "";
+    }
+    
+    public void borrarRiesgo(PeligrosTarea pt, RiesgosPeligroTarea rpt){
+        for (int i = 0; i < pt.getRiesgos().size(); i++) {
+            RiesgosPeligroTarea rrpt = pt.getRiesgos().get(i);
+            if(rpt.getNombre().equals(rrpt.getNombre())){
+                 pt.getRiesgos().remove(i);
+            }
+        }
+    }
+    
+    
+    
+    
     
     
     public String guardarRiesgo(){
@@ -500,6 +522,20 @@ public class GestionPermisoController implements Serializable{
      */
     public void setControl(String control) {
         this.control = control;
+    }
+
+    /**
+     * @return the riesgo
+     */
+    public String getRiesgo() {
+        return riesgo;
+    }
+
+    /**
+     * @param riesgo the riesgo to set
+     */
+    public void setRiesgo(String riesgo) {
+        this.riesgo = riesgo;
     }
 
     
