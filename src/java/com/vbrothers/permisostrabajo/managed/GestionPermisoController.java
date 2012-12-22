@@ -161,6 +161,9 @@ public class GestionPermisoController implements Serializable{
                 habMasTareas = false;
                 System.out.println("Hab mas tareas: "+habMasTareas);
             }
+            if(tarea.getId() != null && tarea.getId() != 0){
+                permisoServices.borrarTarea(tarea);
+            }
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -209,6 +212,9 @@ public class GestionPermisoController implements Serializable{
             PeligrosTarea pt1 = tarea.getPeligros().get(i);
             if(pt1.getPeligro().getId() == pt.getPeligro().getId()){
                 tarea.getPeligros().remove(i);
+                if(pt1.getId() != null && pt1.getId() != 0){
+                    permisoServices.borrarPeligro(pt1);
+                }
             }
         }
     } 
@@ -227,6 +233,9 @@ public class GestionPermisoController implements Serializable{
             ControlesPeligroTarea ctrpt = pt.getControles().get(i);
             if(ctr.getControl().equals(ctrpt.getControl())){
                  pt.getControles().remove(i);
+                 if(ctrpt.getId() != null && ctrpt.getId() != 0){
+                    permisoServices.borrarControl(ctrpt);
+                 }
             }
         }
     }
@@ -244,38 +253,34 @@ public class GestionPermisoController implements Serializable{
             RiesgosPeligroTarea rrpt = pt.getRiesgos().get(i);
             if(rpt.getNombre().equals(rrpt.getNombre())){
                  pt.getRiesgos().remove(i);
+                 if(rrpt.getId() != null && rrpt.getId() != 0){
+                    permisoServices.borrarRiesgo(rrpt);
+                 }
             }
         }
     }
     
-    
-    
-    
-    
-    
-    public String guardarRiesgo(){
-        System.out.println("Proceso de guardar el riesgo!!!");
-        return PAG_DATOS;
-    }
-
-
-
-
-
-    
-    
-    
-    
-    
-    
-    public void guardar(){
+    public String guardarPeligrosPaso(){
         try {
-            permisoServices.guardarPasos(getPermiso());
+            permisoServices.guardarGestionPeligro(getPermiso());
+            while(permiso.getTareasVista().size() < 6){
+                Tarea t = new Tarea();
+                t.setConsecutivo(permiso.getTareasVista().size()+1);
+                t.setPermiso(permiso.getPermiso());
+                permiso.getTareasVista().add(t);
+            }
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
+        return PAG_DATOS;
     }
+
+    
+    
+    
+    
+    
 
     public String solicitarAprobacion(){
         try {
