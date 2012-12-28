@@ -51,7 +51,7 @@
             <p:panel id="trazabilidad" header="Trazabilidad del permiso de Trabajo">
                 <p:dataTable value="#{gestionPermisoController.traz}" var="traz">
                     <p:column headerText="Operación">
-                        <h:outputText value="#{traz.operacion.descripcion}"/>
+                        <h:outputText value="#{traz.operacion.descripcion}" title="#{traz.nota}"/>
                     </p:column>
                     <p:column headerText="Fecha Hora">
                         <h:outputText value="#{traz.fechaHora}">
@@ -65,7 +65,8 @@
                         <h:outputText value="#{traz.usuario}"/>
                     </p:column>
                     <p:column headerText="Estado">
-                        <h:outputText value="#{traz.estadoTraz.descripcion}"/>
+                        <p:graphicImage title="#{traz.estadoTraz.descripcion}"  url="../images/iconcheck2.jpg" rendered="#{traz.estadoTraz.id eq 2}"/>
+                        <p:graphicImage title="#{traz.estadoTraz.descripcion}"  url="../images/update.png" rendered="#{traz.estadoTraz.id eq 1}"/>
                     </p:column>
                     <f:facet name="footer">
                         <p:commandButton icon="ui-icon-pencil" value="Gestionar"  action="#{gestionPermisoController.gestionarPermiso}"/>

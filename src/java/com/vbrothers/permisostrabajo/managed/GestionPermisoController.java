@@ -107,6 +107,13 @@ public class GestionPermisoController implements Serializable{
     public String consultarTrazabilidad(PermisoTrabajo r){
         permiso = permisoServices.findPermisoForGestion(r.getId());
         permiso.setUsr(sesion.getUsuario());
+        for(SelectItem item: sectores){
+            int idItem = (Integer)item.getValue();
+            if(permiso.getPermiso().getSector().getId() == idItem){
+                sectores.remove(item);
+                break;
+            }
+        }
         setTraz(permisoServices.findTrazabilidadPermiso(r));
         return PAG_TRAZABILIDAD;
     }
