@@ -21,6 +21,7 @@
                             <p:column style="border-width: 1px;"><h:outputLabel value="Solicitante"/></p:column>
                             <p:column style="border-width: 1px;"><h:outputLabel value="Sector"/></p:column>
                             <p:column style="border-width: 1px;"><h:outputLabel value="Estado"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Disciplina"/></p:column>
                         </p:row>
                         
                     </f:facet> 
@@ -39,6 +40,9 @@
                         </p:column>
                         <p:column style="border-width: 1px;">
                             <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.disciplina.nombre}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>

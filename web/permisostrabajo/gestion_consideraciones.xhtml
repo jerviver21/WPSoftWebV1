@@ -13,42 +13,49 @@
         <h:form id="form" >
             <p:growl id="msgs" />
             
-            <p:panel header="Disciplina">
-                <p:panelGrid columns="3">
-                    <h:outputLabel for="disciplina" value="Disciplina:" />
-                    <h:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.permiso.disciplina.id}" 
-                                     valueChangeListener="#{gestionPermisoController.cambiarDisc}">
-                        <f:selectItems  value="#{gestionPermisoController.disciplinas}" />
-                        <p:ajax update="@form"/>
-                    </h:selectOneMenu>
-                    <p:message for="disciplina"/>
-
-                    <h:outputLabel for="otra" value="Cual: *" />
-                    <p:inputText id="otra" value="#{gestionPermisoController.permiso.permiso.otraDisciplina}" 
-                                 disabled="#{gestionPermisoController.permiso.permiso.disciplina.id ne -1}" required="true"/>
-                    <p:message for="otra"/>
+            <p:panel id="datos_generales" header="Datos Generales del Permiso">
+                <p:panelGrid  style="margin-top:15px">
+                    <f:facet name="header">  
+                        <p:row>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Id"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Tarea"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Solicitante"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Sector"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Estado"/></p:column>
+                        </p:row>
+                        
+                    </f:facet> 
+                    <p:row>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                        </p:column>
+                    </p:row>
                 </p:panelGrid>
             </p:panel>
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
-
-                <p:panelGrid  columns="2">
-                    <f:facet name="header">
-                        <h:outputText value="Observaciones:"/>
-                    </f:facet>
-                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
-                         <p:ajax/>
-                    </p:inputTextarea>
-                    <p:message for="nota"/>
-                    <f:facet name="footer">
-                        <p:commandButton value="Aprobar" action="#{gestionPermisoController.aprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
-                        <p:commandButton value="No Aprobar" action="#{gestionPermisoController.noAprobar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.APROBAR}"/>
-                        <p:commandButton value="Terminar" action="#{gestionPermisoController.terminar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
-                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.cancelar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
-                        <p:commandButton value="Cancelar" action="#{gestionPermisoController.finalizar}" oncomplete="dlg_nota.hide()" ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
-                    </f:facet>
+            
+            <p:panel header="Consideraciones Requeridas">
+                <p:panelGrid columns="2">
+                    <p:inputTextarea id="consideraciones" value="#{gestionPermisoController.permiso.permiso.consideraciones}" 
+                                      cols="100"/>
+                    <p:message for="consideraciones"/>
                 </p:panelGrid>
-                <p:spacer height="20" width="100"/>
-            </p:dialog>
+            </p:panel>
+            
+            <p:separator/>
+            
+            <p:commandButton value="Solicitar Aprobación" action="#{gestionPermisoController.solicitarAprobacion}" icon="ui-icon-check" ajax="false"/>
             
         </h:form>
    </ui:define>

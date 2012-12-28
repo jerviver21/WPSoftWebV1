@@ -51,7 +51,7 @@ public class SectorController {
     @PostConstruct
     public void init(){
         crearNuevo();
-        setGrupos(FacesUtil.getSelectsItem(new HashSet(grupoService.findGruposByRol(locator.getParameter("rolAutArea")))));
+        setGrupos(FacesUtil.getSelectsItem(grupoService.findGruposByRol(locator.getParameter("rolAutArea")),"getCodigo" ,"getCodigo" ));
     }
 
     public void crearNuevo(){

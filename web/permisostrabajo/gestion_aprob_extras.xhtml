@@ -1,14 +1,51 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panel header="Otras aprobaciones requeridas">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="tipo" value="Tipo" />
+                    <h:selectOneMenu id="tipo" valueChangeListener="#{gestionPermisoController.selectUsroGrupos}">
+                        <f:selectItem  itemValue="1" itemLabel="GRUPO" />
+                        <f:selectItem  itemValue="2" itemLabel="USUARIO" />
+                        <p:ajax update="@form"/>
+                    </h:selectOneMenu>
+                    <p:message for="tipo"/>
+                    
+                    <h:outputLabel for="usr_group" value="Usr-Grupo" />
+                    <h:selectOneMenu id="equipo" value="#{gestionPermisoController.usrGrupo}">
+                        <f:selectItems  value="#{gestionPermisoController.usrsGrupos}" />
+                        <p:ajax/>
+                    </h:selectOneMenu>
+                    <p:commandButton actionListener="#{gestionPermisoController.agregarAprobador}" icon="ui-icon-plus" update="@form"/>
+
+                    <h:outputLabel value="Aprobadores"/>
+                    <p:dataTable value="#{gestionPermisoController.permiso.aprobadoresAdicionales}" var="aprobador">
+                        <p:column headerText="Id">
+                            <h:outputText value="#{aprobador}"/>
+                        </p:column>
+                        <p:column headerText="Borrar">
+                            <p:commandButton icon="ui-icon-trash" update="@form" actionListener="#{gestionPermisoController.removeAprobador(aprobador)}"/>
+                        </p:column>
+                    </p:dataTable>
+            </p:panelGrid>
+            </p:panel>
+            <p:separator/>
+            <p:commandButton value="Aprobar" icon="ui-icon-check" action="#{gestionPermisoController.aprobar}" ajax="false"/>
+            <p:commandButton value="No Aprobar" icon="ui-icon-close" action="#{gestionPermisoController.noAprobar}" ajax="false"/>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
 </html>
+

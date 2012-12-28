@@ -13,7 +13,7 @@
         <h:form id="form" >
             <p:growl id="msgs" />
             
-            <p:panel header="Disciplina">
+            <p:panel header="Disciplina" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.DILIGENCIAR}">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="disciplina" value="Disciplina:" />
                     <p:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.permiso.disciplina.id}">
@@ -84,7 +84,7 @@
                 </p:dataTable>
             </p:panel>
             <p:separator/>
-            <p:commandButton value="Siguiente" icon="ui-icon-arrow-1-e" action="#{gestionPermisoController.agregarConsideraciones}" ajax="false"/>
+            <p:commandButton value="Siguiente" icon="ui-icon-arrow-1-e" action="#{gestionPermisoController.terminaGestionDatos}" ajax="false"/>
         </h:form>
    </ui:define>
   </ui:composition>

@@ -10,7 +10,7 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:messages id="msgs" />
+            <p:growl id="msgs" />
 
             <p:panel id="permisosPendientes" header="Permisos de Trabajo Pendientes Asignados">
                 <p:dataTable value="#{gestionPermisoController.permisosPendientes}" var="permiso"

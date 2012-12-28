@@ -16,6 +16,8 @@ import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
 import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
 import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
+import com.vbrothers.usuarios.services.GruposServicesLocal;
+import com.vbrothers.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.io.Serializable;
@@ -26,6 +28,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 /**
@@ -41,6 +44,10 @@ public class GestionPermisoController implements Serializable{
     PermisoServicesLocal permisoServices;
     @EJB
     PeligrosServicesLocal peligroServices;
+    @EJB
+    GruposServicesLocal grupoServices;
+    @EJB
+    UsuariosServicesLocal usrServices;
     
     SessionController sesion;
     
@@ -65,15 +72,23 @@ public class GestionPermisoController implements Serializable{
     private String control;
     private String riesgo;
     
+    //Permite agregar mas usuarios o grupos para aprobación
+    private List<SelectItem> usrsGrupos;
+    private String usrGrupo;
+    
     
     //Datos de trazabilidad
     private List<TrazabilidadPermiso> traz;
-    
+       
     String PAG_PERMISOS = "/permisostrabajo/mis_permisos.xhtml";
     String PAG_TRAZABILIDAD = "/permisostrabajo/gestion_trazabilidad.xhtml";
     String PAG_DATOS = "/permisostrabajo/gestion_datos.xhtml";
     String PAG_RIESGOS = "/permisostrabajo/gestion_riesgos.xhtml";
     String PAG_CONSIDERACIONES = "/permisostrabajo/gestion_consideraciones.xhtml";
+    String PAG_APR_OTROS = "/permisostrabajo/gestion_aprob_extras.xhtml";
+    
+    
+    
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
@@ -83,6 +98,7 @@ public class GestionPermisoController implements Serializable{
         setDisciplinas(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_DISCIPLINA)));
         permiso = new PermisoTrabajoTO(sesion.getUsuario());
         setPeligros(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_PELIGRO)));
+        setUsrsGrupos(FacesUtil.getSelectsItem(grupoServices.findGruposByRol("aprobadores"), "getCodigo", "getCodigo"));
         setPeligro(new Peligro());
         tarea = new Tarea();
     }
@@ -153,6 +169,12 @@ public class GestionPermisoController implements Serializable{
                 Tarea t = permiso.getTareasVista().get(i);
                 t.setConsecutivo(i+1);
             }
+            
+            if(tarea.getId() != null && tarea.getId() != 0){
+                permisoServices.borrarTarea(tarea);
+                permisoServices.guardarGestionPeligro(permiso);
+            }
+            
             while(permiso.getTareasVista().size() < 6){
                 Tarea t = new Tarea();
                 t.setConsecutivo(permiso.getTareasVista().size()+1);
@@ -161,9 +183,7 @@ public class GestionPermisoController implements Serializable{
                 habMasTareas = false;
                 System.out.println("Hab mas tareas: "+habMasTareas);
             }
-            if(tarea.getId() != null && tarea.getId() != 0){
-                permisoServices.borrarTarea(tarea);
-            }
+            
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -175,13 +195,17 @@ public class GestionPermisoController implements Serializable{
         return PAG_RIESGOS;
     }
     
-    public String agregarConsideraciones(){
+    public String terminaGestionDatos(){
         Tarea t = permiso.getTareasVista().get(0);
         if(t.getDatos() == null || t.getDatos().equals("")){
             FacesUtil.addMessage(FacesUtil.ERROR, "Debe agregar al menos un paso para diligenciar el permiso");
             return null;
         }
-        return PAG_CONSIDERACIONES;
+        String SIG_PAGINA = PAG_CONSIDERACIONES;
+        if(permiso.getEtapa() == permiso.getAPROBAR()){
+            SIG_PAGINA = PAG_APR_OTROS;
+        }
+        return SIG_PAGINA;
     }
     
     //Métodos para el control de eventos de la página gestion_riesgos.xhtml
@@ -196,9 +220,9 @@ public class GestionPermisoController implements Serializable{
         pelTarea.setTarea(tarea);
         pelTarea.setPeligro(p);
         List<ControlesPeligroTarea> controles = new ArrayList<ControlesPeligroTarea>();
-        for(Control control : p.getControles()){
+        for(Control c : p.getControles()){
             ControlesPeligroTarea cpt = new ControlesPeligroTarea();
-            cpt.setControl(control.getNombre());
+            cpt.setControl(c.getNombre());
             cpt.setPeligrosTarea(pelTarea);
             controles.add(cpt);
         }
@@ -276,16 +300,48 @@ public class GestionPermisoController implements Serializable{
         return PAG_DATOS;
     }
 
-    
-    
-    
-    
-    
-
     public String solicitarAprobacion(){
         try {
             permisoServices.solicitarAprobacion(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Solicitud de aprobación enviada!!");
+            FacesUtil.restartBean("gestionPermisoController");
+        } catch (LlaveDuplicadaException e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            return null;
+        }catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
+        }
+        return PAG_PERMISOS;
+    }
+    
+    //Eventos de la página gestion_aprob_otros.xhtml
+    public void selectUsroGrupos(ValueChangeEvent event){
+        int tipo = Integer.parseInt((String)event.getNewValue());
+        if(tipo == 1){
+            setUsrsGrupos(FacesUtil.getSelectsItem(grupoServices.findGruposByRol("aprobadores"), "getCodigo", "getCodigo"));
+        }else{
+            setUsrsGrupos(FacesUtil.getSelectsItem(usrServices.findUsersByRol("aprobadores"), "getUsr", "getUsr"));
+        }
+        
+    }
+    
+    public void removeAprobador(String aprobador){
+       permiso.getAprobadoresAdicionales().remove(aprobador);
+    }
+    
+    public void agregarAprobador(){
+        if(!permiso.getAprobadoresAdicionales().contains(usrGrupo)){
+            permiso.getAprobadoresAdicionales().add(usrGrupo);
+        }
+    }
+
+    public String aprobar(){
+        try {
+            permisoServices.aprobarPermiso(getPermiso());
+            FacesUtil.addMessage(FacesUtil.INFO, "Permiso aprobado");
+            FacesUtil.restartBean("gestionPermisoController");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             return null;
@@ -297,25 +353,11 @@ public class GestionPermisoController implements Serializable{
         return PAG_PERMISOS;
     }
 
-    public String aprobar(){
-        /*try {
-            permisoServices.aprobarPermiso(getPermiso());
-            FacesUtil.addMessage(FacesUtil.INFO, "Permiso aprobado");
-        } catch (LlaveDuplicadaException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
-            return null;
-        }catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
-            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-            return null;
-        }*/
-        return "/permisostrabajo/permisos_diligenciar.xhtml";
-    }
-
     public String noAprobar(){
-        /*try {
+        try {
             permisoServices.noAprobarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso no aprobado");
+            FacesUtil.restartBean("gestionPermisoController");
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             return null;
@@ -323,9 +365,11 @@ public class GestionPermisoController implements Serializable{
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
             return null;
-        }*/
-        return "/permisostrabajo/permisos_diligenciar.xhtml";
+        }
+        return PAG_PERMISOS;
     }
+    
+    //----------------------------------------------------------------------------------------------------------
 
     public String terminar(){
         /*try {
@@ -542,6 +586,36 @@ public class GestionPermisoController implements Serializable{
     public void setRiesgo(String riesgo) {
         this.riesgo = riesgo;
     }
+
+    /**
+     * @return the usrsGrupos
+     */
+    public List<SelectItem> getUsrsGrupos() {
+        return usrsGrupos;
+    }
+
+    /**
+     * @param usrsGrupos the usrsGrupos to set
+     */
+    public void setUsrsGrupos(List<SelectItem> usrsGrupos) {
+        this.usrsGrupos = usrsGrupos;
+    }
+
+    /**
+     * @return the usrGrupo
+     */
+    public String getUsrGrupo() {
+        return usrGrupo;
+    }
+
+    /**
+     * @param usrGrupo the usrGrupo to set
+     */
+    public void setUsrGrupo(String usrGrupo) {
+        this.usrGrupo = usrGrupo;
+    }
+
+  
 
     
 

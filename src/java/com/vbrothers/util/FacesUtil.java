@@ -96,14 +96,17 @@ public class FacesUtil {
         return items;
     }
     
-    public static List<SelectItem> getSelectsItem(Set opciones){
+    public static List<SelectItem> getSelectsItem(List opciones, String methodId, String methodValue){
         List<SelectItem> items = null;
         try {
             items = new ArrayList<SelectItem>();
             for(Object pk : opciones ){
                 SelectItem item = new SelectItem();
-                item.setValue(pk.toString());
-                item.setLabel(pk.toString());
+                Class clase = pk.getClass();
+                Method metodoId = clase.getMethod(methodId, new Class[]{});
+                Method metodoValue = clase.getMethod(methodValue, new Class[]{});
+                item.setValue(metodoId.invoke(pk, new Object[]{}));
+                item.setLabel(metodoValue.invoke(pk, new Object[]{}).toString());
                 items.add(item);
             }    
         } catch (Exception e) {
