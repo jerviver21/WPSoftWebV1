@@ -1,0 +1,132 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="../plantilla1.xhtml">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            
+            <h:commandLink>  
+                <p:graphicImage value="../images/pdf6.gif" />  
+            </h:commandLink>  
+            <p:separator/>
+            <p:panel header="Datos del permiso" id="datos_permiso">
+                <p:panelGrid  style="margin-top:15px">
+                    <f:facet name="header">  
+                        <p:row>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Id"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Tarea"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Solicitante"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Sector"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Estado"/></p:column>
+                            <p:column style="border-width: 1px;"><h:outputLabel value="Disciplina"/></p:column>
+                        </p:row>
+                        
+                    </f:facet> 
+                    <p:row>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                        </p:column>
+                        <p:column style="border-width: 1px;">
+                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.disciplina.nombre}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:separator/>
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Consideraciones Requeridas:"/>
+                    <h:outputText value="#{gestionPermisoController.permiso.permiso.consideraciones}"/>
+                </h:panelGrid>
+                <p:separator/>
+                <h:panelGrid columns="2">
+                   <p:outputLabel value="Otros Sectores Afectados: "/>
+                   <p:dataList value="#{gestionPermisoController.permiso.permiso.sectoresAfectados}" var="sector" 
+                               rendered="#{not empty  gestionPermisoController.permiso.permiso.sectoresAfectados}">
+                        <p:column headerText="Sector">
+                            <h:outputText value="#{sector.nombre}"/>
+                        </p:column>
+                   </p:dataList> 
+                </h:panelGrid>
+                
+                <p:separator/>
+                
+                <p:dataTable value="#{gestionPermisoController.permiso.permiso.tareas}"  var="tarea" id="tareas" editable="true">
+                    <p:column style="width:4%">  
+                        <p:rowToggler />  
+                    </p:column> 
+                    <p:column headerText="Paso">
+                        <h:outputText value="#{tarea.consecutivo}"/>
+                    </p:column>
+                    <p:column headerText="Tarea">
+                        <h:outputText value="#{tarea.datos}"/>
+                    </p:column>
+                    <p:rowExpansion id="expansion"> 
+                        <p:dataTable var="peligro" value="#{tarea.peligros}">  
+                            <p:column headerText="Peligro">  
+                                <h:outputText value="#{peligro.peligro.nombre}" />  
+                            </p:column> 
+                            <p:column headerText="Riesgos">
+                                <p:dataList id="riesgos" value="#{peligro.riesgos}" var="riesgo" rendered="#{not empty  peligro.riesgos}">
+                                        #{riesgo.nombre}"
+                                </p:dataList> 
+                            </p:column>
+                            <p:column headerText="Controles">
+                                <p:dataList id="controles" value="#{peligro.controles}" var="control" rendered="#{not empty  peligro.controles}">
+                                        #{control.control}"
+                                </p:dataList> 
+                            </p:column>
+                        </p:dataTable>  
+                    </p:rowExpansion>
+                </p:dataTable>
+            </p:panel>
+            <p:separator/>
+            <p:commandButton value="Siguiente" icon="ui-icon-check" oncomplete="dlg_nota.show()"/>
+            
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
+                <p:panelGrid  columns="2">
+                    <f:facet name="header">
+                        <h:outputText value="Observaciones:"/>
+                    </f:facet>
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                    <f:facet name="footer">
+                        <p:commandButton value="Terminar" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
+                                         oncomplete="dlg_nota.hide()" ajax="false" 
+                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
+                        <p:commandButton value="Cancelar" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
+                                         oncomplete="dlg_nota.hide()" ajax="false" 
+                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
+                        <p:commandButton value="Finalizar" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
+                                         oncomplete="dlg_nota.hide()" ajax="false" 
+                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
+                    </f:facet>
+                </p:panelGrid>
+                <p:spacer height="20" width="100"/>
+            </p:dialog>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+
