@@ -1,9 +1,11 @@
 package com.vbrothers.permisostrabajo.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vbrothers.herramientas.services.CertificadosServicesLocal;
 import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
+import com.vbrothers.permisostrabajo.dominio.Certificado;
 import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.ControlesPeligroTarea;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
@@ -18,6 +20,8 @@ import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  * @author Jerson Viveros
@@ -38,6 +44,8 @@ public class GestionPermisoController implements Serializable{
     ServiceLocator locator;
     @EJB
     SectoresServicesLocal sectoresServices;
+    @EJB
+    CertificadosServicesLocal certificadosServices;
     @EJB
     PermisoServicesLocal permisoServices;
     @EJB
@@ -54,8 +62,11 @@ public class GestionPermisoController implements Serializable{
     
     //Permiten diligenciar los datos generales del permiso
     private List<SelectItem> sectores;
+    private List<SelectItem> certificados;
     private List<SelectItem> disciplinas;
-    private int idSector = 1;//Para poder agregar varios sectores afectados
+    private int idSector;//Para poder agregar varios sectores afectados
+    private int idCertificado;//Para poder agregar varios certificados
+    private StreamedContent checklistDown;//Para descargar los checklist de los certificados agregados
     
     //Permite diligenciar los pasos del permiso
     private Tarea tarea;
@@ -91,6 +102,7 @@ public class GestionPermisoController implements Serializable{
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
         setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
         setSectores(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR)));
+        certificados = FacesUtil.getSelectsItem(certificadosServices.findAll());
         setDisciplinas(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_DISCIPLINA)));
         permiso = new PermisoTrabajoTO(sesion.getUsuario());
         setPeligros(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_PELIGRO)));
@@ -180,7 +192,7 @@ public class GestionPermisoController implements Serializable{
             
             if(tarea.getId() != null && tarea.getId() != 0){
                 permisoServices.borrarTarea(tarea);
-                permisoServices.guardarGestionPeligro(permiso);
+                permisoServices.guardarGestion(permiso);
             }
             
             while(permiso.getTareasVista().size() < 6){
@@ -294,7 +306,7 @@ public class GestionPermisoController implements Serializable{
     
     public String guardarPeligrosPaso(){
         try {
-            permisoServices.guardarGestionPeligro(getPermiso());
+            permisoServices.guardarGestion(getPermiso());
             while(permiso.getTareasVista().size() < 6){
                 Tarea t = new Tarea();
                 t.setConsecutivo(permiso.getTareasVista().size()+1);
@@ -308,6 +320,30 @@ public class GestionPermisoController implements Serializable{
         return PAG_DATOS;
     }
 
+    //Eventos de la página gestion_consideraciones.xhtml
+    public void borrarCertificado(Certificado cert){
+       getPermiso().getPermiso().getCertificados().remove(cert);
+    }
+
+    public void agregarCertificado(){
+        Certificado r = certificadosServices.find(idCertificado);
+        if(!permiso.getPermiso().getCertificados().contains(r)){
+            getPermiso().getPermiso().getCertificados().add(r);
+        }
+    }
+    
+    public void descargarChecklist(Certificado cert){
+        try {
+            FileInputStream stream = new FileInputStream(cert.getRutaCheckList());
+            String separador = File.separator.equals("/")?"/":"\\";
+            checklistDown = new DefaultStreamedContent(stream, "application/pdf",
+                    cert.getRutaCheckList().replaceAll(".*"+separador+"(.*)", "$1"));
+        } catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "El archivo a descargar no existe!");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+    
     public String solicitarAprobacion(){
         try {
             permisoServices.solicitarAprobacion(getPermiso());
@@ -623,6 +659,34 @@ public class GestionPermisoController implements Serializable{
      */
     public void setUsrGrupo(String usrGrupo) {
         this.usrGrupo = usrGrupo;
+    }
+
+    /**
+     * @return the certificados
+     */
+    public List<SelectItem> getCertificados() {
+        return certificados;
+    }
+
+    /**
+     * @return the idCertificado
+     */
+    public int getIdCertificado() {
+        return idCertificado;
+    }
+
+    /**
+     * @param idCertificado the idCertificado to set
+     */
+    public void setIdCertificado(int idCertificado) {
+        this.idCertificado = idCertificado;
+    }
+
+    /**
+     * @return the checklistDown
+     */
+    public StreamedContent getChecklistDown() {
+        return checklistDown;
     }
 
   

@@ -45,6 +45,35 @@
                 </p:panelGrid>
             </p:panel>
             
+            <p:panel header="Certificados">
+                <p:panelGrid columns="3">
+                    <h:outputLabel for="certificado" value="Certificado:" />
+                    <p:selectOneMenu id="certificado" value="#{gestionPermisoController.idCertificado}">
+                        <f:selectItems  value="#{gestionPermisoController.certificados}" />
+                        <p:ajax/>
+                    </p:selectOneMenu>
+                    <p:commandButton icon="ui-icon-plus" actionListener="#{gestionPermisoController.agregarCertificado}" 
+                                     update=":form:certificados"/>
+                </p:panelGrid>
+
+                <p:outputPanel id="certificados">
+                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.certificados}" var="item">
+                        <p:column headerText="Certificado">
+                            <h:outputText value="#{item.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Borrar">
+                            <p:commandButton update=":form:certificados" icon="ui-icon-trash"
+                                             actionListener="#{gestionPermisoController.borrarCertificado(item)}"/>
+                        </p:column>
+                        <p:column headerText="Descargar">
+                            <p:commandButton icon="ui-icon-arrowthickstop-1-s" ajax="false" actionListener="#{gestionPermisoController.descargarChecklist(item)}">
+                                <p:fileDownload value="#{gestionPermisoController.checklistDown}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:panel>
+            
             <p:panel header="Consideraciones Requeridas">
                 <p:panelGrid columns="2">
                     <p:inputTextarea id="consideraciones" value="#{gestionPermisoController.permiso.permiso.consideraciones}" 
