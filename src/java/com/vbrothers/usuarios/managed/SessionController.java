@@ -2,6 +2,7 @@ package com.vbrothers.usuarios.managed;
 
 import com.vbrothers.common.managed.GeneralController;
 import com.vbrothers.common.services.CommonServicesLocal;
+import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.usuarios.dominio.Groups;
 import com.vbrothers.usuarios.dominio.Users;
 import com.vbrothers.usuarios.services.UsuariosServicesLocal;
@@ -28,12 +29,13 @@ public class SessionController {
     private Users usuario;
     @EJB
     private UsuariosServicesLocal usersServices;
-    @EJB
-    private CommonServicesLocal commonServices;
+
     private UsernamePasswordAuthenticationToken principal;
     private Collection<GrantedAuthority> grantedAuthorities;
     private Set<String> roles;
     private Set<String> grupos;
+    
+    private boolean validador = false;
 
     
     @PostConstruct
@@ -51,6 +53,9 @@ public class SessionController {
         setGrupos(new HashSet<String>());
         for(Groups g : usuario.getGrupos()){
             getGrupos().add(g.getCodigo());
+            if(g.getCodigo().equalsIgnoreCase(ServiceLocator.getInstance().getParameter("grupoValidador"))){
+                setValidador(true);
+            }
         }
         usuario.setRoles(roles);
         usuario.setGruposUsr(grupos);
@@ -146,6 +151,20 @@ public class SessionController {
      */
     public void setGrupos(Set<String> grupos) {
         this.grupos = grupos;
+    }
+
+    /**
+     * @return the validador
+     */
+    public boolean isValidador() {
+        return validador;
+    }
+
+    /**
+     * @param validador the validador to set
+     */
+    public void setValidador(boolean validador) {
+        this.validador = validador;
     }
     
 }

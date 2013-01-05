@@ -70,6 +70,22 @@
                     </f:facet>
                 </p:dataTable>
             </p:panel>
+            
+            <p:panel header="Notas del Permiso de Trabajo" rendered="#{not empty creaPermisoController.permiso.permiso.notas}">
+                <p:commandButton icon="ui-icon-document" value="Agregar Nota" oncomplete="dlg_nota.show()"/>
+                
+                <p:outputPanel id="notas">
+                    <p:dataTable value="#{creaPermisoController.permiso.permiso.notas}" var="item">
+                        <p:column headerText="Nota">
+                            <h:outputText value="#{item.nota}"/>
+                        </p:column>
+                        <p:column headerText="Usuario">
+                            <h:outputText value="#{item.usr}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:panel>
+            
         </h:form>
    </ui:define>
   </ui:composition>

@@ -6,8 +6,10 @@ import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Certificado;
+import com.vbrothers.permisostrabajo.dominio.CertificadosTrabajo;
 import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.ControlesPeligroTarea;
+import com.vbrothers.permisostrabajo.dominio.NotasPermiso;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
 import com.vbrothers.permisostrabajo.dominio.PeligrosTarea;
 import com.vbrothers.permisostrabajo.dominio.PermisoTrabajo;
@@ -82,9 +84,11 @@ public class GestionPermisoController implements Serializable{
     private List<SelectItem> usrsGrupos;
     private String usrGrupo;
     
-    
     //Datos de trazabilidad
     private List<TrazabilidadPermiso> traz;
+    
+    //Notas del permiso
+    private String nota;
        
     String PAG_PERMISOS = "/permisostrabajo/mis_permisos.xhtml";
     String PAG_TRAZABILIDAD = "/permisostrabajo/gestion_trazabilidad.xhtml";
@@ -93,6 +97,7 @@ public class GestionPermisoController implements Serializable{
     String PAG_CONSIDERACIONES = "/permisostrabajo/gestion_consideraciones.xhtml";
     String PAG_APR_OTROS = "/permisostrabajo/gestion_aprob_extras.xhtml";
     String PAG_EJECUCION = "/permisostrabajo/gestion_ejecutar.xhtml";
+    String PAG_NOTAS = "/permisostrabajo/gestion_notas.xhtml";
     
     
     
@@ -128,6 +133,9 @@ public class GestionPermisoController implements Serializable{
     
     //Métodos para el manejo de eventos de la página gestion_trazabilidad.xhtml
     public String gestionarPermiso(){
+        if(sesion.isValidador()){
+            return PAG_NOTAS;
+        }
         if(permiso.getEtapa() == permiso.getTERMINAR() 
                 || permiso.getEtapa() == permiso.getCANCELAR()
                 || permiso.getEtapa() == permiso.getFINALIZAR()){
@@ -321,23 +329,26 @@ public class GestionPermisoController implements Serializable{
     }
 
     //Eventos de la página gestion_consideraciones.xhtml
-    public void borrarCertificado(Certificado cert){
+    public void borrarCertificado(CertificadosTrabajo cert){
        getPermiso().getPermiso().getCertificados().remove(cert);
     }
 
     public void agregarCertificado(){
         Certificado r = certificadosServices.find(idCertificado);
-        if(!permiso.getPermiso().getCertificados().contains(r)){
-            getPermiso().getPermiso().getCertificados().add(r);
+        CertificadosTrabajo ct = new CertificadosTrabajo();
+        ct.setPermiso(permiso.getPermiso());
+        ct.setCertificado(r);
+        if(!permiso.getPermiso().getCertificados().contains(ct)){
+            getPermiso().getPermiso().getCertificados().add(ct);
         }
     }
     
-    public void descargarChecklist(Certificado cert){
+    public void descargarChecklist(CertificadosTrabajo cert){
         try {
-            FileInputStream stream = new FileInputStream(cert.getRutaCheckList());
+            FileInputStream stream = new FileInputStream(cert.getCertificado().getRutaCheckList());
             String separador = File.separator.equals("/")?"/":"\\";
             checklistDown = new DefaultStreamedContent(stream, "application/pdf",
-                    cert.getRutaCheckList().replaceAll(".*"+separador+"(.*)", "$1"));
+                    cert.getCertificado().getRutaCheckList().replaceAll(".*"+separador+"(.*)", "$1"));
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El archivo a descargar no existe!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -462,6 +473,35 @@ public class GestionPermisoController implements Serializable{
         }
         return PAG_PERMISOS;
     }
+    
+    //Eventos de la página gestion_notas.xhtml
+    public void cambiarEstado(ValueChangeEvent event){
+        int estado = (int) (Integer)event.getNewValue();
+        if(permiso.getPermiso().getEstadoPermiso().getId() != estado){
+            permisoServices.cambiarEstado(permiso.getPermiso(), estado);
+        }
+        permisosPendientes.remove(permiso.getPermiso());
+        permisosPendientes.add(permiso.getPermiso());
+    }
+    
+    public String agregarNota(){
+        NotasPermiso n = new NotasPermiso();
+        n.setNota(nota);
+        n.setPermiso(permiso.getPermiso());
+        n.setUsr(sesion.getUsuario().getUsr());
+        permisoServices.guardarNota(n);
+        permiso.getPermiso().getNotas().add(n);
+        return null;
+    }
+    
+    public void borrarNota(NotasPermiso nota){
+        permisoServices.borrarNota(nota);
+        permiso.getPermiso().getNotas().remove(nota);
+    }
+    
+    
+    
+    
 
     /**
      * @return the permisoPendiente
@@ -687,6 +727,20 @@ public class GestionPermisoController implements Serializable{
      */
     public StreamedContent getChecklistDown() {
         return checklistDown;
+    }
+
+    /**
+     * @return the nota
+     */
+    public String getNota() {
+        return nota;
+    }
+
+    /**
+     * @param nota the nota to set
+     */
+    public void setNota(String nota) {
+        this.nota = nota;
     }
 
   

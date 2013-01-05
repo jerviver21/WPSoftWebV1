@@ -12,6 +12,35 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <p:growl id="msgs" />
+            <p:panel header="Certificados">
+                <p:outputPanel id="certificados">
+                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.certificados}" var="item" editable="true">
+                        <p:column headerText="Certificado">
+                            <h:outputText value="#{item.certificado.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Restricción">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{item.restriccion}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{item.restriccion}" style="width:100%">
+                                        <p:ajax update="@form"/>
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Editar">
+                            <p:rowEditor  />
+                        </p:column>
+                        <p:column headerText="Descargar">
+                            <p:commandButton icon="ui-icon-arrowthickstop-1-s" ajax="false" actionListener="#{gestionPermisoController.descargarChecklist(item)}">
+                                <p:fileDownload value="#{gestionPermisoController.checklistDown}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:panel>
             <p:panel header="Otras aprobaciones requeridas">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="tipo" value="Tipo" />
@@ -43,7 +72,7 @@
             <p:separator/>
             <p:commandButton value="Siguiente" icon="ui-icon-arrow-1-e" oncomplete="dlg_nota.show()"/>
         
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="300">
 
                 <p:panelGrid  columns="2">
                     <f:facet name="header">
