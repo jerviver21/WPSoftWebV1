@@ -3,6 +3,7 @@ package com.vbrothers.usuarios.managed;
 
 import com.vbrothers.common.services.CommonServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
+import com.vbrothers.permisostrabajo.services.PermisoTimerService;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
@@ -33,12 +34,17 @@ public class ApplicationController {
 
     @EJB
     private CommonServicesLocal commonServices;
+    
+    @EJB
+    private PermisoTimerService timerServices;
 
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
         System.out.println("--> Iniciando application controller <--");
         commonServices.updateEstructuraMenus();
+        timerServices.initTimer();
+        
         
         
         ROL_ADMIN = locator.getParameter("rolAdmin");
