@@ -13,21 +13,22 @@
         <h:form id="form" >
             <p:growl id="msgs" />
             
-            <p:panel header="Disciplina" rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.DILIGENCIAR}">
+            <p:panel header="Disciplina" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.DILIGENCIAR}">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="disciplina" value="Disciplina:" />
-                    <p:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.permiso.disciplina.id}">
+                    <p:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.disciplina.id}">
                         <f:selectItems  value="#{gestionPermisoController.disciplinas}" />
                         <p:ajax update="@form"/>
                     </p:selectOneMenu>
                     <p:message for="disciplina"/>
 
                     <h:outputLabel for="otra" value="Cual: *" />
-                    <p:inputText id="otra" value="#{gestionPermisoController.permiso.permiso.otraDisciplina}" 
-                                 disabled="#{gestionPermisoController.permiso.permiso.disciplina.id ne -1}" required="true"/>
+                    <p:inputText id="otra" value="#{gestionPermisoController.permiso.otraDisciplina}" 
+                                 disabled="#{gestionPermisoController.permiso.disciplina.id ne -1}" required="true"/>
                     <p:message for="otra"/>
                 </p:panelGrid>
             </p:panel>
+            
             <p:panel header="Otros Sectores Afectados">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="sectores" value="Sector:" />
@@ -40,7 +41,7 @@
                 </p:panelGrid>
 
                 <p:outputPanel id="sectores_afectados">
-                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.sectoresAfectados}" var="sector">
+                    <p:dataTable value="#{gestionPermisoController.permiso.sectoresAfectados}" var="sector">
                         <p:column headerText="Sector">
                             <h:outputText value="#{sector.nombre}"/>
                         </p:column>
@@ -54,7 +55,7 @@
             <p:panel id="pasos" header="Pasos para ejecutar el Permiso">
                 <p:commandLink update=":form:pasos" process="@this" actionListener="#{gestionPermisoController.addTarea}" value="Agregar Paso" 
                                rendered="#{gestionPermisoController.habMasTareas}" id="apaso"/>
-                <p:dataTable value="#{gestionPermisoController.permiso.tareasVista}"  var="tarea" id="tareas" editable="true">
+                <p:dataTable value="#{gestionPermisoController.permiso.tareas}"  var="tarea" id="tareas" editable="true">
                     <p:column headerText="Paso">
                         <h:outputText value="#{tarea.consecutivo}"/>
                     </p:column>
@@ -65,7 +66,7 @@
                              </f:facet>
                              <f:facet name="input">
                                  <p:inputText value="#{tarea.datos}" style="width:100%">
-                                     <p:ajax update=":form:pasos" listener="#{gestionPermisoController.diligenciarPaso}"/>
+                                     <p:ajax update=":form:pasos" listener="#{gestionPermisoController.guardarGestionTareas}"/>
                                  </p:inputText>
                              </f:facet>
                          </p:cellEditor>
@@ -79,7 +80,7 @@
                      </p:column>
                     <p:column headerText="Borrar">
                         <p:commandButton action="#{gestionPermisoController.borrarTarea(tarea)}"  icon="ui-icon-trash" 
-                                         disabled="#{tarea.datos eq null}" update=":form:pasos"/>
+                                         disabled="#{tarea.datos eq null}" update="@form"/>
                      </p:column>
                 </p:dataTable>
             </p:panel>

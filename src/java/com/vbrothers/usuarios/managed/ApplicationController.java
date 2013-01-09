@@ -4,6 +4,7 @@ package com.vbrothers.usuarios.managed;
 import com.vbrothers.common.services.CommonServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.services.PermisoTimerService;
+import com.vbrothers.util.EtapaPermiso;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
@@ -30,6 +31,12 @@ public class ApplicationController {
     private String ROL_INGENIERIA;
     private String ROL_MASTER;
     
+    //Etapas del permiso de trabajo
+    private EtapaPermiso DILIGENCIAR;
+    private EtapaPermiso APROBAR;
+    private EtapaPermiso TERMINAR;
+    private EtapaPermiso CANCELAR;
+    private EtapaPermiso FINALIZAR;
     
 
     @EJB
@@ -53,6 +60,12 @@ public class ApplicationController {
         ROL_VALIDADOR = locator.getParameter("rolValidador");
         ROL_JEFE_SECTOR = locator.getParameter("rolAutArea");
         ROL_GERENTE = locator.getParameter("rolGerente");
+        
+        TERMINAR = EtapaPermiso.TERMINAR;
+        CANCELAR = EtapaPermiso.CANCELAR;
+        FINALIZAR = EtapaPermiso.FINALIZAR;
+        DILIGENCIAR = EtapaPermiso.DILIGENCIAR;
+        APROBAR = EtapaPermiso.APROBAR;
     }
     
     public String preCargar(){
@@ -211,6 +224,41 @@ public class ApplicationController {
      */
     public void setROL_MASTER(String ROL_MASTER) {
         this.ROL_MASTER = ROL_MASTER;
+    }
+
+    /**
+     * @return the TERMINAR
+     */
+    public EtapaPermiso getTERMINAR() {
+        return TERMINAR;
+    }
+
+    /**
+     * @return the CANCELAR
+     */
+    public EtapaPermiso getCANCELAR() {
+        return CANCELAR;
+    }
+
+    /**
+     * @return the FINALIZAR
+     */
+    public EtapaPermiso getFINALIZAR() {
+        return FINALIZAR;
+    }
+
+    /**
+     * @return the DILIGENCIAR
+     */
+    public EtapaPermiso getDILIGENCIAR() {
+        return DILIGENCIAR;
+    }
+
+    /**
+     * @return the APROBAR
+     */
+    public EtapaPermiso getAPROBAR() {
+        return APROBAR;
     }
 
 }

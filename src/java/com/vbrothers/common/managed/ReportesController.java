@@ -86,7 +86,7 @@ public class ReportesController {
         if(FacesUtil.getPaginaRequest().matches(".*reportes.xhtml.*")){
             proceso = REPORTE;
         }
-        setReportes(FacesUtil.getSelectsItem(reporteService.getReportesByProcesoAndRol(proceso, sessionControler.getRoles())));
+        setReportes(FacesUtil.getSelectsItem(reporteService.getReportesByProcesoAndRol(proceso, sessionControler.getUsuario().getRolesUsr())));
     }
 
     public ReportesController() {

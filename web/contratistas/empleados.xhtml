@@ -11,61 +11,58 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:messages id="msgs" />
-            <p:commandLink update=":form"  process="@this"
-                           action="#{empleadoController.nuevoEmpleado}" value="Crear Empleado" ajax="false"/>
-
-            <sec:ifNotGranted roles="#{applicationController.ROL_CONTRATISTA}">
-            <p:panelGrid columns="3">
-                <h:outputLabel for="contratista" value="#{labels.contratista}" style="font-weight: bold;"/>
-                <p:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}" >
-                    <p:ajax  listener="#{empleadoController.cargarEmpleadosContratista}" update=":form:empleados"/>
-                    <f:selectItem itemLabel="Todos" itemValue="-2"  />
-                    <f:selectItems  value="#{empleadoController.contratistas}" />
-                    <f:selectItem itemLabel="Planta" itemValue="-1"  />
-                </p:selectOneMenu>
-            </p:panelGrid>
-            </sec:ifNotGranted>
+            <p:growl id="msgs" />
             
-            <p:outputPanel id="empleados">
-                <p:dataTable value="#{empleadoController.empleadosContratista}" var="empleado"
-                             paginator="true"
-                             rows="10"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                             paginatorPosition="top"
-                             paginatorAlwaysVisible="false">
-                    <p:column headerText="Num. Id." filterBy="#{empleado.numId}">
-                        <sec:ifNotGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_CONTRATISTA}, #{applicationController.ROL_GERENTE}">
-                            <h:outputText value="#{empleado.numId}"/>
-                        </sec:ifNotGranted>
-                        <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_CONTRATISTA}, #{applicationController.ROL_GERENTE}">
-                            <p:commandLink ajax="false" value="#{empleado.numId}" 
-                                           actionListener="#{empleadoController.mostrarEmpleadoContratista}" 
-                                           action="#{empleadoController.navEmpleado}">
-                                <f:attribute name="empleadoCambiar" value="#{empleado}" />
-                            </p:commandLink>
-                        </sec:ifAnyGranted>
-                        
-                    </p:column>
-                    <p:column headerText="#{labels.nombre}">
-                        <h:outputText value="#{empleado.nombresApellidos}"/>
-                    </p:column>
-                    <sec:ifAllGranted roles="#{applicationController.ROL_VALIDADOR}">
-                        <p:column headerText="#{labels.fecha_induccion}">
-                            <p:calendar value="#{empleado.fechaInduccion}" pattern="yyyy-MM-dd"  valueChangeListener="#{empleadoController.cambiarFechaEmpleado}">
-                                <f:attribute name="empleado" value="#{empleado}" />
-                                <p:ajax event="dateSelect" update=":form:msgs"/>
-                            </p:calendar>
+            <p:commandButton icon="ui-icon-document" action="#{empleadoController.crearNuevo}" value="Crear" ajax="false"/>
+            <p:panel header="Empleados">
+               
+                <sec:ifNotGranted roles="#{applicationController.ROL_CONTRATISTA}">
+                    <p:panelGrid columns="3">
+                        <h:outputLabel for="contratista" value="#{labels.contratista}" style="font-weight: bold;"/>
+                        <p:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}" >
+                            <p:ajax  listener="#{empleadoController.cargarEmpleadosContratista}" update=":form:empleados"/>
+                            <f:selectItem itemLabel="Todos" itemValue="-2"  />
+                            <f:selectItems  value="#{empleadoController.contratistas}" />
+                            <f:selectItem itemLabel="Planta" itemValue="-1"  />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </sec:ifNotGranted>
+
+                <p:outputPanel id="empleados">
+                    <p:dataTable value="#{empleadoController.empleadosContratista}" var="empleado"
+                                 paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                 paginatorPosition="top"
+                                 paginatorAlwaysVisible="false">
+                        <p:column headerText="Num. Id." filterBy="#{empleado.numId}">
+                            <sec:ifNotGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_CONTRATISTA}, #{applicationController.ROL_GERENTE}">
+                                <h:outputText value="#{empleado.numId}"/>
+                            </sec:ifNotGranted>
+                            <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_CONTRATISTA}, #{applicationController.ROL_GERENTE}">
+                                <p:commandLink ajax="false" value="#{empleado.numId}" action="#{empleadoController.consultarEmpleado(empleado)}"/>
+                            </sec:ifAnyGranted>
                         </p:column>
-                        <p:column headerText="#{labels.activar}">
-                            <p:selectBooleanCheckbox value="#{empleado.activo}" valueChangeListener="#{empleadoController.activarEmpleado}">
-                                <p:ajax update=":form:msgs"/>
-                                <f:attribute name="empleado" value="#{empleado}" />
-                            </p:selectBooleanCheckbox>
+                        <p:column headerText="#{labels.nombre}">
+                            <h:outputText value="#{empleado.nombresApellidos}"/>
                         </p:column>
-                    </sec:ifAllGranted>
-                </p:dataTable>
-            </p:outputPanel>
+                        <sec:ifAllGranted roles="#{applicationController.ROL_VALIDADOR}">
+                            <p:column headerText="#{labels.fecha_induccion}">
+                                <p:calendar value="#{empleado.fechaInduccion}" pattern="yyyy-MM-dd"  valueChangeListener="#{empleadoController.cambiarFechaEmpleado}">
+                                    <f:attribute name="empleado" value="#{empleado}" />
+                                    <p:ajax event="dateSelect" update=":form:msgs"/>
+                                </p:calendar>
+                            </p:column>
+                            <p:column headerText="#{labels.activar}">
+                                <p:selectBooleanCheckbox value="#{empleado.activo}" valueChangeListener="#{empleadoController.activarEmpleado}">
+                                    <p:ajax update=":form:msgs"/>
+                                    <f:attribute name="empleado" value="#{empleado}" />
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                        </sec:ifAllGranted>
+                    </p:dataTable>
+                </p:outputPanel>
+            </p:panel>
         </h:form>
    </ui:define>
   </ui:composition>

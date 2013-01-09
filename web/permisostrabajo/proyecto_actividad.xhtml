@@ -15,7 +15,7 @@
             <p:panel header="Diligencie los datos de la Actividad (Permiso de Trabajo)">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="area" value="#{labels.area_sitio}" />
-                    <h:selectOneMenu id="area" value="#{proyectoController.permiso.permiso.sector.id}" 
+                    <h:selectOneMenu id="area" value="#{proyectoController.permiso.sector.id}" 
                                      valueChangeListener="#{proyectoController.buscarEquiposXSector}">
                         <f:selectItems  value="#{proyectoController.sectores}" />
                         <p:ajax update=":form:equipo"/>
@@ -23,7 +23,7 @@
                     <p:message for="area"/>
                     
                     <h:outputLabel for="equipo" value="#{labels.equipo_intervenido}" />
-                    <h:selectOneMenu id="equipo" value="#{proyectoController.permiso.permiso.equipo.id}">
+                    <h:selectOneMenu id="equipo" value="#{proyectoController.permiso.equipo.id}">
                         <f:selectItem itemValue="#{null}" itemLabel=""/>
                         <f:selectItems  value="#{proyectoController.equipos}" />
                         <p:ajax/>
@@ -31,22 +31,22 @@
                     <p:message for="equipo"/>
                         
                     <h:outputLabel for="desc_tarea" value="#{labels.tarea}" />
-                    <p:inputTextarea id="desc_tarea" cols="50" value="#{proyectoController.permiso.permiso.tarea}" required="true">
+                    <p:inputTextarea id="desc_tarea" cols="50" value="#{proyectoController.permiso.tarea}" required="true">
                             <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="desc_tarea"/>
                         
                     <h:outputLabel for="fecha_ini" value="Fecha Inicio"/>
-                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.permiso.fechaHoraIni}" 
+                    <p:calendar id="fecha_ini" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.fechaHoraIni}" 
                                 mindate="#{proyectoController.fechaIniProy}" maxdate="#{proyectoController.fechaFinProy}" required="true">
                         <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIniPer}" update="fecha_fin"/>
                     </p:calendar>
                     <p:message for="fecha_ini"/>
                     
                     <h:outputLabel for="fecha_fin" value="Fecha Fin"/>
-                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.permiso.fechaHoraFin}" required="true"
+                    <p:calendar id="fecha_fin" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.fechaHoraFin}" required="true"
                                 mindate="#{proyectoController.fechaIniPer}" maxdate="#{proyectoController.fechaFinProy}"
-                                disabled="#{proyectoController.permiso.permiso.fechaHoraIni eq null}">
+                                disabled="#{proyectoController.permiso.fechaHoraIni eq null}">
                        <p:ajax event="dateSelect"/>
                     </p:calendar>
                     <p:message for="fecha_fin"/>
@@ -55,7 +55,7 @@
                     <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
                     <p:selectOneRadio id="tipo_ejecutante" value="#{proyectoController.tipoEjecutante}" 
                                       valueChangeListener="#{proyectoController.seleccionarTipoEjecutante}"
-                                      disabled="#{proyectoController.permiso.permiso.id ne null}">
+                                      disabled="#{proyectoController.permiso.id ne null}">
                         <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{proyectoController.EMPLEADO}" />
                         <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{proyectoController.CONTRATISTA}" />
                         <p:ajax update="@form"/>
@@ -66,19 +66,19 @@
                     <h:outputLabel id="l_empleado" for="empleado" value="#{labels.empleado}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"/>
                     <p:selectOneMenu id="empleado" value="#{proyectoController.idEmpleado}" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
-                                     disabled="#{proyectoController.permiso.permiso.id ne null}">
+                                     disabled="#{proyectoController.permiso.id ne null}">
                         <f:selectItems  value="#{creaPermisoController.empleados}" />
                         <p:ajax/>
                     </p:selectOneMenu>
                     <p:commandButton id="b_empleado" actionListener="#{proyectoController.addEmpleado}" icon="ui-icon-plus" update="@form" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.EMPLEADO}"
-                                     disabled="#{proyectoController.permiso.permiso.id ne null}"/>
+                                     disabled="#{proyectoController.permiso.id ne null}"/>
                     
                     
                     <h:outputLabel id="l_contratista" for="contratista" value="#{labels.contratista}" rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}" />
                     <p:selectOneMenu id="contratista" value="#{proyectoController.permiso.contratista.id}" 
                                      rendered="#{proyectoController.tipoEjecutante eq proyectoController.CONTRATISTA}"
-                                     disabled="#{proyectoController.permiso.permiso.id ne null}">
+                                     disabled="#{proyectoController.permiso.id ne null}">
                         <f:selectItems  value="#{proyectoController.contratistas}" />
                         <p:ajax/>
                     </p:selectOneMenu>
@@ -100,7 +100,7 @@
                         </p:column>
                         <p:column headerText="Borrar">
                             <p:commandButton icon="ui-icon-trash" update="@form" actionListener="#{proyectoController.removeEmpleado(empleado)}" 
-                                           disabled="#{proyectoController.permiso.permiso.id ne null}"/>
+                                           disabled="#{proyectoController.permiso.id ne null}"/>
                         </p:column>
                     </p:dataTable>
                     

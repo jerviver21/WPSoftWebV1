@@ -27,19 +27,19 @@
                     </f:facet> 
                     <p:row>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.id}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.tarea}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.usuarioCreacion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.sector.nombre}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.estadoPermiso.descripcion}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -57,7 +57,7 @@
                 </p:panelGrid>
 
                 <p:outputPanel id="certificados">
-                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.certificados}" var="item">
+                    <p:dataTable value="#{gestionPermisoController.permiso.certificados}" var="item">
                         <p:column headerText="Certificado">
                             <h:outputText value="#{item.certificado.nombre}"/>
                         </p:column>
@@ -76,7 +76,7 @@
             
             <p:panel header="Consideraciones Requeridas">
                 <p:panelGrid columns="2">
-                    <p:inputTextarea id="consideraciones" value="#{gestionPermisoController.permiso.permiso.consideraciones}" 
+                    <p:inputTextarea id="consideraciones" value="#{gestionPermisoController.permiso.consideraciones}" 
                                       cols="100"/>
                     <p:message for="consideraciones"/>
                 </p:panelGrid>

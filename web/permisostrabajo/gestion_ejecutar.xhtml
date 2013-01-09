@@ -32,35 +32,35 @@
                     </f:facet> 
                     <p:row>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.id}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.tarea}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.usuarioCreacion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.sector.nombre}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.estadoPermiso.descripcion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.disciplina.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.disciplina.nombre}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>
                 <p:separator/>
                 <h:panelGrid columns="2">
                     <p:outputLabel value="Consideraciones Requeridas:"/>
-                    <h:outputText value="#{gestionPermisoController.permiso.permiso.consideraciones}"/>
+                    <h:outputText value="#{gestionPermisoController.permiso.consideraciones}"/>
                 </h:panelGrid>
                 <p:separator/>
                 <h:panelGrid columns="2">
                    <p:outputLabel value="Otros Sectores Afectados: "/>
-                   <p:dataList value="#{gestionPermisoController.permiso.permiso.sectoresAfectados}" var="sector" 
-                               rendered="#{not empty  gestionPermisoController.permiso.permiso.sectoresAfectados}">
+                   <p:dataList value="#{gestionPermisoController.permiso.sectoresAfectados}" var="sector" 
+                               rendered="#{not empty  gestionPermisoController.permiso.sectoresAfectados}">
                         <p:column headerText="Sector">
                             <h:outputText value="#{sector.nombre}"/>
                         </p:column>
@@ -69,7 +69,7 @@
                 
                 <p:separator/>
                 
-                <p:dataTable value="#{gestionPermisoController.permiso.permiso.tareas}"  var="tarea" id="tareas" editable="true">
+                <p:dataTable value="#{gestionPermisoController.permiso.tareas}"  var="tarea" id="tareas" editable="true">
                     <p:column style="width:4%">  
                         <p:rowToggler />  
                     </p:column> 
@@ -106,20 +106,20 @@
                     <f:facet name="header">
                         <h:outputText value="Observaciones:"/>
                     </f:facet>
-                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.notaGestion}"  cols="50">
                          <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="nota"/>
                     <f:facet name="footer">
                         <p:commandButton value="Terminar" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
                                          oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.TERMINAR}"/>
+                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.TERMINAR}"/>
                         <p:commandButton value="Cancelar" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
                                          oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.CANCELAR}"/>
+                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.CANCELAR}"/>
                         <p:commandButton value="Finalizar" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
                                          oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq gestionPermisoController.permiso.FINALIZAR}"/>
+                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.FINALIZAR}"/>
                     </f:facet>
                 </p:panelGrid>
                 <p:spacer height="20" width="100"/>

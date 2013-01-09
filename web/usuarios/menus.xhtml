@@ -48,43 +48,24 @@
 
 
             <p:outputPanel id="menus">
-                <p:commandLink update="@form" actionListener="#{menusController.nuevo}" value="Nuevo Menu"/>
+                <p:commandButton update="@form" actionListener="#{menusController.nuevo}" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{menusController.menus}" var="menu"
                              paginator="true"
                              rows="10"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Nombre" />
-                        </f:facet>
+                    <p:column headerText="Nombre">
                         <h:outputText value="#{menu.nombre}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Menu" />
-                        </f:facet>
+                    <p:column headerText="Menu">
                         <h:outputText value="#{menu.menuPadre.nombre}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:menus :form:msgs"  process="@this" actionListener="#{menusController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="menuCambiar" value="#{menu}" />
-                            <p:collector value="#{menu}" removeFrom="#{menusController.menus}"/>
-                        </p:commandLink>
+                    <p:column headerText="Borrar" >
+                        <p:commandButton update=":form:menus :form:msgs"  process="@this" actionListener="#{menusController.borrar(menu)}" icon="ui-icon-trash"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar" />
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{menusController.actualizar}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="menuCambiar" value="#{menu}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar" >
+                        <p:commandButton update="@form"  process="@this" actionListener="#{menusController.actualizar(menu)}" icon="ui-icon-pencil"/>
                     </p:column>
 
                 </p:dataTable>

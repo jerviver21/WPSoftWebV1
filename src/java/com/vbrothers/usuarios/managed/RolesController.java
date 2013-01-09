@@ -49,7 +49,7 @@ public class RolesController {
         }
     }
     
-    public void nuevo(ActionEvent event){
+    public void nuevo(){
         init();
     }
 
@@ -107,9 +107,8 @@ public class RolesController {
         return null;
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Rol r){
         try {
-            Rol r  = (Rol) event.getComponent().getAttributes().get("rolCambiar");
             roles.remove(r);
             rolService.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO,"Rol borrado con exito!!");
@@ -119,8 +118,7 @@ public class RolesController {
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Rol r  = (Rol) event.getComponent().getAttributes().get("rolCambiar");
+    public void actualizar(Rol r){
         Set<Resource> recursosRol = rolService.findResourceByRol(r);
         for(Resource g : getRecursos()){
             if(recursosRol.contains(g)){

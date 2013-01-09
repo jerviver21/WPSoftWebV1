@@ -27,24 +27,24 @@
                     </f:facet> 
                     <p:row>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.id}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.tarea}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.usuarioCreacion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.sector.nombre}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <p:inplace editor="true" label="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}">  
-                                <h:selectOneMenu value="#{gestionPermisoController.permiso.permiso.estadoPermiso.id}" valueChangeListener="#{gestionPermisoController.cambiarEstado}">  
-                                    <f:selectItem  itemValue="#{gestionPermisoController.permiso.permiso.estadoPermiso.id}"  
-                                                   itemLabel="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/> 
-                                    <f:selectItem  itemValue="#{gestionPermisoController.permiso.permiso.estadoAnterior.id}"  
-                                                   itemLabel="#{gestionPermisoController.permiso.permiso.estadoAnterior.descripcion}"/> 
+                            <p:inplace editor="true" label="#{gestionPermisoController.permiso.estadoPermiso.descripcion}">  
+                                <h:selectOneMenu value="#{gestionPermisoController.permiso.estadoPermiso.id}" valueChangeListener="#{gestionPermisoController.cambiarEstado}">  
+                                    <f:selectItem  itemValue="#{gestionPermisoController.permiso.estadoPermiso.id}"  
+                                                   itemLabel="#{gestionPermisoController.permiso.estadoPermiso.descripcion}"/> 
+                                    <f:selectItem  itemValue="#{gestionPermisoController.permiso.estadoAnterior.id}"  
+                                                   itemLabel="#{gestionPermisoController.permiso.estadoAnterior.descripcion}"/> 
                                     <p:ajax update="@form"/>
                                 </h:selectOneMenu>  
                             </p:inplace> 
@@ -57,7 +57,7 @@
                 <p:commandButton icon="ui-icon-document" value="Agregar Nota" oncomplete="dlg_nota.show()"/>
                 
                 <p:outputPanel id="notas">
-                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.notas}" var="item">
+                    <p:dataTable value="#{gestionPermisoController.permiso.notas}" var="item">
                         <p:column headerText="Nota">
                             <h:outputText value="#{item.nota}"/>
                         </p:column>
@@ -84,6 +84,8 @@
                 </p:panelGrid>
                 <p:spacer height="20" width="100"/>
             </p:dialog>
+            
+            <p:commandButton icon="ui-icon-disk" value="Guardar" action="#{gestionPermisoController.guardarValidacion}"/>
             
 
             

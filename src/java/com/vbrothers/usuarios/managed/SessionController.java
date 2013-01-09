@@ -1,7 +1,5 @@
 package com.vbrothers.usuarios.managed;
 
-import com.vbrothers.common.managed.GeneralController;
-import com.vbrothers.common.services.CommonServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.usuarios.dominio.Groups;
 import com.vbrothers.usuarios.dominio.Users;
@@ -32,10 +30,7 @@ public class SessionController {
 
     private UsernamePasswordAuthenticationToken principal;
     private Collection<GrantedAuthority> grantedAuthorities;
-    private Set<String> roles;
-    private Set<String> grupos;
-    
-    private boolean validador = false;
+
 
     
     @PostConstruct
@@ -44,29 +39,24 @@ public class SessionController {
         principal = (UsernamePasswordAuthenticationToken)FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
 
         grantedAuthorities = principal.getAuthorities();
-        roles = new HashSet<String>();
+        Set roles = new HashSet<String>();
         for(GrantedAuthority autoridad: grantedAuthorities){
             roles.add(autoridad.getAuthority());
         }
         String nombreUsuario = principal.getName();
         setUsuario(usersServices.findFullUser(nombreUsuario));
-        setGrupos(new HashSet<String>());
+        Set grupos = new HashSet<String>();
         for(Groups g : usuario.getGrupos()){
-            getGrupos().add(g.getCodigo());
-            if(g.getCodigo().equalsIgnoreCase(ServiceLocator.getInstance().getParameter("grupoValidador"))){
-                setValidador(true);
-            }
+            grupos.add(g.getCodigo());
         }
-        usuario.setRoles(roles);
+        usuario.setRolesUsr(roles);
         usuario.setGruposUsr(grupos);
         restartModel();
     }
 
     public void restartModel(){
-        setModel(FacesUtil.getMenu(getUsuario().getRecursosUsr()));
+        setModel(FacesUtil.getMenu(getUsuario().getRecursos()));
     }
-    
-    
     
 
     /**
@@ -125,46 +115,6 @@ public class SessionController {
         this.grantedAuthorities = grantedAuthorities;
     }
 
-    /**
-     * @return the roles
-     */
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    /**
-     * @param roles the roles to set
-     */
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    /**
-     * @return the grupos
-     */
-    public Set<String> getGrupos() {
-        return grupos;
-    }
-
-    /**
-     * @param grupos the grupos to set
-     */
-    public void setGrupos(Set<String> grupos) {
-        this.grupos = grupos;
-    }
-
-    /**
-     * @return the validador
-     */
-    public boolean isValidador() {
-        return validador;
-    }
-
-    /**
-     * @param validador the validador to set
-     */
-    public void setValidador(boolean validador) {
-        this.validador = validador;
-    }
+    
     
 }

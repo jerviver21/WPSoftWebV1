@@ -4,7 +4,6 @@ package com.vbrothers.contratistas.managed;
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.common.exceptions.ParametroException;
 import com.vbrothers.locator.ServiceLocator;
-
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
@@ -18,7 +17,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 
 /**
  * @author Jerson Viveros
@@ -37,12 +35,12 @@ public class ContratistaController {
     @EJB
     private ContratistaServicesLocal contratistasService;
 
-    
+    public ContratistaController() {
+    }
 
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
-        
         contratistas = contratistasService.findAll();
     }
 
@@ -50,10 +48,7 @@ public class ContratistaController {
         setContratista(new Contratista(null));
         getContratista().setEmpleados(new ArrayList<Empleado>());
         permitirAddEmpleados = false;
-    }
-
-    public ContratistaController() {
-    }
+    }    
 
     public String guardar(){
         try {
@@ -85,26 +80,18 @@ public class ContratistaController {
     }
     
     
-    
-    public void nuevoContratista(ActionEvent event){
+    //Eventos de la página contratistas.xhtml
+    public String crearNuevo(){
         initContratista();
         permitirAddEmpleados = false;
-    }
-
-
-    public String crearNuevoContratista(){
-        initContratista();
-        return "/contratistas/contratista.xhtml";
-    }
-    
-    public String navContratista(){
         return "/contratistas/contratista.xhtml";
     }
 
-    public void updateContratista(ActionEvent evento){
-         contratista  = (Contratista) evento.getComponent().getAttributes().get("itemCambiar");
+    public String updateContratista(Contratista c){
+         contratista  = c;
          contratista = contratistasService.find(contratista.getId());
          permitirAddEmpleados = true;
+         return "/contratistas/contratista.xhtml";
     }
 
 

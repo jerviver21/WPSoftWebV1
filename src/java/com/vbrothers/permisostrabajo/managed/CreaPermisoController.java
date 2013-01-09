@@ -11,7 +11,6 @@ import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
 import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
-import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
@@ -47,7 +46,7 @@ public class CreaPermisoController {
     SessionController sesion;
     
     /*Permite la creación y consulta de permisos de trabajo*/
-    private PermisoTrabajoTO permiso;
+    private PermisoTrabajo permiso;
     private List<SelectItem> equipos;
     private List<SelectItem> sectores;
     private List<SelectItem> contratistas;
@@ -98,16 +97,16 @@ public class CreaPermisoController {
         equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
-        setEstados(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS)));
+        estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS));
         fechaActual = fd.format(new Date());
         crearNuevoPermiso();
     }
     
     //Métodos para procesar eventos de permisos.xhtml
     public String crearNuevoPermiso(){
-        setPermiso(new PermisoTrabajoTO(sesion.getUsuario()));
-        if(permiso.getPermiso().getSector().getId() != null && permiso.getPermiso().getSector().getId() != 0){
-            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        setPermiso(new PermisoTrabajo(sesion.getUsuario()));
+        if(permiso.getSector().getId() != null && permiso.getSector().getId() != 0){
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getSector().getId()));
         }
         tipoEjecutante = EMPLEADO;
         return PAG_SEL_TIPO;
@@ -127,20 +126,20 @@ public class CreaPermisoController {
     }
     
     public String consultarTrazabilidad(PermisoTrabajo p){
-        setTraz(permisoService.findTrazabilidadPermiso(p));
+        traz = permisoService.findTrazabilidadPermiso(p);
         permiso = permisoService.findPermisoForCreacion(p.getId());
-        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
-        permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
-        if(permiso.getPermiso().getFechaHoraIni() != null){
-            fechaIni = fd.format(permiso.getPermiso().getFechaHoraIni());
+        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getSector().getId()));
+        permiso.setEquipo(permiso.getEquipo() == null ? new Equipo(null) : permiso.getEquipo());
+        if(permiso.getFechaHoraIni() != null){
+            fechaIni = fd.format(permiso.getFechaHoraIni());
         }
         
-        if(permiso.getPermiso().getNumOrden() != null){
+        if(permiso.getNumOrden() != null){
             tipoPermiso = ORDEN_TRABAJO;
         }else{
             tipoPermiso = CORRECTIVO_SIN_ORDEN;
         }
-        if(permiso.getPermiso().isEjecutorContratista()){
+        if(permiso.isEjecutorContratista()){
             tipoEjecutante = CONTRATISTA;
         }else{
             tipoEjecutante = EMPLEADO;
@@ -155,9 +154,9 @@ public class CreaPermisoController {
     
     public void seleccionarTipoPermiso(ValueChangeEvent event){
         setTipoPermiso((int) (Integer)event.getNewValue());
-        permiso.getPermiso().setProyecto(null);
+        permiso.setProyecto(null);
         if(getTipoPermiso() == getCORRECTIVO_SIN_ORDEN()){
-            permiso.getPermiso().setNumOrden(null);
+            permiso.setNumOrden(null);
         }
     }
     
@@ -167,25 +166,25 @@ public class CreaPermisoController {
     
     //Métodos para procesar eventos de creacion_trazabilidad.xhtml
     public String consultarDatosPermiso(){
-        if(permiso.getPermiso().getProyecto() != null){
+        if(permiso.getProyecto() != null){
             ProyectoController pc = (ProyectoController)FacesUtil.getManagedBean("#{proyectoController}");
-            pc.consultarProyecto(permiso.getPermiso().getProyecto());
-            return pc.consultarPermiso(permiso.getPermiso());
+            pc.consultarProyecto(permiso.getProyecto());
+            return pc.consultarPermiso(permiso);
         }
         return PAG_DATOS;
     }
     
     public void cambiarEstado(ValueChangeEvent event){
         int estado = (int) (Integer)event.getNewValue();
-        if(permiso.getPermiso().getEstadoPermiso().getId() != estado){
-            if(permiso.getPermiso().getEquipo().getId() == null ||  permiso.getPermiso().getEquipo().getId() == 0 ){
-                permiso.getPermiso().setEquipo(null);
+        if(permiso.getEstadoPermiso().getId() != estado){
+            if(permiso.getEquipo().getId() == null ||  permiso.getEquipo().getId() == 0 ){
+                permiso.setEquipo(null);
             }
-            permisoService.cambiarEstado(permiso.getPermiso(), estado);
+            permisoService.cambiarEstado(permiso, estado);
             
         }
-        permisos.remove(permiso.getPermiso());
-        permisos.add(permiso.getPermiso());
+        permisos.remove(permiso);
+        permisos.add(permiso);
     }
     
     
@@ -204,9 +203,9 @@ public class CreaPermisoController {
     public void buscarEquiposXSector(ValueChangeEvent event){
         int sector = (int) (Integer)event.getNewValue();
         if(equiposXgrupo.get(sector) != null){
-            setEquipos(FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sector)));
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sector));
         }else{
-            setEquipos(new ArrayList<SelectItem>());
+            equipos = new ArrayList<SelectItem>();
         }
         
     }
@@ -222,21 +221,21 @@ public class CreaPermisoController {
     }
     
     public void formatearFechaIni(DateSelectEvent event){
-        fechaIni = fd.format(permiso.getPermiso().getFechaHoraIni());
+        fechaIni = fd.format(permiso.getFechaHoraIni());
     }
     
     public String guardarPermiso(){
         try {
-            if(permiso.getPermiso().getId() == null){
+            if(permiso.getId() == null){
                 permisoService.crearPermiso(permiso);
             }else{
-                if(permiso.getPermiso().getEquipo().getId() == null || permiso.getPermiso().getEquipo().getId() == 0 ){
-                    permiso.getPermiso().setEquipo(null);
+                if(permiso.getEquipo().getId() == null || permiso.getEquipo().getId() == 0 ){
+                    permiso.setEquipo(null);
                 }
                 permisoService.actualizarPermiso(permiso);
-                permisos.remove(permiso.getPermiso());
+                permisos.remove(permiso);
             }
-            permisos.add(permiso.getPermiso());
+            permisos.add(permiso);
             FacesUtil.addMessage(FacesUtil.INFO, "El permiso de trabajo fue guardado!");  
         }  catch (ValidacionException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error de validación: "+e.getMessage());
@@ -258,14 +257,14 @@ public class CreaPermisoController {
     /**
      * @return the PermisoTrabajo
      */
-    public PermisoTrabajoTO getPermiso() {
+    public PermisoTrabajo getPermiso() {
         return permiso;
     }
 
     /**
      * @param PermisoTrabajo the PermisoTrabajo to set
      */
-    public void setPermiso(PermisoTrabajoTO PermisoTrabajo) {
+    public void setPermiso(PermisoTrabajo PermisoTrabajo) {
         this.permiso = PermisoTrabajo;
     }
 
@@ -277,38 +276,18 @@ public class CreaPermisoController {
     }
 
     /**
-     * @param PermisoTrabajos the PermisoTrabajos to set
-     */
-    public void setPermisos(List<PermisoTrabajo> PermisoTrabajos) {
-        this.permisos = PermisoTrabajos;
-    }
-
-    /**
      * @return the equipos
      */
     public List<SelectItem> getEquipos() {
         return equipos;
     }
 
-    /**
-     * @param equipos the equipos to set
-     */
-    public void setEquipos(List<SelectItem> equipos) {
-        this.equipos = equipos;
-    }
 
     /**
      * @return the areas
      */
     public List<SelectItem> getSectores() {
         return sectores;
-    }
-
-    /**
-     * @param areas the areas to set
-     */
-    public void setSectores(List<SelectItem> areas) {
-        this.sectores = areas;
     }
 
     /**
@@ -319,24 +298,10 @@ public class CreaPermisoController {
     }
 
     /**
-     * @param contratistas the contratistas to set
-     */
-    public void setContratistas(List<SelectItem> contratistas) {
-        this.contratistas = contratistas;
-    }
-
-    /**
      * @return the empleados
      */
     public List<SelectItem> getEmpleados() {
         return empleados;
-    }
-
-    /**
-     * @param empleados the empleados to set
-     */
-    public void setEmpleados(List<SelectItem> empleados) {
-        this.empleados = empleados;
     }
 
     /**
@@ -417,13 +382,6 @@ public class CreaPermisoController {
     }
 
     /**
-     * @param estados the estados to set
-     */
-    public void setEstados(List<SelectItem> estados) {
-        this.estados = estados;
-    }
-
-    /**
      * @return the estadoBusqueda
      */
     public int getEstadoBusqueda() {
@@ -470,13 +428,6 @@ public class CreaPermisoController {
      */
     public List<TrazabilidadPermiso> getTraz() {
         return traz;
-    }
-
-    /**
-     * @param traz the traz to set
-     */
-    public void setTraz(List<TrazabilidadPermiso> traz) {
-        this.traz = traz;
     }
 
     /**

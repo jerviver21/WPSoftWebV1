@@ -3,8 +3,7 @@
      xmlns:h="http://java.sun.com/jsf/html"
      xmlns:p="http://primefaces.org/ui"
      xmlns:f="http://java.sun.com/jsf/core"
-     xmlns:ui="http://java.sun.com/jsf/facelets"
-     xmlns:sec="http://www.springframework.org/security/facelets/tags">
+     xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
 <ui:composition template="../plantilla1.xhtml">
     <ui:define name="navegador">
@@ -24,7 +23,7 @@
                 </f:facet>
                 <p:row>
                     <p:column><h:outputLabel for="nombre" value="Nombre: *" /></p:column>
-                    <p:column><p:inputText id="nombre" value="#{sectorController.item.nombre}" required="true" /></p:column>
+                    <p:column><p:inputText id="nombre" value="#{sectorController.item.nombre}" required="true" ><p:ajax/></p:inputText></p:column>
                     <p:column><p:message for="nombre"/></p:column>
                 </p:row>
                 <p:row>
@@ -45,27 +44,18 @@
                                         <p:ajax/>
                                     </p:inputText>
                                     <p:message for="nombre_equipo"/>
-                                    <p:commandLink update=":form:equipos"  process="@this" actionListener="#{sectorController.addEquipo()}" value="Agregar Equipo"/>
+                                    <p:commandButton update=":form:equipos"  process="@this" actionListener="#{sectorController.addEquipo}" icon="ui-icon-plus"/>
                                 </p:panelGrid>
                                 <p:dataTable value="#{sectorController.item.equipos}" var="equipo"
                                              paginator="true" rows="5"
                                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                              paginatorAlwaysVisible="false"
                                              paginatorPosition="top">
-                                    <p:column>
-                                        <f:facet name="header">
-                                            <h:outputText value="Nombre" />
-                                        </f:facet>
+                                    <p:column headerText="Nombre">
                                         <h:outputText value="#{equipo.nombre}"/>
                                     </p:column>
-                                    <p:column>
-                                        <f:facet name="header">
-                                            <h:outputText value="Borrar" />
-                                        </f:facet>
-                                        <p:commandLink update=":form"  process="@this" actionListener="#{sectorController.removeEquipo}" ajax="true">
-                                            <p:graphicImage value="/images/cross.gif"/>
-                                            <f:attribute name="itemBorrar" value="#{equipo}" />
-                                        </p:commandLink>
+                                    <p:column headerText="Borrar">
+                                        <p:commandButton update=":form"  process="@this" actionListener="#{sectorController.removeEquipo(equipo)}" icon="ui-icon-trash"/>
                                     </p:column>
                                 </p:dataTable>
                             </p:tab>
@@ -76,9 +66,7 @@
                 <f:facet name="footer">
                     <p:row>
                         <p:column colspan="3">
-                            <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" ajax="true">
-                                <p:collector value="#{sectorController.item}" addTo="#{sectorController.items}"/>
-                            </p:commandButton>
+                            <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" icon="ui-icon-disk"/>
                         </p:column>
                     </p:row>
                 </f:facet>
@@ -92,42 +80,21 @@
 
 
             <p:outputPanel id="sectores">
-                <p:commandLink actionListener="#{sectorController.crearNuevo}" update="@form" value="Crear Nuevo"/>
+                <p:commandButton actionListener="#{sectorController.crearNuevo}" update="@form" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{sectorController.items}" var="item" >
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Nombre" />
-                        </f:facet>
+                    <p:column headerText="Nombre">
                         <h:outputText value="#{item.nombre}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Grupo" />
-                        </f:facet>
+                    <p:column headerText="Grupo" >
                         <h:outputText value="#{item.grupo}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:sectores :form:msgs"  process="@this" actionListener="#{sectorController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="itemCambiar" value="#{item}" />
-                            <p:collector value="#{item}" removeFrom="#{sectorController.items}"/>
-                        </p:commandLink>
+                    <p:column headerText="Borrar">
+                        <p:commandButton update=":form:sectores :form:msgs"  process="@this" actionListener="#{sectorController.borrar(item)}" icon="ui-icon-trash"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar" />
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{sectorController.actualizar}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="itemCambiar" value="#{item}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar">
+                        <p:commandButton update="@form"  process="@this" actionListener="#{sectorController.actualizar(item)}" icon="ui-icon-pencil"/>
                     </p:column>
-
                 </p:dataTable>
-
             </p:outputPanel>
         </h:form>
    </ui:define>

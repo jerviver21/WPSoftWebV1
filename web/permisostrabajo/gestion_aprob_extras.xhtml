@@ -14,7 +14,7 @@
             <p:growl id="msgs" />
             <p:panel header="Certificados">
                 <p:outputPanel id="certificados">
-                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.certificados}" var="item" editable="true">
+                    <p:dataTable value="#{gestionPermisoController.permiso.certificados}" var="item" editable="true">
                         <p:column headerText="Certificado">
                             <h:outputText value="#{item.certificado.nombre}"/>
                         </p:column>
@@ -59,7 +59,7 @@
                     <p:commandButton actionListener="#{gestionPermisoController.agregarAprobador}" icon="ui-icon-plus" update="@form"/>
 
                     <h:outputLabel value="Aprobadores"/>
-                    <p:dataTable value="#{gestionPermisoController.permiso.aprobadoresAdicionales}" var="aprobador">
+                    <p:dataTable value="#{gestionPermisoController.permiso.otrosAprobadores}" var="aprobador">
                         <p:column headerText="Id">
                             <h:outputText value="#{aprobador}"/>
                         </p:column>
@@ -78,7 +78,7 @@
                     <f:facet name="header">
                         <h:outputText value="Observaciones:"/>
                     </f:facet>
-                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.nota}"  cols="50">
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.notaGestion}"  cols="50">
                          <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="nota"/>

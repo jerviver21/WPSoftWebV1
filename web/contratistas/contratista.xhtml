@@ -14,8 +14,7 @@
             <h:inputHidden value="#{contratistaController.contratista.id}"/>
             <p:growl id="msgs" />
             <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
-                <p:commandLink update=":form"  process="@this"
-                                   actionListener="#{contratistaController.nuevoContratista}" value="Crear Nuevo Contratista"/>
+                <p:commandButton update="@form" action="#{contratistaController.crearNuevo}" value="Crear" icon="ui-icon-document"/>
             </sec:ifAnyGranted>
             <p:panel header="#{labels.datos_contratista}">
                 
@@ -81,7 +80,7 @@
                     
                     <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
                         <f:facet name="footer">
-                            <p:commandButton value="#{labels.boton_enviar}" update="@form" action="#{contratistaController.guardar}" ajax="false"/>
+                            <p:commandButton value="Guardar" icon="ui-icon-disk" update="@form" action="#{contratistaController.guardar}" ajax="false"/>
                         </f:facet>
                     </sec:ifAnyGranted>    
                 </p:panelGrid>
@@ -91,55 +90,32 @@
 
             <p:panel id="empleados" header="#{labels.empleados}">
                 <h:panelGrid columns="1">
-                    <p:commandLink ajax="false" process="@this" 
-                                action="#{empleadoController.navEmpleado}"
-                                disabled="#{!contratistaController.permitirAddEmpleados}">
-                        #{labels.crear_empleado}
-                    </p:commandLink>
+                    <p:commandButton ajax="false" action="#{empleadoController.crearNuevo}" 
+                                     disabled="#{!contratistaController.permitirAddEmpleados}" value="Agregar" icon="ui-icon-plus"/>
                 </h:panelGrid>
                 <p:dataTable value="#{contratistaController.contratista.empleados}" var="empleado" paginator="true"
                              rows="20"
-                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.num_id}" />
-                        </f:facet>
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             paginatorAlwaysVisible="false"
+                             paginatorPosition="bottom">
+                    <p:column headerText="#{labels.num_id}">
                         <h:outputText value="#{empleado.numId}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.nombre}" />
-                        </f:facet>
+                    <p:column headerText="#{labels.nombre}">
                         <h:outputText value="#{empleado.nombresApellidos}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.activar}" />
-                        </f:facet>
+                    <p:column headerText="#{labels.activar}">
                         <p:selectBooleanCheckbox value="#{empleado.activo}"/>
                     </p:column>
                     <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
-                        <p:column >
-                            <f:facet name="header">
-                                <h:outputText value="Vetar" />
-                            </f:facet>
+                        <p:column headerText="Vetar">
                             <p:selectBooleanCheckbox value="#{empleado.betado}"/>
                         </p:column>
                     </sec:ifAnyGranted>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="#{labels.actualizar}" />
-                        </f:facet>
-                        <p:commandLink ajax="false"  process="@this" 
-                                       actionListener="#{empleadoController.mostrarEmpleadoContratista}" 
-                                       action="#{empleadoController.navEmpleado}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="empleadoCambiar" value="#{empleado}" />
-                        </p:commandLink>
+                    <p:column headerText="#{labels.actualizar}">
+                        <p:commandButton ajax="false" icon="ui-icon-pencil"  action="#{empleadoController.consultarEmpleado(empleado)}"/>
                     </p:column>
-
                 </p:dataTable>
-
             </p:panel>
 
         </h:form>

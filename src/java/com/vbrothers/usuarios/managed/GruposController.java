@@ -45,7 +45,7 @@ public class GruposController {
         }
     }
     
-    public void nuevo(ActionEvent event){
+    public void nuevo(){
         init();
     }
 
@@ -103,9 +103,8 @@ public class GruposController {
         return null;
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Groups r){
         try {
-            Groups r  = (Groups) event.getComponent().getAttributes().get("grupoCambiar");
             grupos.remove(r);
             groupsService.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO,"Grupo borrado con exito!!");
@@ -115,8 +114,7 @@ public class GruposController {
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Groups r  = (Groups) event.getComponent().getAttributes().get("grupoCambiar");
+    public void actualizar(Groups r){
         List<Rol> rolesGrupo = groupsService.findRolesByGroup(r);
         for(Rol rol : roles){
             if(rolesGrupo.contains(rol)){

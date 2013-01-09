@@ -44,40 +44,23 @@
             <br/>
 
             <p:outputPanel id="roles">
-                <p:commandLink update="@form" actionListener="#{rolesController.nuevo}" value="Nuevo Rol"/>
+                <p:commandButton update="@form" actionListener="#{rolesController.nuevo}" icon="ui-icon-document" value="Crear"/>
                 <p:dataTable value="#{rolesController.roles}" var="rol"
                              paginator="true"
                              rows="10"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Rol" />
-                        </f:facet>
+                    <p:column headerText="Rol">
                         <h:outputText value="#{rol.codigo}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:roles :form:msgs"  process="@this" actionListener="#{rolesController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="rolCambiar" value="#{rol}" />
-                        </p:commandLink>
+                    <p:column headerText="Borrar">
+                        <p:commandButton update=":form:roles :form:msgs"  process="@this" actionListener="#{rolesController.borrar(rol)}" icon="ui-icon-trash"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar" />
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{rolesController.actualizar}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="rolCambiar" value="#{rol}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar">
+                        <p:commandButton update="@form"  process="@this" actionListener="#{rolesController.actualizar(rol)}" icon="ui-icon-pencil" />
                     </p:column>
-
                 </p:dataTable>
-
             </p:outputPanel>
 
         </h:form>

@@ -75,8 +75,8 @@ public class EmpleadoController {
         Contratista contratista = new Contratista(-1l);
         SessionController sessionControler = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
         List<Contratista> contratistasList = new ArrayList<Contratista>();
-        if(sessionControler.getRoles().contains(locator.getParameter("rolContratista")) &&
-                !sessionControler.getRoles().contains(locator.getParameter("rolMaster"))){
+        if(sessionControler.getUsuario().getRolesUsr().contains(locator.getParameter("rolContratista")) &&
+                !sessionControler.getUsuario().getRolesUsr().contains(locator.getParameter("rolMaster"))){
             contratista = contratistaService.findByUser(sessionControler.getUsuario().getUsr());
             contratistasList.add(contratistaService.findByUser(sessionControler.getUsuario().getUsr()));
             empleadosContratista = empleadoService.findEmpleadosXContratita(contratista.getId());
@@ -89,7 +89,7 @@ public class EmpleadoController {
         
     }
     
-    public String nuevoEmpleado(){
+    public String crearNuevo(){
         init();
         return "/contratistas/empleado.xhtml";
     }
@@ -189,17 +189,14 @@ public class EmpleadoController {
     }
     
     
-    public void mostrarEmpleadoContratista(ActionEvent event){
-        empleado  = (Empleado) event.getComponent().getAttributes().get("empleadoCambiar");
-        empleado = empleadoService.find(empleado.getId());
+    public String consultarEmpleado(Empleado emp){
+        empleado = empleadoService.find(emp.getId());
         if(empleado.getContratista() == null){
             empleado.setContratista(new Contratista(-1l));
         }
-    }
-    
-    public String navEmpleado(){
         return "/contratistas/empleado.xhtml";
     }
+
     
     public void cargarEmpleadosContratista() {    
         empleadosContratista = empleadoService.findEmpleadosXContratita(empleado.getContratista().getId());

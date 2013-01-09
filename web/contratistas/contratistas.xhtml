@@ -15,7 +15,7 @@
 
             <p:panel id="contratistas" header="Contratistas:">
                 <h:panelGrid columns="1">
-                    <p:commandLink ajax="false" action="#{contratistaController.crearNuevoContratista}" value="Crear Contratista"/>
+                    <p:commandButton icon="ui-icon-document" ajax="false" action="#{contratistaController.crearNuevo}" value="Crear"/>
                 </h:panelGrid>
                 <p:dataTable value="#{contratistaController.contratistas}" var="contratista" paginator="true"
                              rows="20"
@@ -23,10 +23,7 @@
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
                     <p:column headerText="Nit" filterBy="#{contratista.numId}" id="nit_c">
-                        <p:commandLink ajax="false" actionListener="#{contratistaController.updateContratista}"
-                                       action="#{contratistaController.navContratista}" value="#{contratista.numId}">
-                            <f:attribute name="itemCambiar" value="#{contratista}" />
-                        </p:commandLink>
+                        <p:commandLink ajax="false" action="#{contratistaController.updateContratista(contratista)}" value="#{contratista.numId}"/>
                     </p:column>
                     <p:column headerText="Nombre" filterBy="#{contratista.nombre}" id="nombre_c">
                         <h:outputText value="#{contratista.nombre}"/>

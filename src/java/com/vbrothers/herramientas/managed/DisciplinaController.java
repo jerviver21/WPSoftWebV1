@@ -64,19 +64,18 @@ public class DisciplinaController {
         setItem(new Disciplina());
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Disciplina r){
         try {
-            Disciplina r  = (Disciplina) event.getComponent().getAttributes().get("itemCambiar");
             disciplinaService.remove(r);
+            setItems(disciplinaService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Recurso borrado con exito!!");
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el recurso");
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar la disciplina, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Disciplina r  = (Disciplina) event.getComponent().getAttributes().get("itemCambiar");
+    public void actualizar(Disciplina r){
         this.setItem(r);
     }
 

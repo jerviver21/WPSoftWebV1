@@ -68,9 +68,9 @@ public class RecursosController {
         return null;
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Resource r){
         try {
-            Resource r  = (Resource) event.getComponent().getAttributes().get("recursoCambiar");
+            recursos.remove(r);
             recursoService.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO,  "Recurso borrado con exito!!");
         } catch (Exception e) {
@@ -79,13 +79,12 @@ public class RecursosController {
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Resource r  = (Resource) event.getComponent().getAttributes().get("recursoCambiar");
+    public void actualizar(Resource r){
         this.recurso = r;
     }
 
     
-    public void nuevo(ActionEvent event){
+    public void nuevo(){
         init();
     }
 

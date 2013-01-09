@@ -13,7 +13,6 @@ import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
 import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
 import com.vbrothers.permisostrabajo.services.ProyectoServicesLocal;
-import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
@@ -66,7 +65,7 @@ public class ProyectoController {
     private long idEmpleado;//Permite seleccionar varios empleados
     
     /*Permite la creación y consulta de permisos de trabajo*/
-    private PermisoTrabajoTO permiso;
+    private PermisoTrabajo permiso;
     private List<SelectItem> equipos;
     private List<SelectItem> sectores;
     private List<SelectItem> contratistas;
@@ -164,10 +163,10 @@ public class ProyectoController {
     
     //Métodos para el manejo de eventos de la página proyecto_permisos.xhtml
     public String crearNuevoPermiso(){
-        setPermiso(new PermisoTrabajoTO(sesion.getUsuario()));
-        permiso.getPermiso().setProyecto(proyecto);
-        if(permiso.getPermiso().getSector().getId() != null && permiso.getPermiso().getSector().getId() != 0){
-            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
+        setPermiso(new PermisoTrabajo(sesion.getUsuario()));
+        permiso.setProyecto(proyecto);
+        if(permiso.getSector().getId() != null && permiso.getSector().getId() != 0){
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getSector().getId()));
         }
         tipoEjecutante = EMPLEADO;
         return PAG_DATOS_PERMISO;
@@ -175,9 +174,9 @@ public class ProyectoController {
     
     public String consultarPermiso(PermisoTrabajo p){
         permiso = permisoService.findPermisoForCreacion(p.getId());
-        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getPermiso().getSector().getId()));
-        permiso.getPermiso().setEquipo(permiso.getPermiso().getEquipo() == null ? new Equipo(null) : permiso.getPermiso().getEquipo());
-        if(permiso.getPermiso().isEjecutorContratista()){
+        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(permiso.getSector().getId()));
+        permiso.setEquipo(permiso.getEquipo() == null ? new Equipo(null) : permiso.getEquipo());
+        if(permiso.isEjecutorContratista()){
             tipoEjecutante = CONTRATISTA;
         }else{
             tipoEjecutante = EMPLEADO;
@@ -253,22 +252,22 @@ public class ProyectoController {
     
     public void formatearFechaIniPer(DateSelectEvent event){
         SimpleDateFormat fd1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        fechaIniPer = fd1.format(permiso.getPermiso().getFechaHoraIni());
+        fechaIniPer = fd1.format(permiso.getFechaHoraIni());
     }
     
     public String guardarPermiso(){
         try {
-            if(permiso.getPermiso().getId() == null){
+            if(permiso.getId() == null){
                 permisoService.crearPermiso(permiso);              
             }else{
-                if(permiso.getPermiso().getEquipo().getId() == null || 
-                        permiso.getPermiso().getEquipo().getId() == 0 ){
-                    permiso.getPermiso().setEquipo(null);
+                if(permiso.getEquipo().getId() == null || 
+                        permiso.getEquipo().getId() == 0 ){
+                    permiso.setEquipo(null);
                 }
                 permisoService.actualizarPermiso(permiso);
-                proyecto.getPermisos().remove(permiso.getPermiso());
+                proyecto.getPermisos().remove(permiso);
             }
-            proyecto.getPermisos().add(permiso.getPermiso());
+            proyecto.getPermisos().add(permiso);
             FacesUtil.restartBean("creaPermisoController");
             FacesUtil.addMessage(FacesUtil.INFO, "La actividad fue guardado!");  
         } catch (ValidacionException e) {
@@ -370,14 +369,14 @@ public class ProyectoController {
     /**
      * @return the permiso
      */
-    public PermisoTrabajoTO getPermiso() {
+    public PermisoTrabajo getPermiso() {
         return permiso;
     }
 
     /**
      * @param permiso the permiso to set
      */
-    public void setPermiso(PermisoTrabajoTO permiso) {
+    public void setPermiso(PermisoTrabajo permiso) {
         this.permiso = permiso;
     }
 

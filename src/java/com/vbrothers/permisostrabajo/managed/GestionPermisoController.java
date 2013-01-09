@@ -18,8 +18,8 @@ import com.vbrothers.permisostrabajo.dominio.Sector;
 import com.vbrothers.permisostrabajo.dominio.Tarea;
 import com.vbrothers.permisostrabajo.dominio.TrazabilidadPermiso;
 import com.vbrothers.permisostrabajo.services.PermisoServicesLocal;
-import com.vbrothers.permisostrabajo.to.PermisoTrabajoTO;
 import com.vbrothers.usuarios.managed.SessionController;
+import com.vbrothers.util.EtapaPermiso;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.io.File;
@@ -57,7 +57,7 @@ public class GestionPermisoController implements Serializable{
     SessionController sesion;
     
     //Permite la gestion del permiso en todas sus etapas
-    private PermisoTrabajoTO permiso;
+    private PermisoTrabajo permiso;
     
     //Permite listar los permisos de trabajo pendientes
     private List<PermisoTrabajo> permisosPendientes;
@@ -68,6 +68,7 @@ public class GestionPermisoController implements Serializable{
     private List<SelectItem> disciplinas;
     private int idSector;//Para poder agregar varios sectores afectados
     private int idCertificado;//Para poder agregar varios certificados
+    private String nota;//Permite agregar varias notas al permiso de trabajo.
     private StreamedContent checklistDown;//Para descargar los checklist de los certificados agregados
     
     //Permite diligenciar los pasos del permiso
@@ -87,9 +88,6 @@ public class GestionPermisoController implements Serializable{
     //Datos de trazabilidad
     private List<TrazabilidadPermiso> traz;
     
-    //Notas del permiso
-    private String nota;
-       
     String PAG_PERMISOS = "/permisostrabajo/mis_permisos.xhtml";
     String PAG_TRAZABILIDAD = "/permisostrabajo/gestion_trazabilidad.xhtml";
     String PAG_DATOS = "/permisostrabajo/gestion_datos.xhtml";
@@ -99,119 +97,87 @@ public class GestionPermisoController implements Serializable{
     String PAG_EJECUCION = "/permisostrabajo/gestion_ejecutar.xhtml";
     String PAG_NOTAS = "/permisostrabajo/gestion_notas.xhtml";
     
-    
-    
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
         sesion = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
-        setPermisosPendientes(permisoServices.findPermisosPendientes(sesion.getUsuario()));
-        setSectores(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR)));
-        certificados = FacesUtil.getSelectsItem(certificadosServices.findAll());
-        setDisciplinas(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_DISCIPLINA)));
-        permiso = new PermisoTrabajoTO(sesion.getUsuario());
-        setPeligros(FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_PELIGRO)));
-        setPeligro(new Peligro());
+        
+        permisosPendientes = permisoServices.findPermisosPendientes(sesion.getUsuario());
+       
+        certificados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_CERTIFICADO));
+        disciplinas = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_DISCIPLINA));
+        peligros = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_PELIGRO));
+        
+        permiso = new PermisoTrabajo(sesion.getUsuario());
+        peligro = new Peligro();
         tarea = new Tarea();
     }
     
     //Métodos para el manejo de eventos de la página mis_permisos.xhtml
     public String consultarTrazabilidad(PermisoTrabajo r){
         permiso = permisoServices.findPermisoForGestion(r.getId());
-        permiso.setUsr(sesion.getUsuario());
+        permiso.setUsuario(sesion.getUsuario());
+        sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         for(SelectItem item: sectores){
             int idItem = (Integer)item.getValue();
-            if(permiso.getPermiso().getSector().getId() == idItem){
+            if(permiso.getSector().getId() == idItem){
                 sectores.remove(item);
                 break;
             }
         }
-        setTraz(permisoServices.findTrazabilidadPermiso(r));
-        setUsrsGrupos(FacesUtil.getSelectsItem(permisoServices.findGruposAprobadores(permiso.getPermiso()), "getCodigo", "getCodigo"));
+        traz = permisoServices.findTrazabilidadPermiso(r);
+        usrsGrupos = FacesUtil.getSelectsItem(permisoServices.findGruposAprobadores(permiso), "getCodigo", "getCodigo");
         return PAG_TRAZABILIDAD;
     }
     
     //Métodos para el manejo de eventos de la página gestion_trazabilidad.xhtml
     public String gestionarPermiso(){
-        if(sesion.isValidador()){
+        String rolValidador = locator.getParameter("rolValidador");
+        if(rolValidador == null){
+            FacesUtil.addMessage(FacesUtil.ERROR, "No existe el parámetro rolValidador, debe ser ingresado (Consulte con el administrador)");
+            return null;
+        }
+        if(sesion.getUsuario().getRolesUsr().contains(rolValidador)){
             return PAG_NOTAS;
         }
-        if(permiso.getEtapa() == permiso.getTERMINAR() 
-                || permiso.getEtapa() == permiso.getCANCELAR()
-                || permiso.getEtapa() == permiso.getFINALIZAR()){
+        if(permiso.getEtapa() == EtapaPermiso.TERMINAR || permiso.getEtapa() == EtapaPermiso.CANCELAR || permiso.getEtapa() == EtapaPermiso.FINALIZAR ){
             return PAG_EJECUCION;
         }
+        guardarGestionTareas();//Permite ordenar 6 tareas por defecto en la página
         return PAG_DATOS;
     }
     
     //Métodos para el control de eventos de la página gestion_datos.xhtml
     public void borrarSectorAfectado(Sector sector){
-       getPermiso().getPermiso().getSectoresAfectados().remove(sector);
+       permiso.getSectoresAfectados().remove(sector);
     }
 
     public void agregarSectorAfectado(){
         Sector r = sectoresServices.find(idSector);
-        if(!permiso.getPermiso().getSectoresAfectados().contains(r)){
-            getPermiso().getPermiso().getSectoresAfectados().add(r);
-        }
-    }
-    
-    public void diligenciarPaso(){
-        habMasTareas = true;
-        for (int i = 0; i < permiso.getTareasVista().size(); i++) {
-            Tarea t = permiso.getTareasVista().get(i);
-            if(t.getDatos() == null || t.getDatos().equals("")){
-                permiso.getTareasVista().remove(i);
-                i--;
-            }
-        }
-        for (int i = 0; i < permiso.getTareasVista().size(); i++) {
-            Tarea t = permiso.getTareasVista().get(i);
-            t.setConsecutivo(i+1);
-        }
-        while(permiso.getTareasVista().size() < 6){
-            Tarea t = new Tarea();
-            t.setConsecutivo(permiso.getTareasVista().size()+1);
-            t.setPermiso(permiso.getPermiso());
-            permiso.getTareasVista().add(t);
-            habMasTareas = false;
+        if(!permiso.getSectoresAfectados().contains(r)){
+            permiso.getSectoresAfectados().add(r);
         }
     }
 
     public void addTarea(){
         Tarea t = new Tarea();
-        t.setConsecutivo(permiso.getTareasVista().size()+1);
-        t.setPermiso(permiso.getPermiso());
-        permiso.getTareasVista().add(t);
+        t.setConsecutivo(permiso.getTareas().size()+1);
+        t.setPermiso(permiso);
+        permiso.getTareas().add(t);
     }
 
     public void borrarTarea(Tarea tarea){
         try {
-            for (int i = 0; i < permiso.getTareasVista().size(); i++) {
-                if(tarea.getConsecutivo() == permiso.getTareasVista().get(i).getConsecutivo()){
-                    permiso.getTareasVista().remove(i);
+            for (int i = 0; i < permiso.getTareas().size(); i++) {
+                if(tarea.getConsecutivo() == permiso.getTareas().get(i).getConsecutivo()){
+                    permiso.getTareas().remove(i);
                     break;
                 }
             }
-            for (int i = 0; i < permiso.getTareasVista().size(); i++) {
-                Tarea t = permiso.getTareasVista().get(i);
-                t.setConsecutivo(i+1);
-            }
-            
             if(tarea.getId() != null && tarea.getId() != 0){
                 permisoServices.borrarTarea(tarea);
-                permisoServices.guardarGestion(permiso);
             }
-            
-            while(permiso.getTareasVista().size() < 6){
-                Tarea t = new Tarea();
-                t.setConsecutivo(permiso.getTareasVista().size()+1);
-                t.setPermiso(permiso.getPermiso());
-                permiso.getTareasVista().add(t);
-                habMasTareas = false;
-                System.out.println("Hab mas tareas: "+habMasTareas);
-            }
-            
+            guardarGestionTareas();
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al agregar área afectada!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -224,13 +190,13 @@ public class GestionPermisoController implements Serializable{
     }
     
     public String terminaGestionDatos(){
-        Tarea t = permiso.getTareasVista().get(0);
+        Tarea t = permiso.getTareas().get(0);
         if(t.getDatos() == null || t.getDatos().equals("")){
             FacesUtil.addMessage(FacesUtil.ERROR, "Debe agregar al menos un paso para diligenciar el permiso");
             return null;
         }
         String SIG_PAGINA = PAG_CONSIDERACIONES;
-        if(permiso.getEtapa() == permiso.getAPROBAR()){
+        if(permiso.getEtapa() == EtapaPermiso.APROBAR){
             SIG_PAGINA = PAG_APR_OTROS;
         }
         return SIG_PAGINA;
@@ -243,19 +209,7 @@ public class GestionPermisoController implements Serializable{
                 return;
             }
         }
-        Peligro p = peligroServices.find(getPeligro().getId());
-        PeligrosTarea pelTarea = new PeligrosTarea();
-        pelTarea.setTarea(tarea);
-        pelTarea.setPeligro(p);
-        List<ControlesPeligroTarea> controles = new ArrayList<ControlesPeligroTarea>();
-        for(Control c : p.getControles()){
-            ControlesPeligroTarea cpt = new ControlesPeligroTarea();
-            cpt.setControl(c.getNombre());
-            cpt.setPeligrosTarea(pelTarea);
-            controles.add(cpt);
-        }
-        pelTarea.setControles(controles);
-        pelTarea.setRiesgos(new ArrayList<RiesgosPeligroTarea>());
+        PeligrosTarea pelTarea = peligroServices.findPeligroTarea(getPeligro(), getTarea());
         tarea.getPeligros().add(pelTarea);
     }  
     
@@ -267,10 +221,10 @@ public class GestionPermisoController implements Serializable{
                 if(pt1.getId() != null && pt1.getId() != 0){
                     permisoServices.borrarPeligro(pt1);
                 }
+                break;
             }
         }
     } 
-    
     
     public void agregarControl(PeligrosTarea pt){
         ControlesPeligroTarea cpt = new ControlesPeligroTarea();
@@ -288,6 +242,7 @@ public class GestionPermisoController implements Serializable{
                  if(ctrpt.getId() != null && ctrpt.getId() != 0){
                     permisoServices.borrarControl(ctrpt);
                  }
+                 break;
             }
         }
     }
@@ -308,39 +263,39 @@ public class GestionPermisoController implements Serializable{
                  if(rrpt.getId() != null && rrpt.getId() != 0){
                     permisoServices.borrarRiesgo(rrpt);
                  }
+                 break;
             }
         }
     }
     
-    public String guardarPeligrosPaso(){
+    public String guardarGestionTareas(){
         try {
-            permisoServices.guardarGestion(getPermiso());
-            while(permiso.getTareasVista().size() < 6){
-                Tarea t = new Tarea();
-                t.setConsecutivo(permiso.getTareasVista().size()+1);
-                t.setPermiso(permiso.getPermiso());
-                permiso.getTareasVista().add(t);
-            }
+            habMasTareas = true;
+            removerTareasNoGestionadas();
+            permisoServices.guardarGestion(permiso);
+            cargar6TareasDefecto();
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el Permiso de Trabajo");
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar la gestion del permiso de trabajo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
         return PAG_DATOS;
     }
 
     //Eventos de la página gestion_consideraciones.xhtml
-    public void borrarCertificado(CertificadosTrabajo cert){
-       getPermiso().getPermiso().getCertificados().remove(cert);
-    }
-
+   
     public void agregarCertificado(){
         Certificado r = certificadosServices.find(idCertificado);
         CertificadosTrabajo ct = new CertificadosTrabajo();
-        ct.setPermiso(permiso.getPermiso());
+        ct.setPermiso(permiso);
         ct.setCertificado(r);
-        if(!permiso.getPermiso().getCertificados().contains(ct)){
-            getPermiso().getPermiso().getCertificados().add(ct);
+        if(!permiso.getCertificados().contains(ct)){
+            permiso.getCertificados().add(ct);
         }
+    }
+    
+    
+    public void borrarCertificado(CertificadosTrabajo cert){
+       permiso.getCertificados().remove(cert);
     }
     
     public void descargarChecklist(CertificadosTrabajo cert){
@@ -357,6 +312,7 @@ public class GestionPermisoController implements Serializable{
     
     public String solicitarAprobacion(){
         try {
+            removerTareasNoGestionadas();
             permisoServices.solicitarAprobacion(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Solicitud de aprobación enviada!!");
             FacesUtil.restartBean("gestionPermisoController");
@@ -375,25 +331,25 @@ public class GestionPermisoController implements Serializable{
     public void selectUsroGrupos(ValueChangeEvent event){
         int tipo = Integer.parseInt((String)event.getNewValue());
         if(tipo == 1){
-            setUsrsGrupos(FacesUtil.getSelectsItem(permisoServices.findGruposAprobadores(permiso.getPermiso()), "getCodigo", "getCodigo"));
+            usrsGrupos = FacesUtil.getSelectsItem(permisoServices.findGruposAprobadores(permiso), "getCodigo", "getCodigo");
         }else{
-            setUsrsGrupos(FacesUtil.getSelectsItem(permisoServices.findUsersAprobadores(permiso.getPermiso()), "getUsr", "getUsr"));
+            usrsGrupos = FacesUtil.getSelectsItem(permisoServices.findUsersAprobadores(permiso), "getUsr", "getUsr");
         }
-        
     }
     
     public void removeAprobador(String aprobador){
-       permiso.getAprobadoresAdicionales().remove(aprobador);
+       permiso.getOtrosAprobadores().remove(aprobador);
     }
     
     public void agregarAprobador(){
-        if(!permiso.getAprobadoresAdicionales().contains(usrGrupo)){
-            permiso.getAprobadoresAdicionales().add(usrGrupo);
+        if(!permiso.getOtrosAprobadores().contains(usrGrupo)){
+            permiso.getOtrosAprobadores().add(usrGrupo);
         }
     }
 
     public String aprobar(){
         try {
+            removerTareasNoGestionadas();
             permisoServices.aprobarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso aprobado");
             FacesUtil.restartBean("gestionPermisoController");
@@ -410,6 +366,7 @@ public class GestionPermisoController implements Serializable{
 
     public String noAprobar(){
         try {
+            removerTareasNoGestionadas();
             permisoServices.noAprobarPermiso(getPermiso());
             FacesUtil.addMessage(FacesUtil.INFO, "Permiso no aprobado");
             FacesUtil.restartBean("gestionPermisoController");
@@ -425,7 +382,6 @@ public class GestionPermisoController implements Serializable{
     }
     
     //eventos de la página gestion_ejecutar.xhtml
-
     public String terminar(){
         try {
             permisoServices.terminarPermiso(getPermiso());
@@ -477,43 +433,75 @@ public class GestionPermisoController implements Serializable{
     //Eventos de la página gestion_notas.xhtml
     public void cambiarEstado(ValueChangeEvent event){
         int estado = (int) (Integer)event.getNewValue();
-        if(permiso.getPermiso().getEstadoPermiso().getId() != estado){
-            permisoServices.cambiarEstado(permiso.getPermiso(), estado);
+        if(permiso.getEstadoPermiso().getId() != estado){
+            permisoServices.cambiarEstado(permiso, estado);
         }
-        permisosPendientes.remove(permiso.getPermiso());
-        permisosPendientes.add(permiso.getPermiso());
+        permisosPendientes.remove(permiso);
+        permisosPendientes.add(permiso);
     }
     
     public String agregarNota(){
         NotasPermiso n = new NotasPermiso();
         n.setNota(nota);
-        n.setPermiso(permiso.getPermiso());
+        n.setPermiso(permiso);
         n.setUsr(sesion.getUsuario().getUsr());
-        permisoServices.guardarNota(n);
-        permiso.getPermiso().getNotas().add(n);
+        permiso.getNotas().add(n);
         return null;
     }
     
     public void borrarNota(NotasPermiso nota){
         permisoServices.borrarNota(nota);
-        permiso.getPermiso().getNotas().remove(nota);
+        permiso.getNotas().remove(nota);
     }
     
+    public String guardarValidacion(){
+        try {
+            permisoServices.actualizarPermiso(permiso);
+            FacesUtil.addMessage(FacesUtil.INFO, "Permiso actualizado con exito");
+        } catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar validacion");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
+        }
+        return PAG_PERMISOS;
+    }
     
+    //Métodos para administración de las 6 tareas visibles por defecto
+    public void removerTareasNoGestionadas(){
+        for (int i = 0; i < permiso.getTareas().size(); i++) {
+            Tarea t = permiso.getTareas().get(i);
+            if(t.getDatos() == null || t.getDatos().equals("")){
+                permiso.getTareas().remove(i);
+                i--;
+            }
+        }
+        for (int i = 0; i < permiso.getTareas().size(); i++) {
+            Tarea t = permiso.getTareas().get(i);
+            t.setConsecutivo(i+1);
+        }
+    }
     
-    
+    public void cargar6TareasDefecto(){
+        while(permiso.getTareas().size() < 6){
+            Tarea t = new Tarea();
+            t.setConsecutivo(permiso.getTareas().size()+1);
+            t.setPermiso(permiso);
+            permiso.getTareas().add(t);
+            habMasTareas = false;
+        }
+    }
 
     /**
      * @return the permisoPendiente
      */
-    public PermisoTrabajoTO getPermiso() {
+    public PermisoTrabajo getPermiso() {
         return permiso;
     }
 
     /**
      * @param permisoPendiente the permisoPendiente to set
      */
-    public void setPermiso(PermisoTrabajoTO permisoPendiente) {
+    public void setPermiso(PermisoTrabajo permisoPendiente) {
         this.permiso = permisoPendiente;
     }
 
@@ -525,24 +513,10 @@ public class GestionPermisoController implements Serializable{
     }
 
     /**
-     * @param permisosPendientes the permisosPendientes to set
-     */
-    public void setPermisosPendientes(List<PermisoTrabajo> permisosPendientes) {
-        this.permisosPendientes = permisosPendientes;
-    }
-
-    /**
      * @return the sectores
      */
     public List<SelectItem> getSectores() {
         return sectores;
-    }
-
-    /**
-     * @param sectores the sectores to set
-     */
-    public void setSectores(List<SelectItem> sectores) {
-        this.sectores = sectores;
     }
 
     /**
@@ -551,15 +525,6 @@ public class GestionPermisoController implements Serializable{
     public List<SelectItem> getDisciplinas() {
         return disciplinas;
     }
-
-    /**
-     * @param disciplinas the disciplinas to set
-     */
-    public void setDisciplinas(List<SelectItem> disciplinas) {
-        this.disciplinas = disciplinas;
-    }
-
-
 
     /**
      * @return the idSector
@@ -589,19 +554,11 @@ public class GestionPermisoController implements Serializable{
         this.tarea = tarea;
     }
 
-
     /**
      * @return the traz
      */
     public List<TrazabilidadPermiso> getTraz() {
         return traz;
-    }
-
-    /**
-     * @param traz the traz to set
-     */
-    public void setTraz(List<TrazabilidadPermiso> traz) {
-        this.traz = traz;
     }
 
     /**
@@ -626,13 +583,6 @@ public class GestionPermisoController implements Serializable{
     }
 
     /**
-     * @param peligros the peligros to set
-     */
-    public void setPeligros(List<SelectItem> peligros) {
-        this.peligros = peligros;
-    }
-
-    /**
      * @return the peligro
      */
     public Peligro getPeligro() {
@@ -645,6 +595,7 @@ public class GestionPermisoController implements Serializable{
     public void setPeligro(Peligro peligro) {
         this.peligro = peligro;
     }
+    
     /**
      * @return the control
      */
@@ -678,13 +629,6 @@ public class GestionPermisoController implements Serializable{
      */
     public List<SelectItem> getUsrsGrupos() {
         return usrsGrupos;
-    }
-
-    /**
-     * @param usrsGrupos the usrsGrupos to set
-     */
-    public void setUsrsGrupos(List<SelectItem> usrsGrupos) {
-        this.usrsGrupos = usrsGrupos;
     }
 
     /**
@@ -742,9 +686,4 @@ public class GestionPermisoController implements Serializable{
     public void setNota(String nota) {
         this.nota = nota;
     }
-
-  
-
-    
-
 }

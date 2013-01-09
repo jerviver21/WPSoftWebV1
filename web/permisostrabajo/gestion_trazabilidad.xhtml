@@ -27,22 +27,22 @@
                     </f:facet> 
                     <p:row>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.id}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.id}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.tarea}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.usuarioCreacion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.usuarioCreacion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.sector.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.sector.nombre}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.estadoPermiso.descripcion}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.estadoPermiso.descripcion}"/>
                         </p:column>
                         <p:column style="border-width: 1px;">
-                            <h:outputLabel value="#{gestionPermisoController.permiso.permiso.disciplina.nombre}"/>
+                            <h:outputLabel value="#{gestionPermisoController.permiso.disciplina.nombre}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -75,11 +75,11 @@
             </p:panel>
             
             
-            <p:panel header="Notas del Permiso de Trabajo" rendered="#{not empty gestionPermisoController.permiso.permiso.notas}">
+            <p:panel header="Notas del Permiso de Trabajo" rendered="#{not empty gestionPermisoController.permiso.notas}">
                 <p:commandButton icon="ui-icon-document" value="Agregar Nota" oncomplete="dlg_nota.show()"/>
                 
                 <p:outputPanel id="notas">
-                    <p:dataTable value="#{gestionPermisoController.permiso.permiso.notas}" var="item">
+                    <p:dataTable value="#{gestionPermisoController.permiso.notas}" var="item">
                         <p:column headerText="Nota">
                             <h:outputText value="#{item.nota}"/>
                         </p:column>

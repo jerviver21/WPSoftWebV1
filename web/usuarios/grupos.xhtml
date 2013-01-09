@@ -45,36 +45,21 @@
             <br/>
 
             <p:outputPanel id="grupos">
-                <p:commandLink update="@form" actionListener="#{gruposController.nuevo}" value="Nuevo Grupo"/>
+                <p:commandButton update="@form" actionListener="#{gruposController.nuevo}" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{gruposController.grupos}" var="grupo"
                              paginator="true"
                              rows="10"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Grupo" />
-                        </f:facet>
+                    <p:column headerText="Grupo">
                         <h:outputText value="#{grupo.codigo}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:grupos :form:msgs"  process="@this" actionListener="#{gruposController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="grupoCambiar" value="#{grupo}" />
-                        </p:commandLink>
+                    <p:column headerText="Borrar">
+                        <p:commandButton update=":form:grupos :form:msgs"  process="@this" actionListener="#{gruposController.borrar(grupo)}" icon="ui-icon-trash"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar" />
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{gruposController.actualizar}" >
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="grupoCambiar" value="#{grupo}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar">
+                        <p:commandButton update="@form"  process="@this" actionListener="#{gruposController.actualizar(grupo)}" icon="ui-icon-pencil" />
                     </p:column>
 
                 </p:dataTable>

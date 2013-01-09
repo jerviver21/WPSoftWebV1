@@ -17,9 +17,9 @@
             <h4>Información General</h4>
             <h:panelGrid columns="2">
                 <h:outputLabel value="Id del Permiso:"/>
-                <h:outputText value="#{gestionPermisoController.permiso.permiso.id}"/>
+                <h:outputText value="#{gestionPermisoController.permiso.id}"/>
                 <h:outputLabel value="Actividad del Permiso:"/>
-                <h:outputText value="#{gestionPermisoController.permiso.permiso.tarea}"/>
+                <h:outputText value="#{gestionPermisoController.permiso.tarea}"/>
                 <h:outputLabel value="#{gestionPermisoController.tarea.consecutivo} - Paso a realizar:" style="font-weight: bold"/>
                 <h:outputText value="#{gestionPermisoController.tarea.datos}" style="font-weight: bold"/>
             </h:panelGrid>
@@ -117,7 +117,7 @@
             
             <p:separator/>
             
-            <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.guardarPeligrosPaso}" ajax="false"/>
+            <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.guardarGestionTareas}" ajax="false"/>
             
             
             

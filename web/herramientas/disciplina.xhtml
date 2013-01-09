@@ -26,9 +26,7 @@
                 <p:message for="descripcion"/>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Guardar" update="@form"  action="#{disciplinaController.guardar}" ajax="true">
-                    <p:collector value="#{disciplinaController.item}" addTo="#{disciplinaController.items}"/>
-                </p:commandButton>
+                    <p:commandButton value="Guardar" update="@form"  action="#{disciplinaController.guardar}" ajax="true"/>
                 </f:facet>
             </p:panelGrid>
             </p:panel>
@@ -40,42 +38,21 @@
 
 
             <p:outputPanel id="disciplinas">
-                <p:commandLink actionListener="#{disciplinaController.crearNuevo}" update="@form" value="Crear Nuevo"/>
+                <p:commandButton actionListener="#{disciplinaController.crearNuevo}" update="@form" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{disciplinaController.items}" var="item" >
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Nombre" />
-                        </f:facet>
+                    <p:column headerText="Nombre">
                         <h:outputText value="#{item.nombre}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Descripción" />
-                        </f:facet>
+                    <p:column headerText="Descripcion">
                         <h:outputText value="#{item.descripcion}"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:disciplinas :form:msgs"  process="@this" actionListener="#{disciplinaController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="itemCambiar" value="#{item}" />
-                            <p:collector value="#{item}" removeFrom="#{disciplinaController.items}"/>
-                        </p:commandLink>
+                    <p:column headerText="Borrar">
+                        <p:commandButton update=":form:disciplinas :form:msgs"  process="@this" actionListener="#{disciplinaController.borrar(item)}" icon="ui-icon-trash"/>
                     </p:column>
-                    <p:column >
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar" />
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{disciplinaController.actualizar}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="itemCambiar" value="#{item}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar" >
+                        <p:commandButton update="@form"  process="@this" actionListener="#{disciplinaController.actualizar(item)}" icon="ui-icon-pencil"/>
                     </p:column>
-
                 </p:dataTable>
-
             </p:outputPanel>
         </h:form>
    </ui:define>

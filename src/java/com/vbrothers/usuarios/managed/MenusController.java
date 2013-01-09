@@ -50,7 +50,7 @@ public class MenusController {
     }
 
 
-    public void nuevo(ActionEvent event){
+    public void nuevo(){
         init();
     }
 
@@ -113,9 +113,9 @@ public class MenusController {
         return null;
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Menu r){
         try {
-            Menu r  = (Menu) event.getComponent().getAttributes().get("menuCambiar");
+            menus.remove(r);
             menuServices.remove(r);
             locator.restartCache();
             FacesUtil.addMessage(FacesUtil.INFO,"Menu borrado con exito!!");
@@ -126,8 +126,7 @@ public class MenusController {
         
     }
 
-    public void actualizar(ActionEvent event){
-        Menu r  = (Menu) event.getComponent().getAttributes().get("menuCambiar");
+    public void actualizar(Menu r){
         locator.restartCache();
         this.menu = r;
     }

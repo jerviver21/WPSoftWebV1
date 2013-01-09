@@ -72,32 +72,30 @@ public class PeligroController {
 
     
 
-    public void borrar(ActionEvent event){
+    public void borrar(Peligro r){
         try {
-            Peligro r  = (Peligro) event.getComponent().getAttributes().get("itemCambiar");
             peligroService.remove(r);
+            setItems(peligroService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Riesgo borrado con exito!!");
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el riesgo");
+            FacesUtil.addMessage(FacesUtil.ERROR, "No se puede borrar el peligro, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Peligro r  = (Peligro) event.getComponent().getAttributes().get("itemCambiar");
+    public void actualizar(Peligro r ){
         this.setItem(r);
     }
 
 
-    public void addControl(ActionEvent event){
+    public void addControl(){
         control.setPeligro(item);
         control.setConsecutivo(item.getControles().size()+1);
         item.getControles().add(control);
         control = new Control();
     }
 
-    public void removeControl(ActionEvent event){
-        Control r  = (Control) event.getComponent().getAttributes().get("itemBorrar");
+    public void removeControl(Control r ){
         item.getControles().remove(r);
         controlService.remove(r);
     }

@@ -6,24 +6,21 @@
 package com.vbrothers.herramientas.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vbrothers.herramientas.services.EquiposServicesLocal;
+import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.Sector;
-import com.vbrothers.herramientas.services.EquiposServicesLocal;
-import com.vbrothers.herramientas.services.SectoresServicesLocal;
-import com.vbrothers.usuarios.services.GruposServicesLocal;
+import com.vbrothers.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 /**
@@ -46,12 +43,12 @@ public class SectorController {
     @EJB
     private EquiposServicesLocal equipoService;
     @EJB
-    private GruposServicesLocal grupoService;
+    private RolesServicesLocal rolService;
 
     @PostConstruct
     public void init(){
         crearNuevo();
-        setGrupos(FacesUtil.getSelectsItem(grupoService.findGruposByRol(locator.getParameter("rolAutArea")),"getCodigo" ,"getCodigo" ));
+        setGrupos(FacesUtil.getSelectsItem(rolService.findGruposByRol(locator.getParameter("rolAutArea")),"getCodigo" ,"getCodigo" ));
     }
 
     public void crearNuevo(){
@@ -83,30 +80,28 @@ public class SectorController {
         return null;
     }
 
-    public void borrar(ActionEvent event){
+    public void borrar(Sector r){
         try {
-            Sector r  = (Sector) event.getComponent().getAttributes().get("itemCambiar");
             sectorService.remove(r);
+            setItems(sectorService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Recurso borrado con exito!!");
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el recurso");
+            FacesUtil.addMessage(FacesUtil.ERROR, "No se puede borrar el sector, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
-    public void actualizar(ActionEvent event){
-        Sector r  = (Sector) event.getComponent().getAttributes().get("itemCambiar");
+    public void actualizar(Sector r){
         this.setItem(r);
     }
 
-    public void addEquipo(ActionEvent event){
+    public void addEquipo(){
         equipo.setArea(item);
         item.getEquipos().add(equipo);
         equipo = new Equipo();
     }
 
-    public void removeEquipo(ActionEvent event){
-        Equipo r  = (Equipo) event.getComponent().getAttributes().get("itemBorrar");
+    public void removeEquipo(Equipo r){
         item.getEquipos().remove(r);
         equipoService.remove(r);
     }

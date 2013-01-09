@@ -47,49 +47,27 @@
             </p:panel>
             <br/>
             <p:outputPanel id="recursos">
-                <p:commandLink update="@form" actionListener="#{recursosController.nuevo}" value="Nuevo Recurso"/>
+                <p:commandButton update="@form" actionListener="#{recursosController.nuevo}" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{recursosController.recursos}" var="recurso"
                              paginator="true"
                              rows="10"
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Nombre"/>
-                        </f:facet>
+                    <p:column headerText="Nombre">
                         <h:outputText value="#{recurso.nombre}"/>
                     </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="URL"/>
-                        </f:facet>
+                    <p:column headerText="URL">
                         <h:outputText value="#{recurso.url}"/>
                     </p:column  >
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Menu" />
-                        </f:facet>
+                    <p:column headerText="Menu">
                         <h:outputText value="#{recurso.menu.nombre}"/>
                     </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Borrar" />
-                        </f:facet>
-                        <p:commandLink update=":form:recursos :form:msgs"  process="@this" actionListener="#{recursosController.borrar}">
-                            <p:graphicImage value="/images/cross.gif"/>
-                            <f:attribute name="recursoCambiar" value="#{recurso}" />
-                            <p:collector value="#{recurso}" removeFrom="#{recursosController.recursos}"/>
-                        </p:commandLink>
+                    <p:column headerText="Borrar">
+                        <p:commandButton icon="ui-icon-trash" update=":form:recursos :form:msgs"  process="@this" actionListener="#{recursosController.borrar(recurso)}"/>
                     </p:column>
-                    <p:column>
-                        <f:facet name="header">
-                            <h:outputText value="Actualizar"/>
-                        </f:facet>
-                        <p:commandLink update="@form"  process="@this" actionListener="#{recursosController.actualizar}">
-                            <p:graphicImage value="/images/update.png"/>
-                            <f:attribute name="recursoCambiar" value="#{recurso}" />
-                        </p:commandLink>
+                    <p:column headerText="Actualizar">
+                        <p:commandButton update="@form"  process="@this" actionListener="#{recursosController.actualizar(recurso)}" icon="ui-icon-pencil"/>
                     </p:column>
                 </p:dataTable>
             </p:outputPanel>

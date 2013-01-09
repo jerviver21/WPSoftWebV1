@@ -24,7 +24,7 @@
                     <p:message for="tipo_permiso"/>
                     <h:outputLabel for="num_orden" value="#{labels.nro_orden}"
                                    rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}"/>
-                    <p:inputText id="num_orden" value="#{creaPermisoController.permiso.permiso.numOrden}"
+                    <p:inputText id="num_orden" value="#{creaPermisoController.permiso.numOrden}"
                                  rendered="#{creaPermisoController.tipoPermiso eq creaPermisoController.ORDEN_TRABAJO}" required="true">
                         <p:ajax/>
                     </p:inputText>

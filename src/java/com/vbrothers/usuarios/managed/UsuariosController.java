@@ -89,9 +89,8 @@ public class UsuariosController {
     }
 
 
-    public void borrar(ActionEvent event){
+    public void borrar(Users r){
         try {
-            Users r  = (Users) event.getComponent().getAttributes().get("usuarioBorrar");
             usuarios.remove(r);
             usersServices.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO, "Usuario borrado con exito!!");
@@ -102,8 +101,7 @@ public class UsuariosController {
         
     }
 
-    public void actualizar(ActionEvent event){
-        Users r  = (Users) event.getComponent().getAttributes().get("usuarioCambiar");
+    public void actualizar(Users r){
         List<Groups> gruposUsuario = usersServices.findGroupsUser(r);
         for(Groups g : grupos){
             if(gruposUsuario.contains(g)){
@@ -116,7 +114,7 @@ public class UsuariosController {
         this.usuario = r;
     }
     
-    public void nuevo(ActionEvent event){
+    public void nuevo(){
         init();
     }
 
