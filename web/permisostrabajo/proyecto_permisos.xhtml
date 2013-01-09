@@ -92,8 +92,8 @@
                     <p:column headerText="Actividad">
                         <h:outputText value="#{permiso.tarea}"/>
                     </p:column>
-                    <p:column headerText="Usuario Asignado">
-                        <h:outputText value="#{permiso.usuariosEjecutante}"/>
+                    <p:column headerText="Usuario Solicitante">
+                        <h:outputText value="#{permiso.usuarioCreacion}"/>
                     </p:column>
                     <p:column headerText="Estado" filterBy="#{permiso.estadoPermiso.descripcion}">
                         <h:outputText value="#{permiso.estadoPermiso.descripcion}"/>
