@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.web.WebAttributes;
 
 /**
@@ -39,8 +40,11 @@ public class LoginController{
                 }else{
                    mensaje = "Bad Credentials";
                 }
+            }if(ex instanceof DisabledException){
+                mensaje =  "El usuario se encuentra inactivo";
             }else{
                 Exception exc = (Exception) ex;
+                mensaje =  "Error al tratar de autenticar "+ex.toString();
                 exc.printStackTrace();
             }
         }

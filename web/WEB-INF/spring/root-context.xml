@@ -14,7 +14,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
     <beans:property name="enableAuthorities" value="false"/>
     <beans:property name="usersByUsernameQuery">
       <beans:value>
-        select usr,pwd,estado from users where usr=?
+        select usr,pwd, estado from users where usr=? AND vetado = false
       </beans:value>
     </beans:property>
     <beans:property name="groupAuthoritiesByUsernameQuery">

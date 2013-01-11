@@ -7,6 +7,7 @@ import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
+import com.vbrothers.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import com.vbrothers.util.SpringUtils;
@@ -15,8 +16,11 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 /**
  * @author Jerson Viveros
@@ -31,9 +35,13 @@ public class ContratistaController {
     private String contrasena;
     private long numId;
     private boolean permitirAddEmpleados = false;
+    private List<SelectItem> arps;
 
     @EJB
     private ContratistaServicesLocal contratistasService;
+    
+    @EJB
+    private UsuariosServicesLocal usrService;
 
     public ContratistaController() {
     }
@@ -42,6 +50,7 @@ public class ContratistaController {
     public void init(){
         locator = ServiceLocator.getInstance();
         contratistas = contratistasService.findAll();
+        arps = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_COD_ARP));
     }
 
     public void initContratista(){
@@ -92,6 +101,14 @@ public class ContratistaController {
          contratista = contratistasService.find(contratista.getId());
          permitirAddEmpleados = true;
          return "/contratistas/contratista.xhtml";
+    }
+    
+    public void dispUsuario(){
+        FacesContext fc = FacesContext.getCurrentInstance();
+        if(!usrService.isUsuarioDisponible(contratista.getUsuario())){
+            FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El nombre de usuario ya existe, seleccione otro", "El nombre de usuario ya existe, seleccione otro");
+            fc.addMessage("form:usr", fm);
+        }
     }
 
 
@@ -163,6 +180,13 @@ public class ContratistaController {
      */
     public void setContratistas(List<Contratista> contratistas) {
         this.contratistas = contratistas;
+    }
+
+    /**
+     * @return the arps
+     */
+    public List<SelectItem> getArps() {
+        return arps;
     }
    
 }
