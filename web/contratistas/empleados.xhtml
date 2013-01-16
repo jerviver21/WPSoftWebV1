@@ -46,20 +46,28 @@
                         <p:column headerText="#{labels.nombre}">
                             <h:outputText value="#{empleado.nombresApellidos}"/>
                         </p:column>
-                        <sec:ifAllGranted roles="#{applicationController.ROL_VALIDADOR}">
+                        <sec:ifAnyGranted roles="#{applicationController.ROL_VALIDADOR}, #{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
                             <p:column headerText="#{labels.fecha_induccion}">
-                                <p:calendar value="#{empleado.fechaInduccion}" pattern="yyyy-MM-dd"  valueChangeListener="#{empleadoController.cambiarFechaEmpleado}">
+                                <p:calendar value="#{empleado.fechaInduccion}" pattern="yyyy-MM-dd"  valueChangeListener="#{empleadoController.cambiarFechaEmpleado}" disabled="#{empleado.betado}">
                                     <f:attribute name="empleado" value="#{empleado}" />
                                     <p:ajax event="dateSelect" update=":form:msgs"/>
                                 </p:calendar>
                             </p:column>
                             <p:column headerText="#{labels.activar}">
-                                <p:selectBooleanCheckbox value="#{empleado.activo}" valueChangeListener="#{empleadoController.activarEmpleado}">
+                                <p:selectBooleanCheckbox value="#{empleado.activo}" valueChangeListener="#{empleadoController.activarEmpleado}" disabled="#{empleado.betado}">
                                     <p:ajax update=":form:msgs"/>
                                     <f:attribute name="empleado" value="#{empleado}" />
                                 </p:selectBooleanCheckbox>
                             </p:column>
-                        </sec:ifAllGranted>
+                        </sec:ifAnyGranted>
+                        <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
+                            <p:column headerText="Vetar">
+                                <p:selectBooleanCheckbox value="#{empleado.betado}" valueChangeListener="#{empleadoController.betarEmpleado}">
+                                    <p:ajax update="@form"/>
+                                    <f:attribute name="empleado" value="#{empleado}" />
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                        </sec:ifAnyGranted>
                     </p:dataTable>
                 </p:outputPanel>
             </p:panel>

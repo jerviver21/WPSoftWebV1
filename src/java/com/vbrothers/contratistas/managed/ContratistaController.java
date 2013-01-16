@@ -1,4 +1,3 @@
-
 package com.vbrothers.contratistas.managed;
 
 import com.vbrothers.common.exceptions.LlaveDuplicadaException;
@@ -30,18 +29,21 @@ import javax.faces.model.SelectItem;
 @SessionScoped
 public class ContratistaController {
     ServiceLocator locator;
-    private List<Contratista> contratistas;
-    private Contratista contratista;
-    private String contrasena;
-    private long numId;
-    private boolean permitirAddEmpleados = false;
-    private List<SelectItem> arps;
-
+    
+    //Servicios
     @EJB
     private ContratistaServicesLocal contratistasService;
     
     @EJB
     private UsuariosServicesLocal usrService;
+    
+    //Atributos para la gestion de datos del contratista
+    private List<Contratista> contratistas;
+    private Contratista contratista;
+    private String contrasena = "";
+    private boolean permitirAddEmpleados = false;
+    private List<SelectItem> arps;
+    private boolean asignarClave = true;
 
     public ContratistaController() {
     }
@@ -51,6 +53,7 @@ public class ContratistaController {
         locator = ServiceLocator.getInstance();
         contratistas = contratistasService.findAll();
         arps = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_COD_ARP));
+        asignarClave = true;
     }
 
     public void initContratista(){
@@ -61,20 +64,17 @@ public class ContratistaController {
 
     public String guardar(){
         try {
-            if(contrasena == null){
-                FacesUtil.addMessage(FacesUtil.ERROR, "Este usuario no tiene permisos para crear contratistas");
-                return null;
-            }
             if(contratista.getNumId() == 0l){
                 FacesUtil.addMessage(FacesUtil.ERROR, "Ingrese un número de identificación valido");
                 return null;
             }
  
-            contrasena = contrasena.equals("")?contratista.getPwd():SpringUtils.getPasswordEncoder().encodePassword(contrasena, null);
+            contrasena = contrasena == null || contrasena.equals("")?contratista.getPwd():SpringUtils.getPasswordEncoder().encodePassword(contrasena, null);
             contratista.setPwd(contrasena);
             contratistasService.guardar(getContratista());
             FacesUtil.addMessage(FacesUtil.INFO,"Contratista guardado con exito!!");
             permitirAddEmpleados = true;
+            crearNuevo();
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (ParametroException e) {
@@ -96,10 +96,11 @@ public class ContratistaController {
         return "/contratistas/contratista.xhtml";
     }
 
-    public String updateContratista(Contratista c){
+    public String consultarContratista(Contratista c){
          contratista  = c;
          contratista = contratistasService.find(contratista.getId());
          permitirAddEmpleados = true;
+         asignarClave = false;
          return "/contratistas/contratista.xhtml";
     }
     
@@ -109,6 +110,10 @@ public class ContratistaController {
             FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El nombre de usuario ya existe, seleccione otro", "El nombre de usuario ya existe, seleccione otro");
             fc.addMessage("form:usr", fm);
         }
+    }
+    
+    public void cambiarClaveCont(){
+        asignarClave = true;
     }
 
 
@@ -154,19 +159,6 @@ public class ContratistaController {
         this.permitirAddEmpleados = permitirAddEmpleados;
     }
 
-    /**
-     * @return the numId
-     */
-    public long getNumId() {
-        return numId;
-    }
-
-    /**
-     * @param numId the numId to set
-     */
-    public void setNumId(long numId) {
-        this.numId = numId;
-    }
 
     /**
      * @return the contratistas
@@ -187,6 +179,20 @@ public class ContratistaController {
      */
     public List<SelectItem> getArps() {
         return arps;
+    }
+
+    /**
+     * @return the asignarClave
+     */
+    public boolean isAsignarClave() {
+        return asignarClave;
+    }
+
+    /**
+     * @param asignarClave the asignarClave to set
+     */
+    public void setAsignarClave(boolean asignarClave) {
+        this.asignarClave = asignarClave;
     }
    
 }

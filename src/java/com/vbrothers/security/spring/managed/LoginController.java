@@ -40,7 +40,7 @@ public class LoginController{
                 }else{
                    mensaje = "Bad Credentials";
                 }
-            }if(ex instanceof DisabledException){
+            }else if(ex instanceof DisabledException){
                 mensaje =  "El usuario se encuentra inactivo";
             }else{
                 Exception exc = (Exception) ex;

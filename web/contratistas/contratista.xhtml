@@ -67,7 +67,7 @@
                     
                     <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
                     <p:inputText id="mail" value="#{contratistaController.contratista.mail}" required="true" validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
-                        <f:validateRegex pattern="\w+@\w+\.\w+\.*\w*"/>
+                        <f:validateRegex pattern="[\w\.]+@\w+\.\w+\.*\w*"/>
                         <p:ajax process="mail" update="mail msg_mail" event="change"/>
                     </p:inputText>
                     <p:message id="msg_mail" for="mail"/>
@@ -95,12 +95,14 @@
                         </p:inputText>
                         <p:message id="msg_usr" for="usr"/>
 
-                        <h:outputLabel for="pwd" value="#{labels.pwd}" />
-                        <h:panelGrid columns="1">
-                            <h:outputText value="#{labels.msj_no_cambio_clave}" style="color: blue;font-size: 9"/>
-                            <p:password id="pwd" value="#{contratistaController.contrasena}" feedback="true"/>
-                        </h:panelGrid>
-                        <p:message for="pwd"/>
+                        <h:outputLabel id="lpwd" for="pwd" value="#{labels.pwd}" />
+                        <p:commandLink value="Cambiar Clave" actionListener="#{contratistaController.cambiarClaveCont}" 
+                                       rendered="#{!contratistaController.asignarClave}" update="@form"/>
+                        <p:password id="pwd" value="#{contratistaController.contrasena}" feedback="true"
+                                    rendered="#{contratistaController.asignarClave}">
+                            <p:ajax event="change"/>
+                        </p:password>
+                        <p:message id="mpwd" for="pwd"/>
                     </sec:ifAnyGranted>
                     
                     <h:outputLabel  value="#{labels.contratista_activo}" />
@@ -134,14 +136,7 @@
                     <p:column headerText="#{labels.nombre}">
                         <h:outputText value="#{empleado.nombresApellidos}"/>
                     </p:column>
-                    <p:column headerText="#{labels.activar}">
-                        <p:selectBooleanCheckbox value="#{empleado.activo}"/>
-                    </p:column>
-                    <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
-                        <p:column headerText="Vetar">
-                            <p:selectBooleanCheckbox value="#{empleado.betado}"/>
-                        </p:column>
-                    </sec:ifAnyGranted>
+
                     <p:column headerText="#{labels.actualizar}">
                         <p:commandButton ajax="false" icon="ui-icon-pencil"  action="#{empleadoController.consultarEmpleado(empleado)}"/>
                     </p:column>

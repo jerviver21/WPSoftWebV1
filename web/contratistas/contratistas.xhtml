@@ -23,7 +23,7 @@
                              paginatorPosition="top"
                              paginatorAlwaysVisible="false">
                     <p:column headerText="Nit" filterBy="#{contratista.numId}" id="nit_c">
-                        <p:commandLink ajax="false" action="#{contratistaController.updateContratista(contratista)}" value="#{contratista.numId}"/>
+                        <p:commandLink ajax="false" action="#{contratistaController.consultarContratista(contratista)}" value="#{contratista.numId}"/>
                     </p:column>
                     <p:column headerText="Nombre" filterBy="#{contratista.nombre}" id="nombre_c">
                         <h:outputText value="#{contratista.nombre}"/>

@@ -10,6 +10,7 @@ import com.vbrothers.permisostrabajo.dominio.Empleado;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
 import com.vbrothers.usuarios.managed.SessionController;
+import com.vbrothers.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import com.vbrothers.util.SpringUtils;
@@ -18,13 +19,13 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import org.primefaces.event.FileUploadEvent;
@@ -44,41 +45,40 @@ public class EmpleadoController {
     ContratistaServicesLocal contratistaService;
     @EJB
     EmpleadoServicesLocal empleadoService;
+    @EJB
+    UsuariosServicesLocal usrService;
 
-    
+    //Para gestion de datos del empleado
     private Empleado empleado;
     private List<SelectItem> contratistas;
+    private List<SelectItem> epss;
     private String contrasena = "" ;
-    private long numId;
+    private boolean certMedicoCargado = false;
+    private boolean certTACargado = false;
+    private boolean asignarClave = true;
 
-    
+    //Para la carga de los certificados médicos y de trabajo en alturas!
     private UploadedFile certificadoMedico;
     private StreamedContent certificadoMedicoDown;
     private UploadedFile certificadoTrabajoAlturas;
     private StreamedContent trabajoAlturasDown;
-    private List<UploadedFile> otrosCertificados;
     
+    //Permite mostrar los empleados de un contratista, en la pagina empleados.xhtml
     private List<Empleado> empleadosContratista;
     
-    
-    //Constantes
-    private final String nombreArchCM = "CM";
-    private final String nombreArchTA = "TA";
+    //Para manejar la session
+    SessionController sessionControler;
 
-
-    
-    
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
         empleado = new Empleado();
         Contratista contratista = new Contratista(-1l);
-        SessionController sessionControler = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
+        sessionControler = (SessionController)FacesUtil.getManagedBean("#{sessionController}");
         List<Contratista> contratistasList = new ArrayList<Contratista>();
-        if(sessionControler.getUsuario().getRolesUsr().contains(locator.getParameter("rolContratista")) &&
-                !sessionControler.getUsuario().getRolesUsr().contains(locator.getParameter("rolMaster"))){
+        if(sessionControler.getUsuario().getRolesUsr().contains(locator.getParameter("rolContratista"))){
             contratista = contratistaService.findByUser(sessionControler.getUsuario().getUsr());
-            contratistasList.add(contratistaService.findByUser(sessionControler.getUsuario().getUsr()));
+            contratistasList.add(contratista);
             empleadosContratista = empleadoService.findEmpleadosXContratita(contratista.getId());
         }else{
             contratistasList = contratistaService.findAll();
@@ -86,7 +86,10 @@ public class EmpleadoController {
         }
         empleado.setContratista(contratista);
         setContratistas(FacesUtil.getSelectsItem(contratistasList));
-        
+        epss = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_COD_EPS));
+        certMedicoCargado = false;
+        certTACargado = false;
+        asignarClave = true;
     }
     
     public String crearNuevo(){
@@ -95,24 +98,28 @@ public class EmpleadoController {
     }
     
     public String createEmpleado(){
-        
         try {
-            if(!empleado.getCertificadoMedico()){
+            if(!empleado.getCertificadoMedico() && empleado.getCertMedico() == null){
                 FacesUtil.addMessage(FacesUtil.ERROR, "Es necesario cargar el certificado médico del empleado");
                 return null;
             }
-            if(empleado.getNumId() == 0){
+            if(empleado.getNumId() == 0l){
                 FacesUtil.addMessage(FacesUtil.ERROR, "Ingrese un número de identificación valido");
                 return null;
             }
-            contrasena = contrasena.equals("")?empleado.getPwd():SpringUtils.getPasswordEncoder().encodePassword(contrasena, null);
-            empleado.setPwd(contrasena);
+            empleado.setPwd(contrasena == null || contrasena.equals("")?empleado.getPwd():SpringUtils.getPasswordEncoder().encodePassword(contrasena, null));
+            if(empleado.getContratista().getId() == -1){//Por convencion si el empleado es de planta, selecciona -1
+                empleado.setContratista(null);
+            }
             empleadoService.guardar(empleado);
             FacesUtil.addMessage(FacesUtil.INFO, "Empleado guardado con exito!");
+            crearNuevo();
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }catch (ParametroException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el empleado");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -123,18 +130,11 @@ public class EmpleadoController {
     
     public void cargarCertMedico(FileUploadEvent event){
         try {
-            if(empleado.getNumId() == 0){
-                FacesUtil.addMessage(FacesUtil.ERROR, "Ingrese primero todos los datos del empleado!");
-                return;
-            }
-            String rutaCert = empleadoService.cargarCertificado(nombreArchCM+"."+event.getFile().getFileName().replaceAll(
-                    ".*\\.(.*)", "$1"), empleado.getNumId(), event.getFile().getInputstream());
-            empleado.setRutaCertCm(rutaCert);
-            empleado.setCertificadoMedico(true);
-        } catch (ParametroException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            empleado.setCertMedico(event.getFile().getInputstream());
+            empleado.setExtCM(event.getFile().getFileName().replaceAll( ".*\\.(.*)", "$1"));
+            certMedicoCargado = true;
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el archivo");
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al cargar el archivo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         } 
     }
@@ -146,7 +146,8 @@ public class EmpleadoController {
             }
             FileInputStream stream = new FileInputStream(empleado.getRutaCertCm());
             String separador = File.separator.equals("/")?"/":"\\";
-            certificadoMedicoDown = new DefaultStreamedContent(stream, "application/pdf",empleado.getRutaCertCm().replaceAll(
+            certificadoMedicoDown = new DefaultStreamedContent(stream, "application/"+empleado.getRutaCertCm().replaceAll( ".*\\.(.*)", "$1")
+                    ,empleado.getRutaCertCm().replaceAll(
                     ".*"+separador+"(.*)", "$1"));
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El archivo a descargar no existe!");
@@ -157,20 +158,13 @@ public class EmpleadoController {
     
     public void cargarCertTA(FileUploadEvent event){
         try {
-            if(empleado.getNumId() == 0){
-                FacesUtil.addMessage(FacesUtil.ERROR, "Ingrese primero todos los datos del empleado!");
-                return;
-            }
-            String rutaCert = empleadoService.cargarCertificado(nombreArchTA+"."+event.getFile().getFileName().replaceAll(
-                    ".*\\.(.*)", "$1"), empleado.getNumId(), event.getFile().getInputstream());
-            empleado.setRutaCertTA(rutaCert);
-            empleado.setTrabajoAlturas(true);
-        } catch (ParametroException e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
+            empleado.setCertTrabAlt(event.getFile().getInputstream());
+            empleado.setExtCTA(event.getFile().getFileName().replaceAll( ".*\\.(.*)", "$1"));
+            certTACargado = true;
         } catch (Exception e) {
-            FacesUtil.addMessage(FacesUtil.ERROR, "Error al guardar el archivo");
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al cargar el archivo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
-        } 
+        }  
     }
     
     public void descargarCertTA(){
@@ -180,11 +174,19 @@ public class EmpleadoController {
             }
             FileInputStream stream = new FileInputStream(empleado.getRutaCertTA());
             String separador = File.separator.equals("/")?"/":"\\";
-            certificadoMedicoDown = new DefaultStreamedContent(stream, "application/pdf",
+            trabajoAlturasDown = new DefaultStreamedContent(stream, "application/"+empleado.getRutaCertTA().replaceAll( ".*\\.(.*)", "$1"),
                     empleado.getRutaCertTA().replaceAll(".*"+separador+"(.*)", "$1"));
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El archivo a descargar no existe!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+    
+    public void dispUsuario(){
+        FacesContext fc = FacesContext.getCurrentInstance();
+        if(!usrService.isUsuarioDisponible(empleado.getUsuario())){
+            FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El nombre de usuario ya existe, seleccione otro", "El nombre de usuario ya existe, seleccione otro");
+            fc.addMessage("form:usr", fm);
         }
     }
     
@@ -194,7 +196,22 @@ public class EmpleadoController {
         if(empleado.getContratista() == null){
             empleado.setContratista(new Contratista(-1l));
         }
+        asignarClave = false;
         return "/contratistas/empleado.xhtml";
+    }
+    
+    public void cambiarClaveEmp(){
+        asignarClave = true;
+    }
+    
+    public void eliminarCM(){
+        empleado.setCertificadoMedico(false);
+        empleado.setRutaCertCm(null);
+    }
+    
+    public void eliminarCA(){
+        empleado.setTrabajoAlturas(false);
+        empleado.setRutaCertTA(null);
     }
 
     
@@ -204,13 +221,24 @@ public class EmpleadoController {
     
     
     public void activarEmpleado(ValueChangeEvent evento){
-        try {         
+        try {   
             Empleado emp  = (Empleado) evento.getComponent().getAttributes().get("empleado");
             emp.setActivo((Boolean)evento.getNewValue());
-            empleadoService.activarEmpleado(emp);
+            empleadoService.activarEmpleado(emp, sessionControler.getUsuario().getUsr());
         } catch( EmpActivoOtroContException e){
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         } catch (Exception e) {
+            FacesUtil.addMessage(FacesUtil.ERROR, "Error al tratar de activar los empleados ");
+            Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+    
+    public void betarEmpleado(ValueChangeEvent evento){
+        try {         
+            Empleado emp  = (Empleado) evento.getComponent().getAttributes().get("empleado");
+            emp.setBetado((Boolean)evento.getNewValue());
+            empleadoService.betarEmpleado(emp, sessionControler.getUsuario().getUsr());
+        }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al tratar de activar los empleados ");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
@@ -220,7 +248,7 @@ public class EmpleadoController {
         try {
             Empleado emp  = (Empleado) evento.getComponent().getAttributes().get("empleado");
             emp.setFechaInduccion((Date)evento.getNewValue());
-            empleadoService.edit(emp);
+            empleadoService.cambiarFechaInduccion(emp, sessionControler.getUsuario().getUsr());
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al tratar de cambiar la fecha al empleado");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -284,19 +312,6 @@ public class EmpleadoController {
         this.certificadoTrabajoAlturas = certificadoTrabajoAlturas;
     }
 
-    /**
-     * @return the otrosCertificados
-     */
-    public List<UploadedFile> getOtrosCertificados() {
-        return otrosCertificados;
-    }
-
-    /**
-     * @param otrosCertificados the otrosCertificados to set
-     */
-    public void setOtrosCertificados(List<UploadedFile> otrosCertificados) {
-        this.otrosCertificados = otrosCertificados;
-    }
 
     /**
      * @return the certificadoMedicoDown
@@ -341,20 +356,6 @@ public class EmpleadoController {
     }
 
     /**
-     * @return the numId
-     */
-    public long getNumId() {
-        return numId;
-    }
-
-    /**
-     * @param numId the numId to set
-     */
-    public void setNumId(long numId) {
-        this.numId = numId;
-    }
-
-    /**
      * @return the empleadosContratista
      */
     public List<Empleado> getEmpleadosContratista() {
@@ -366,6 +367,55 @@ public class EmpleadoController {
      */
     public void setEmpleadosContratista(List<Empleado> empleadosContratista) {
         this.empleadosContratista = empleadosContratista;
+    }
+
+    /**
+     * @return the epss
+     */
+    public List<SelectItem> getEpss() {
+        return epss;
+    }
+
+    /**
+     * @return the certMedicoCargado
+     */
+    public boolean isCertMedicoCargado() {
+        return certMedicoCargado;
+    }
+
+    /**
+     * @param certMedicoCargado the certMedicoCargado to set
+     */
+    public void setCertMedicoCargado(boolean certMedicoCargado) {
+        this.certMedicoCargado = certMedicoCargado;
+    }
+
+    /**
+     * @return the certTACargado
+     */
+    public boolean isCertTACargado() {
+        return certTACargado;
+    }
+
+    /**
+     * @param certTACargado the certTACargado to set
+     */
+    public void setCertTACargado(boolean certTACargado) {
+        this.certTACargado = certTACargado;
+    }
+
+    /**
+     * @return the asignarClave
+     */
+    public boolean isAsignarClave() {
+        return asignarClave;
+    }
+
+    /**
+     * @param asignarClave the asignarClave to set
+     */
+    public void setAsignarClave(boolean asignarClave) {
+        this.asignarClave = asignarClave;
     }
     
 }
