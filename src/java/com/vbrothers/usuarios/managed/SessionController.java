@@ -23,6 +23,7 @@ import org.springframework.security.core.GrantedAuthority;
 @ManagedBean(name="sessionController")
 @SessionScoped
 public class SessionController {
+    ServiceLocator locator;
     private MenuModel model;
     private Users usuario;
     @EJB
@@ -30,12 +31,16 @@ public class SessionController {
 
     private UsernamePasswordAuthenticationToken principal;
     private Collection<GrantedAuthority> grantedAuthorities;
+    
+    //PArametros de inicio
+    private boolean iniciado = false;
 
 
     
     @PostConstruct
     public void init(){
         System.out.println("Iniciando session");
+        locator = ServiceLocator.getInstance();
         principal = (UsernamePasswordAuthenticationToken)FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
 
         grantedAuthorities = principal.getAuthorities();
@@ -52,6 +57,14 @@ public class SessionController {
         usuario.setRolesUsr(roles);
         usuario.setGruposUsr(grupos);
         restartModel();
+    }
+    
+    public String iniciar(){
+        iniciado = true;
+        if(!usuario.getRolesUsr().contains(locator.getParameter("rolRecepcionista"))){
+            return "/permisostrabajo/mis_permisos.xhtml";
+        }
+        return "/general/bienvenida.xhtml";
     }
 
     public void restartModel(){
@@ -113,6 +126,20 @@ public class SessionController {
      */
     public void setGrantedAuthorities(Collection<GrantedAuthority> grantedAuthorities) {
         this.grantedAuthorities = grantedAuthorities;
+    }
+
+    /**
+     * @return the iniciado
+     */
+    public boolean isIniciado() {
+        return iniciado;
+    }
+
+    /**
+     * @param iniciado the iniciado to set
+     */
+    public void setIniciado(boolean iniciado) {
+        this.iniciado = iniciado;
     }
 
     

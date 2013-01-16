@@ -13,9 +13,9 @@
         <h:form id="form" >
             <p:growl id="msgs" />
             
-            <h:commandLink>  
-                <p:graphicImage value="../images/pdf6.gif" />  
-            </h:commandLink>  
+            <p:commandButton value="Imprimir" type="button" icon="ui-icon-print">  
+                <p:printer target="datos_permiso" />  
+            </p:commandButton> 
             <p:separator/>
             <p:panel header="Datos del permiso" id="datos_permiso">
                 <p:panelGrid  style="margin-top:15px">

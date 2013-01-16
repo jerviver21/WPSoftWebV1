@@ -62,7 +62,7 @@
 
     <!-- CONFIGURACIÓN BÁSICA WEB-->
     <welcome-file-list>
-        <welcome-file>/permisostrabajo/mis_permisos.xhtml</welcome-file>
+        <welcome-file>/general/bienvenida.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>
 
