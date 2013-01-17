@@ -12,7 +12,8 @@
         <h:form id="form" >
             <p:growl id="msgs" />
 
-            <p:panel id="permisosPendientes" header="Permisos de Trabajo Pendientes Asignados">
+            <p:panel id="permisosPendientes" header="Permisos de Trabajo Pendientes Asignados" 
+                     rendered="#{not empty gestionPermisoController.permisosPendientes}">
                 <p:dataTable value="#{gestionPermisoController.permisosPendientes}" var="permiso"
                              paginator="true"  paginatorAlwaysVisible="false"  paginatorPosition="bottom" rows="10"  
                              paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
