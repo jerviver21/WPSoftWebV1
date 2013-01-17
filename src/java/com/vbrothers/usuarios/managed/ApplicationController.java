@@ -38,6 +38,9 @@ public class ApplicationController {
     private EtapaPermiso CANCELAR;
     private EtapaPermiso FINALIZAR;
     
+    //Define la plantilla y layout de la aplicacion
+    private String plantilla = "../plantilla2.xhtml";
+    
 
     @EJB
     private CommonServicesLocal commonServices;
@@ -259,6 +262,20 @@ public class ApplicationController {
      */
     public EtapaPermiso getAPROBAR() {
         return APROBAR;
+    }
+
+    /**
+     * @return the plantilla
+     */
+    public String getPlantilla() {
+        return plantilla;
+    }
+
+    /**
+     * @param plantilla the plantilla to set
+     */
+    public void setPlantilla(String plantilla) {
+        this.plantilla = plantilla;
     }
 
 }

@@ -4,7 +4,7 @@
      xmlns:f="http://java.sun.com/jsf/core"
      xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
-  <ui:composition template="../plantilla1.xhtml">
+  <ui:composition template="#{applicationController.plantilla}">
     <ui:define name="contenido">
         <h:outputLabel value="#{labels.acceso_denegado}" style="color: red"  />
   </ui:define>

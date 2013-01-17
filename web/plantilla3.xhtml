@@ -1,0 +1,53 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:sec="http://www.springframework.org/security/facelets/tags"
+     xmlns:p="http://primefaces.org/ui">
+
+    <h:head id="head1">
+        <title id="title">Work Permiss System</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript">
+            //Funcion para componentes de arrastrar y soltar
+            function handleDrop(event, ui) {
+                var data = ui.draggable;
+                data.fadeOut('fast');
+            }
+        </script>
+        <f:view id="view1" locale="#{generalController.locale}" />
+     </h:head>
+     <h:body id="body1" onload="precargar();">
+         <h:form>
+             <p:remoteCommand name="precargar" action="#{applicationController.preCargar}"/>
+         </h:form>
+         
+         
+         <div id="holder">																																																																																																																																																																																																																																																																										
+            <div id="page">		
+                <div id="top">
+                    <div id="name_part_1" >WORK <span class="orange">P</span>ERMISS</div>
+                    <div id="name_part_2" ><span class="green">S</span>YSTEM</div>	
+                    <div id="square"><div id="orange_square"></div><div id="green_square"></div></div>	
+                    <sec:ifAnyGranted roles="ROLE_USER, MASTER">
+                        <a id="ref1" href="/wpsoft/j_spring_security_logout">Cerrar Sesión</a>
+                    </sec:ifAnyGranted>
+		</div>
+                <div id="line"></div>
+                <div id="left_col">
+                    <div class="clearboth"></div>												
+                    <!-- Menu -->
+                    <ui:insert id="nav" name="navegador"></ui:insert>
+                    <!-- Menu end-->				
+                </div>
+                <!--Contenido-->
+                <div id="right_col">											
+                    <ui:insert id="cont" name="contenido"></ui:insert>										
+                </div>
+                <!--End contenido-->
+            </div>
+        </div>
+    </h:body>
+</html>
+
