@@ -35,7 +35,7 @@ text-decoration :none;
 }
 #top {
 position: relative;
-padding:10px 0px 20px 0px;
+padding:10px 0px 0px 0px;
 background-image: url(../images/main_bg3.jpg);
 }
 #square {	
@@ -51,7 +51,7 @@ background-image: url(../images/main_bg3.jpg);
 		height:20px;
 		background-color:#f47b33;
 		position:absolute;
-		right:0px;		
+		right:-10px;		
 }
 
 #green_square {
@@ -59,7 +59,7 @@ background-image: url(../images/main_bg3.jpg);
 		height:20px;
 		background-color:#74be37;
 		position:absolute;
-		left:0px;	
+		left:10px;	
 		bottom:0px;	
 }
 
@@ -82,7 +82,7 @@ background-image: url(../images/main_bg3.jpg);
 }
 
 #line {
-background:#000000 none repeat scroll 0%;
+background:#888888 none repeat scroll 0%;
 font-size:0px;
 height:1px;
 margin-bottom:20px;
@@ -124,7 +124,7 @@ object,embed{margin:-1px;}
 
 
 #right_col {
-	width:570px;
+	width:70%;
 	padding:0 0 10px 10px;
 float:left;
 

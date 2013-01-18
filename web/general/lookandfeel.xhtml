@@ -1,0 +1,34 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+  <ui:composition template="#{applicationController.plantilla}">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form">
+            <p:panelGrid columns="2">
+                <p:outputLabel value="Decoración"/>
+                <p:selectOneMenu id="contratista" value="#{applicationController.plantilla}" valueChangeListener="#{applicationController.cambiarLookandfeel}">
+                    <p:ajax update="@form"/>
+                    <f:selectItem itemLabel="CLASICO" itemValue="../plantilla1.xhtml"  />
+                    <f:selectItem itemLabel="ORANGE" itemValue="../plantilla2.xhtml"  />
+                    <f:selectItem itemLabel="GREEN" itemValue="../plantilla3.xhtml"  />
+                </p:selectOneMenu>
+                <p:outputLabel value="Tema"/>
+                <p:themeSwitcher style="width:165px" id="defaultSwitcher">  
+                    <f:selectItem itemLabel="Seleccione Tema" itemValue="" />  
+                    <f:selectItems value="#{applicationController.themes}" />  
+                </p:themeSwitcher>  
+                <f:facet name="footer">
+                    <p:commandButton action="#{applicationController.cambiarLookandfeel}" ajax="False" icon="ui-icon-check" value="Cambiar"/>
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>

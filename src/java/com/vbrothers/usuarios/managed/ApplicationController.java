@@ -5,10 +5,13 @@ import com.vbrothers.common.services.CommonServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.services.PermisoTimerService;
 import com.vbrothers.util.EtapaPermiso;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.event.ValueChangeEvent;
 
 /**
  * @author Jerson Viveros
@@ -39,7 +42,13 @@ public class ApplicationController {
     private EtapaPermiso FINALIZAR;
     
     //Define la plantilla y layout de la aplicacion
+    private String p1 = "../plantilla1.xhtml";
+    private String p2 = "../plantilla2.xhtml";
+    private String p3 = "../plantilla3.xhtml";
     private String plantilla = "../plantilla2.xhtml";
+    private String planIndex = "plantilla2.xhtml";
+    private Map<String, String> themes; 
+    private String theme = "casablanca";
     
 
     @EJB
@@ -69,6 +78,23 @@ public class ApplicationController {
         FINALIZAR = EtapaPermiso.FINALIZAR;
         DILIGENCIAR = EtapaPermiso.DILIGENCIAR;
         APROBAR = EtapaPermiso.APROBAR;
+        
+        themes = new TreeMap<String, String>();  
+        themes.put("Afterdark", "afterdark");  
+        themes.put("Casablanca", "casablanca");  
+        themes.put("South-Street", "south-street");  
+        themes.put("UI-Lightness", "ui-lightness");  
+    }
+    
+    public String cambiarLookandfeel(){
+        if(plantilla.equalsIgnoreCase(p1)){
+            planIndex = "plantilla1.xhtml";
+        }else if(plantilla.equalsIgnoreCase(p2)){
+            planIndex = "plantilla2.xhtml";
+        }else{
+            planIndex = "plantilla3.xhtml";
+        }
+        return null;
     }
     
     public String preCargar(){
@@ -276,6 +302,90 @@ public class ApplicationController {
      */
     public void setPlantilla(String plantilla) {
         this.plantilla = plantilla;
+    }
+
+    /**
+     * @return the p1
+     */
+    public String getP1() {
+        return p1;
+    }
+
+    /**
+     * @param p1 the p1 to set
+     */
+    public void setP1(String p1) {
+        this.p1 = p1;
+    }
+
+    /**
+     * @return the p2
+     */
+    public String getP2() {
+        return p2;
+    }
+
+    /**
+     * @param p2 the p2 to set
+     */
+    public void setP2(String p2) {
+        this.p2 = p2;
+    }
+
+    /**
+     * @return the p3
+     */
+    public String getP3() {
+        return p3;
+    }
+
+    /**
+     * @param p3 the p3 to set
+     */
+    public void setP3(String p3) {
+        this.p3 = p3;
+    }
+
+    /**
+     * @return the planIndex
+     */
+    public String getPlanIndex() {
+        return planIndex;
+    }
+
+    /**
+     * @param planIndex the planIndex to set
+     */
+    public void setPlanIndex(String planIndex) {
+        this.planIndex = planIndex;
+    }
+
+    /**
+     * @return the themes
+     */
+    public Map<String, String> getThemes() {
+        return themes;
+    }
+
+    /**
+     * @param themes the themes to set
+     */
+    public void setThemes(Map<String, String> themes) {
+        this.themes = themes;
+    }
+
+    /**
+     * @return the theme
+     */
+    public String getTheme() {
+        return theme;
+    }
+
+    /**
+     * @param theme the theme to set
+     */
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
 }

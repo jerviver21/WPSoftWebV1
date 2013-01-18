@@ -6,34 +6,8 @@
      xmlns:ui="http://java.sun.com/jsf/facelets"
      xmlns:sec="http://www.springframework.org/security/facelets/tags">
 <f:view>
-<ui:composition template="plantilla1.xhtml">
+    <ui:composition template="#{applicationController.planIndex}">
     <ui:define name="navegador">
-        <h:form>
-            <table>
-               <!-- <tr><td>
-                    <p:graphicImage value="/images/Ingles.png"/>
-                    <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
-                        <h:outputText value="English" style="font-size: 8px"/>
-                        <f:attribute name="language" value="en" />
-                    </p:commandLink>
-                </td><td>
-                     <p:graphicImage value="/images/espanol.png"/>
-                     <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
-
-                        <h:outputText value="Español" style="font-size: 8px"/>
-                        <f:attribute name="language" value="es" />
-                     </p:commandLink>
-                </td><td>
-                    <p:graphicImage value="/images/portuqes.png"/>
-                    <p:commandLink actionListener="{generalController.changeLanguage}" ajax="false">
-                        <h:outputText value="Portugues" style="font-size: 8px"/>
-                        <f:attribute name="language" value="pt" />
-                    </p:commandLink>
-                </td></tr>-->
-            </table>
-        </h:form>
-    </ui:define>
-    <ui:define name="contenido">
         <h:form id="loginForm" prependId="false">
         <!-- Agregue la implementación del navegador-->
         <p:messages/>
@@ -59,6 +33,10 @@
              </tr>
         </table>
         </h:form>
+    </ui:define>
+    <ui:define name="contenido">
+        
+        <p:graphicImage value="images/empresarial.jpg" />
     </ui:define>
   </ui:composition>
 </f:view>

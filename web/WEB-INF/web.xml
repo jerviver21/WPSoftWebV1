@@ -29,7 +29,7 @@
     <!-- Configuración de PRIMEFACES - JSF -->
     <context-param>  
         <param-name>primefaces.THEME</param-name>  
-        <param-value>casablanca</param-value>
+        <param-value>#{applicationController.theme}</param-value>
     </context-param> 
     
     <filter>

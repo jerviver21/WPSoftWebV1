@@ -7,8 +7,7 @@
 
     <h:head id="head1">
         <title id="title">Work Permiss System</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-        <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
+        <link href="/wpsoft/styles/principal2.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
             //Funcion para componentes de arrastrar y soltar
             function handleDrop(event, ui) {
@@ -30,9 +29,11 @@
                     <div id="name_part_1" >WORK <span class="orange">P</span>ERMISS</div>
                     <div id="name_part_2" ><span class="green">S</span>YSTEM</div>	
                     <div id="square"><div id="orange_square"></div><div id="green_square"></div></div>	
-                    <sec:ifAnyGranted roles="ROLE_USER, MASTER">
-                        <a id="ref1" href="/wpsoft/j_spring_security_logout">Cerrar Sesión</a>
-                    </sec:ifAnyGranted>
+                    <div style="text-align: right">
+                      <sec:ifAnyGranted roles="ROLE_USER, MASTER">
+                        <a id="ref1" href="/wpsoft/j_spring_security_logout">Cerrar Sesion</a>
+                      </sec:ifAnyGranted>  
+                    </div>
 		</div>
                 <div id="line"></div>
                 <div id="left_col">

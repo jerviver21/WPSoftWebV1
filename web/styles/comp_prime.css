@@ -3,7 +3,7 @@
     border: 1px solid #AAAAAA;
     color: #000000;
     font-weight: normal;
-}*/
+}
 
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
     background: url("/wpsoft/javax.faces.resource/images/active.png.xhtml?ln=primefaces-casablanca") repeat-x scroll 50% 50% #FFFFFF;
@@ -17,7 +17,7 @@
     border: 1px solid #AAAAAA;
     color: #000000;
     font-weight: normal;
-}
+}*/
 
 .ui-datatable table {
     font-size: 12px;
