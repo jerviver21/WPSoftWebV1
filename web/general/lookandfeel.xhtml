@@ -19,7 +19,8 @@
                     <f:selectItem itemLabel="GREEN" itemValue="../plantilla3.xhtml"  />
                 </p:selectOneMenu>
                 <p:outputLabel value="Tema"/>
-                <p:themeSwitcher style="width:165px" id="defaultSwitcher">  
+                <p:themeSwitcher style="width:165px" id="defaultSwitcher" value="#{applicationController.theme}" valueChangeListener="#{applicationController.cambiarTema}">  
+                    <p:ajax/>
                     <f:selectItem itemLabel="Seleccione Tema" itemValue="" />  
                     <f:selectItems value="#{applicationController.themes}" />  
                 </p:themeSwitcher>  

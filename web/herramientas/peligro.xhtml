@@ -15,58 +15,52 @@
             <p:growl id="msgs" />
             <h:inputHidden id="id" value="#{riesgoController.item.id}"/>
 
-
-            <p:panelGrid id="form_riesgo" style="width: 100%">
-                <f:facet name="header">
+            <p:panel header="Datos del Peligro">
+                <p:panelGrid id="form_riesgo" style="width: 100%">
                     <p:row>
-                        <p:column colspan="3"><h:outputLabel value="Datos del Peligro"/></p:column>
+                        <p:column colspan="1"><h:outputLabel for="nombre" value="Peligro" /></p:column>
+                        <p:column colspan="1"><p:inputText id="nombre" value="#{riesgoController.item.nombre}" required="true"><p:ajax/></p:inputText></p:column>
+                        <p:column colspan="1"><p:message for="nombre"/></p:column>
                     </p:row>
-                </f:facet>
-                <p:row>
-                    <p:column colspan="1"><h:outputLabel for="nombre" value="Peligro" /></p:column>
-                    <p:column colspan="1"><p:inputText id="nombre" value="#{riesgoController.item.nombre}" required="true"><p:ajax/></p:inputText></p:column>
-                    <p:column colspan="1"><p:message for="nombre"/></p:column>
-                </p:row>
 
-                <p:row>
-                    <p:column colspan="3">
-                        <p:accordionPanel id="controles_peligro">
-                            <p:tab title="Precauciones del peligro">
-                                <p:panelGrid columns="4">
-                                    <h:outputLabel for="datos" value="Control:" />
-                                    <p:inputText id="datos" value="#{riesgoController.control.nombre}">
-                                        <p:ajax/>
-                                    </p:inputText>
-                                    <p:message for="datos"/>
-                                    <p:commandButton update=":form:controles_peligro"  process="@this" actionListener="#{riesgoController.addControl}" icon="ui-icon-plus"/>
-                                </p:panelGrid>
-                                <p:dataTable value="#{riesgoController.item.controles}" var="control"
-                                             paginator="true" rows="5"
-                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             paginatorAlwaysVisible="false"
-                                             paginatorPosition="top">
-                                    <p:column headerText="Paso">
-                                        <h:outputText value="#{control.consecutivo}"/>
-                                    </p:column>
-                                    <p:column headerText="Control">
-                                        <h:outputText value="#{control.nombre}"/>
-                                    </p:column>
-                                    <p:column headerText="Borrar">
-                                        <p:commandButton icon="ui-icon-trash" update=":form"  process="@this" actionListener="#{riesgoController.removeControl(control)}" />
-                                    </p:column>
-                                </p:dataTable>
-                            </p:tab>
-                        </p:accordionPanel>
-                    </p:column>
-                </p:row>
-                <f:facet name="footer">
                     <p:row>
                         <p:column colspan="3">
-                            <p:commandButton value="Guardar" update="@form"  action="#{riesgoController.guardar}" ajax="true" icon="ui-icon-disk"/>
+                            <p:outputPanel id="controles_peligro">
+                                    <p:panelGrid columns="4">
+                                        <h:outputLabel for="datos" value="Control:" />
+                                        <p:inputText id="datos" value="#{riesgoController.control.nombre}">
+                                            <p:ajax/>
+                                        </p:inputText>
+                                        <p:message for="datos"/>
+                                        <p:commandButton update=":form:controles_peligro"  process="@this" actionListener="#{riesgoController.addControl}" icon="ui-icon-plus"/>
+                                    </p:panelGrid>
+                                    <p:dataTable value="#{riesgoController.item.controles}" var="control"
+                                                 paginator="true" rows="5"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 paginatorAlwaysVisible="false"
+                                                 paginatorPosition="top">
+                                        <p:column headerText="Paso">
+                                            <h:outputText value="#{control.consecutivo}"/>
+                                        </p:column>
+                                        <p:column headerText="Control">
+                                            <h:outputText value="#{control.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Borrar">
+                                            <p:commandButton icon="ui-icon-trash" update=":form"  process="@this" actionListener="#{riesgoController.removeControl(control)}" />
+                                        </p:column>
+                                    </p:dataTable>
+                            </p:outputPanel>
                         </p:column>
                     </p:row>
-                </f:facet>
-           </p:panelGrid>
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Guardar" update="@form"  action="#{riesgoController.guardar}" ajax="true" icon="ui-icon-disk"/>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+               </p:panelGrid>
+            </p:panel>
 
 
             

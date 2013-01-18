@@ -14,63 +14,57 @@
             <p:growl id="msgs" />
             <h:inputHidden id="id" value="#{sectorController.item.id}"/>
 
-
-            <p:panelGrid id="form_sector" style="width: 100%">
-                <f:facet name="header">
+            <p:panel header="Datos del Sector">
+                <p:panelGrid id="form_sector" style="width: 100%">
                     <p:row>
-                        <p:column colspan="3"><h:outputLabel value="Datos del Sector"/></p:column>
+                        <p:column><h:outputLabel for="nombre" value="Nombre: *" /></p:column>
+                        <p:column><p:inputText id="nombre" value="#{sectorController.item.nombre}" required="true" ><p:ajax/></p:inputText></p:column>
+                        <p:column><p:message for="nombre"/></p:column>
                     </p:row>
-                </f:facet>
-                <p:row>
-                    <p:column><h:outputLabel for="nombre" value="Nombre: *" /></p:column>
-                    <p:column><p:inputText id="nombre" value="#{sectorController.item.nombre}" required="true" ><p:ajax/></p:inputText></p:column>
-                    <p:column><p:message for="nombre"/></p:column>
-                </p:row>
-                <p:row>
-                    <p:column><h:outputLabel for="grupo" value="Grupo: " /></p:column>
-                    <p:column><h:selectOneMenu id="grupo" value="#{sectorController.item.grupo}" >
-                        <f:selectItems  value="#{sectorController.grupos}" />
-                    </h:selectOneMenu></p:column>
-                    <p:column><p:message for="grupo"/></p:column>
-                </p:row>
+                    <p:row>
+                        <p:column><h:outputLabel for="grupo" value="Grupo: " /></p:column>
+                        <p:column><h:selectOneMenu id="grupo" value="#{sectorController.item.grupo}" >
+                            <f:selectItems  value="#{sectorController.grupos}" />
+                        </h:selectOneMenu></p:column>
+                        <p:column><p:message for="grupo"/></p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column colspan="3">
-                        <p:accordionPanel id="equipos">
-                            <p:tab title="Equipos del sector">
-                                <p:panelGrid columns="4">
-                                    <h:outputLabel for="nombre_equipo" value="Nombre Equipo:" />
-                                    <p:inputText id="nombre_equipo" value="#{sectorController.equipo.nombre}"  >
-                                        <p:ajax/>
-                                    </p:inputText>
-                                    <p:message for="nombre_equipo"/>
-                                    <p:commandButton update=":form:equipos"  process="@this" actionListener="#{sectorController.addEquipo}" icon="ui-icon-plus"/>
-                                </p:panelGrid>
-                                <p:dataTable value="#{sectorController.item.equipos}" var="equipo"
-                                             paginator="true" rows="5"
-                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             paginatorAlwaysVisible="false"
-                                             paginatorPosition="top">
-                                    <p:column headerText="Nombre">
-                                        <h:outputText value="#{equipo.nombre}"/>
-                                    </p:column>
-                                    <p:column headerText="Borrar">
-                                        <p:commandButton update=":form"  process="@this" actionListener="#{sectorController.removeEquipo(equipo)}" icon="ui-icon-trash"/>
-                                    </p:column>
-                                </p:dataTable>
-                            </p:tab>
-                        </p:accordionPanel>
-                    </p:column>
-                </p:row>
-
-                <f:facet name="footer">
                     <p:row>
                         <p:column colspan="3">
-                            <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" icon="ui-icon-disk"/>
+                            <p:outputPanel id="equipos">
+                                    <p:panelGrid columns="4">
+                                        <h:outputLabel for="nombre_equipo" value="Equipo:" />
+                                        <p:inputText id="nombre_equipo" value="#{sectorController.equipo.nombre}"  >
+                                            <p:ajax/>
+                                        </p:inputText>
+                                        <p:message for="nombre_equipo"/>
+                                        <p:commandButton update=":form:equipos"  process="@this" actionListener="#{sectorController.addEquipo}" icon="ui-icon-plus"/>
+                                    </p:panelGrid>
+                                    <p:dataTable value="#{sectorController.item.equipos}" var="equipo"
+                                                 paginator="true" rows="5"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 paginatorAlwaysVisible="false"
+                                                 paginatorPosition="top">
+                                        <p:column headerText="Equipo">
+                                            <h:outputText value="#{equipo.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Borrar">
+                                            <p:commandButton update=":form"  process="@this" actionListener="#{sectorController.removeEquipo(equipo)}" icon="ui-icon-trash"/>
+                                        </p:column>
+                                    </p:dataTable>
+                            </p:outputPanel>
                         </p:column>
                     </p:row>
-                </f:facet>
-            </p:panelGrid>
+
+                    <f:facet name="footer">
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" icon="ui-icon-disk"/>
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+                </p:panelGrid>
+            </p:panel>
 
 
 

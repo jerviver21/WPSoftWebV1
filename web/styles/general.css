@@ -1,3 +1,8 @@
+.index_cont{
+    text-align: center;
+    vertical-align: central;
+}
+
 
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
 	display: block;

@@ -48,7 +48,7 @@ public class ApplicationController {
     private String plantilla = "../plantilla2.xhtml";
     private String planIndex = "plantilla2.xhtml";
     private Map<String, String> themes; 
-    private String theme = "casablanca";
+    private String theme = "ui-lightness";
     
 
     @EJB
@@ -95,6 +95,11 @@ public class ApplicationController {
             planIndex = "plantilla3.xhtml";
         }
         return null;
+    }
+    
+    public void cambiarTema(ValueChangeEvent event){
+        System.out.println("Nuevo tema: "+event.getNewValue());
+        theme = (String)event.getNewValue();
     }
     
     public String preCargar(){
