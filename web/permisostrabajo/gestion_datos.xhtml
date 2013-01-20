@@ -16,10 +16,10 @@
             <p:panel header="Disciplina" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.DILIGENCIAR}">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="disciplina" value="Disciplina:" />
-                    <p:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.disciplina.id}">
+                    <h:selectOneMenu id="disciplina" value="#{gestionPermisoController.permiso.disciplina.id}">
                         <f:selectItems  value="#{gestionPermisoController.disciplinas}" />
                         <p:ajax update="@form"/>
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
                     <p:message for="disciplina"/>
 
                     <h:outputLabel for="otra" value="Cual: *" />
@@ -32,10 +32,10 @@
             <p:panel header="Otros Sectores Afectados">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="sectores" value="Sector:" />
-                    <p:selectOneMenu id="sectores" value="#{gestionPermisoController.idSector}">
+                    <h:selectOneMenu id="sectores" value="#{gestionPermisoController.idSector}">
                         <f:selectItems  value="#{gestionPermisoController.sectores}" />
                         <p:ajax/>
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
                     <p:commandButton icon="ui-icon-plus" actionListener="#{gestionPermisoController.agregarSectorAfectado}" 
                                      update=":form:sectores_afectados"/>
                 </p:panelGrid>

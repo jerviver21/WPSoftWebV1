@@ -35,14 +35,7 @@
                         <h:outputText value="#{proyecto.estado.nombre}"/>
                     </p:column>
                     <p:column headerText="Borrar">
-                        <p:commandButton icon="ui-icon-trash" onclick="dlg#{proyecto.id}.show();" type="button"/>
-                        <p:dialog id="bdlg#{proyecto.id}" widgetVar="dlg#{proyecto.id}" modal="true">  
-                            <h:panelGrid columns="1">
-                                Está seguro que desea borrar  <br/> 
-                                el Proyecto No: #{proyecto.id}?
-                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto(proyecto)}" ajax="false"/>
-                            </h:panelGrid>
-                        </p:dialog>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto(proyecto)}"/>
                     </p:column>
                 </p:dataTable> 
             </p:panel>

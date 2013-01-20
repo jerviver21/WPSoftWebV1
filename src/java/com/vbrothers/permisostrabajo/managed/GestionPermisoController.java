@@ -96,6 +96,7 @@ public class GestionPermisoController implements Serializable{
     String PAG_APR_OTROS = "/permisostrabajo/gestion_aprob_extras.xhtml";
     String PAG_EJECUCION = "/permisostrabajo/gestion_ejecutar.xhtml";
     String PAG_NOTAS = "/permisostrabajo/gestion_notas.xhtml";
+    String PAG_OBSERVACIONES = "/permisostrabajo/gestion_observaciones.xhtml";
     
     @PostConstruct
     public void init(){
@@ -382,6 +383,10 @@ public class GestionPermisoController implements Serializable{
     }
     
     //eventos de la página gestion_ejecutar.xhtml
+    public String navNota(){
+        return PAG_OBSERVACIONES;
+    }
+    
     public String terminar(){
         try {
             permisoServices.terminarPermiso(getPermiso());

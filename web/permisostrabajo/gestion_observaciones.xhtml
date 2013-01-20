@@ -1,0 +1,35 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:p="http://primefaces.org/ui"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+<ui:composition template="#{applicationController.plantilla}">
+    <ui:define name="navegador">
+        <ui:include src="../menu.xhtml"/>
+    </ui:define>
+    <ui:define name="contenido">
+        <h:form id="form" >
+            <p:growl id="msgs" />
+            <p:panel header="Observaciones">
+                <p:panelGrid  columns="2">    
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.notaGestion}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                </p:panelGrid>
+            </p:panel>
+            <p:separator/>
+            <p:commandButton value="Terminar" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
+                              ajax="false"  rendered="#{gestionPermisoController.permiso.etapa eq applicationController.TERMINAR}"/>
+            <p:commandButton value="Cancelar" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
+                              ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.CANCELAR}"/>
+            <p:commandButton value="Finalizar" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
+                              ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.FINALIZAR}"/>
+        </h:form>
+   </ui:define>
+  </ui:composition>
+</f:view>
+</html>
+

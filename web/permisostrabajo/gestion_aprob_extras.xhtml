@@ -70,28 +70,19 @@
             </p:panelGrid>
             </p:panel>
             <p:separator/>
-            <p:commandButton value="Siguiente" icon="ui-icon-arrow-1-e" oncomplete="dlg_nota.show()"/>
-        
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="300">
-
-                <p:panelGrid  columns="2">
-                    <f:facet name="header">
-                        <h:outputText value="Observaciones:"/>
-                    </f:facet>
+            <p:panel header="Observaciones">
+                <p:panelGrid  columns="2">    
                     <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.notaGestion}"  cols="50">
                          <p:ajax/>
                     </p:inputTextarea>
                     <p:message for="nota"/>
-                    <f:facet name="footer">
-                        <p:commandButton value="Aprobar" icon="ui-icon-check" action="#{gestionPermisoController.aprobar}"  oncomplete="dlg_nota.hide()" ajax="false" />
-                        <p:commandButton value="No Aprobar" icon="ui-icon-close" action="#{gestionPermisoController.noAprobar}" oncomplete="dlg_nota.hide()" ajax="false"/>
-                    </f:facet>
                 </p:panelGrid>
-                <p:spacer height="20" width="100"/>
-            </p:dialog>
-        
-        
-        
+            </p:panel>
+            <p:separator/>
+            <p:panelGrid  columns="2">
+                    <p:commandButton value="Aprobar" icon="ui-icon-check" action="#{gestionPermisoController.aprobar}"  ajax="false" />
+                    <p:commandButton value="No Aprobar" icon="ui-icon-close" action="#{gestionPermisoController.noAprobar}"  ajax="false"/>
+            </p:panelGrid>
         
         </h:form>
    </ui:define>

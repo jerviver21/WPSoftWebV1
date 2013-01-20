@@ -27,10 +27,10 @@
             <p:separator/>
             <h4>Peligros</h4>
             <h:panelGrid columns="2">
-                <p:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}" effect="fold">
+                <h:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}" effect="fold">
                     <f:selectItems  value="#{gestionPermisoController.peligros}" />
                     <p:ajax update="@form"/>
-                </p:selectOneMenu>
+                </h:selectOneMenu>
                 <p:commandButton icon="ui-icon-plus" value="Agregar" actionListener="#{gestionPermisoController.agregarPeligro}" update="@form"/>
             </h:panelGrid>
             
@@ -81,7 +81,7 @@
                                     </p:dataTable> 
                                 </p:tab>  
                             </p:tabView>  
-                            <p:dialog id="control" widgetVar="dlg_control" modal="true" width="350" height="100">
+                            <p:dialog id="control" widgetVar="dlg_control" modal="true" width="350" height="100" appendToBody="true">
                                 <p:panelGrid columns="2">
                                     <f:facet name="header">
                                         <h:outputText value="Datos del Control"/>
@@ -94,7 +94,7 @@
                                     </f:facet>
                                 </p:panelGrid>
                             </p:dialog>
-                            <p:dialog id="riesgo" widgetVar="dlg_riesgo" modal="true" width="350" height="100">
+                            <p:dialog id="riesgo" widgetVar="dlg_riesgo" width="350" height="100" appendToBody="true">
                                 <p:panelGrid columns="2">
                                     <f:facet name="header">
                                         <h:outputText value="Datos del Riesgo"/>

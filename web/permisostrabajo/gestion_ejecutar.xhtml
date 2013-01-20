@@ -99,31 +99,7 @@
                 </p:dataTable>
             </p:panel>
             <p:separator/>
-            <p:commandButton value="Siguiente" icon="ui-icon-check" oncomplete="dlg_nota.show()"/>
-            
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="400">
-                <p:panelGrid  columns="2">
-                    <f:facet name="header">
-                        <h:outputText value="Observaciones:"/>
-                    </f:facet>
-                    <p:inputTextarea id="nota" value="#{gestionPermisoController.permiso.notaGestion}"  cols="50">
-                         <p:ajax/>
-                    </p:inputTextarea>
-                    <p:message for="nota"/>
-                    <f:facet name="footer">
-                        <p:commandButton value="Terminar" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
-                                         oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.TERMINAR}"/>
-                        <p:commandButton value="Cancelar" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
-                                         oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.CANCELAR}"/>
-                        <p:commandButton value="Finalizar" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
-                                         oncomplete="dlg_nota.hide()" ajax="false" 
-                                         rendered="#{gestionPermisoController.permiso.etapa eq applicationController.FINALIZAR}"/>
-                    </f:facet>
-                </p:panelGrid>
-                <p:spacer height="20" width="100"/>
-            </p:dialog>
+            <p:commandButton value="Siguiente" icon="ui-icon-check" action="#{gestionPermisoController.navNota}" ajax="false"/>
         </h:form>
    </ui:define>
   </ui:composition>

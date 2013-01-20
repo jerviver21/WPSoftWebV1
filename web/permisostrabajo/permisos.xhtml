@@ -33,14 +33,7 @@
                         <h:outputText value="#{permiso.estadoPermiso.descripcion}"/>
                     </p:column>
                     <p:column headerText="Borrar">
-                        <p:commandButton icon="ui-icon-trash" onclick="dlg#{permiso.id}.show();" type="button"/>
-                        <p:dialog id="bdlg1" widgetVar="dlg#{permiso.id}" modal="true">  
-                            <h:panelGrid columns="1">
-                                Está seguro que desea borrar  <br/> 
-                                el permiso de trabajo No: #{permiso.id}?
-                                <p:commandButton value="Borrar" icon="ui-icon-trash" actionListener="#{creaPermisoController.borrarPermiso(permiso)}" ajax="false"/>
-                            </h:panelGrid>
-                        </p:dialog>
+                        <p:commandButton icon="ui-icon-trash" onclick="#{creaPermisoController.borrarPermiso(permiso)}"/>
                     </p:column>
                     
                 </p:dataTable>
