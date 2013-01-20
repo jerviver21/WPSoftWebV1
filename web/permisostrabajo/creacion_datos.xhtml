@@ -57,13 +57,13 @@
                     <p:message for="fecha_fin" rendered="#{creaPermisoController.tipoPermiso ne creaPermisoController.CORRECTIVO_SIN_ORDEN}"/>
              
                     <h:outputLabel for="tipo_ejecutante" value="#{labels.tipo_ejecutante}" />
-                    <p:selectOneRadio id="tipo_ejecutante" value="#{creaPermisoController.tipoEjecutante}" 
+                    <h:selectOneMenu id="tipo_ejecutante" value="#{creaPermisoController.tipoEjecutante}" 
                                       valueChangeListener="#{creaPermisoController.seleccionarTipoEjecutante}" 
                                       disabled="#{creaPermisoController.permiso.id ne null}">
                         <f:selectItem itemLabel="#{labels.empleado}" itemValue="#{creaPermisoController.EMPLEADO}" />
                         <f:selectItem itemLabel="#{labels.contratista}" itemValue="#{creaPermisoController.CONTRATISTA}" />
-                        <p:ajax update=":form"/>
-                    </p:selectOneRadio>
+                        <p:ajax update=":form" process="tipo_ejecutante"/>
+                    </h:selectOneMenu>
                     <p:message for="tipo_ejecutante"/>
                         
                     

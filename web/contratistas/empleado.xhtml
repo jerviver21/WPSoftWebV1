@@ -11,6 +11,40 @@
         <ui:include src="../menu.xhtml"/>
     </ui:define>
     <ui:define name="contenido">
+        
+        <p:dialog id="cuadro_cm" widgetVar="dlg_cm" modal="true" width="350" height="150" appendToBody="true">
+            <h:form id="form1" enctype="multipart/form-data">
+                <p:panel header="#{labels.certificado_medico1}" id="p_ccm">
+
+                    <p:messages id="msgs1"/>
+                    <p:panelGrid columns="2">
+                        <h:outputLabel value="#{labels.cargar}"/>
+                        <p:fileUpload fileUploadListener="#{empleadoController.cargarCertMedico}" 
+                                      mode="advanced" update=":form1:msgs1 :form:cert_medico" auto="true"
+                                        allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000" 
+                                        label="Seleccionar" oncomplete="dlg_cm.hide()"/>
+                    </p:panelGrid>
+
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        <p:dialog id="cuadro_ca" widgetVar="dlg_ca" modal="true" width="350" height="150" appendToBody="true">
+            <h:form id="form2" enctype="multipart/form-data">
+                <p:panel header="#{labels.certificado_altura1}" id="p_cta">
+
+                    <p:messages id="msgs2"/>
+                    <p:panelGrid columns="2">
+                        <h:outputLabel value="#{labels.cargar}"/>
+                        <p:fileUpload fileUploadListener="#{empleadoController.cargarCertTA}" 
+                                      mode="advanced" update=":form2:msgs2 :form:cert_trab_altura" auto="true"
+                                        allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000"
+                                        label="Seleccionar" oncomplete="dlg_ca.hide()"/> 
+                    </p:panelGrid>
+
+                </p:panel>
+            </h:form>
+        </p:dialog>
+        
         <h:form id="form" >
             <h:inputHidden value="#{empleadoController.empleado.id}"/>
             <p:growl id="msgs" />
@@ -89,19 +123,19 @@
                     
                     
                     <h:outputLabel for="eps" value="#{labels.eps}" />
-                    <p:selectOneMenu id="eps" value="#{empleadoController.empleado.eps}">
+                    <h:selectOneMenu id="eps" value="#{empleadoController.empleado.eps}">
                         <f:selectItems  value="#{empleadoController.epss}" />
                         <p:ajax/>
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
                     <p:message for="eps"/>
 
                     <sec:ifNotGranted roles="#{applicationController.ROL_CONTRATISTA}">
                         <h:outputLabel for="contratista" value="#{labels.contratista}" />
-                        <p:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}">
+                        <h:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}">
                             <f:selectItems  value="#{empleadoController.contratistas}" />
                             <f:selectItem itemLabel="Planta" itemValue="-1"  />
                             <p:ajax/>
-                        </p:selectOneMenu>
+                        </h:selectOneMenu>
                         <p:message for="contratista"/>
                     </sec:ifNotGranted>
                     
@@ -158,38 +192,7 @@
             </p:panel>
         </h:form>
         
-        <p:dialog id="cuadro_cm" widgetVar="dlg_cm" modal="true" width="500" height="300">
-            <h:form id="form1" enctype="multipart/form-data">
-                <p:panel header="#{labels.certificado_medico1}" id="p_ccm">
-
-                    <p:messages id="msgs1"/>
-                    <p:panelGrid columns="2">
-                        <h:outputLabel value="#{labels.cargar}"/>
-                        <p:fileUpload fileUploadListener="#{empleadoController.cargarCertMedico}" 
-                                      mode="advanced" update=":form1:msgs1 :form:cert_medico" auto="true"
-                                        allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000" 
-                                        label="Seleccionar" oncomplete="dlg_cm.hide()"/>
-                    </p:panelGrid>
-
-                </p:panel>
-            </h:form>
-        </p:dialog>
-        <p:dialog id="cuadro_ca" widgetVar="dlg_ca" modal="true" width="500" height="300">
-            <h:form id="form2" enctype="multipart/form-data">
-                <p:panel header="#{labels.certificado_altura1}" id="p_cta">
-
-                    <p:messages id="msgs2"/>
-                    <p:panelGrid columns="2">
-                        <h:outputLabel value="#{labels.cargar}"/>
-                        <p:fileUpload fileUploadListener="#{empleadoController.cargarCertTA}" 
-                                      mode="advanced" update=":form2:msgs2 :form:cert_trab_altura" auto="true"
-                                        allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/" sizeLimit="10000000"
-                                        label="Seleccionar" oncomplete="dlg_ca.hide()"/> 
-                    </p:panelGrid>
-
-                </p:panel>
-            </h:form>
-        </p:dialog>
+        
         
    </ui:define>
   </ui:composition>

@@ -73,10 +73,10 @@
                     <p:message id="msg_mail" for="mail"/>
                     
                     <h:outputLabel for="arp" value="#{labels.arp}" />
-                    <p:selectOneMenu id="arp" value="#{contratistaController.contratista.arp}">
+                    <h:selectOneMenu id="arp" value="#{contratistaController.contratista.arp}">
                         <f:selectItems  value="#{contratistaController.arps}" />
                         <p:ajax/>
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
                     <p:message for="arp"/>
                     
                     <h:outputLabel for="nivel_riesgo" value="#{labels.nivel_riesgo}" />

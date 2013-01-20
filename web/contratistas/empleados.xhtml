@@ -19,12 +19,12 @@
                 <sec:ifNotGranted roles="#{applicationController.ROL_CONTRATISTA}">
                     <p:panelGrid columns="3">
                         <h:outputLabel for="contratista" value="#{labels.contratista}" style="font-weight: bold;"/>
-                        <p:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}" >
+                        <h:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}" >
                             <p:ajax  listener="#{empleadoController.cargarEmpleadosContratista}" update=":form:empleados"/>
                             <f:selectItem itemLabel="Todos" itemValue="-2"  />
                             <f:selectItems  value="#{empleadoController.contratistas}" />
                             <f:selectItem itemLabel="Planta" itemValue="-1"  />
-                        </p:selectOneMenu>
+                        </h:selectOneMenu>
                     </p:panelGrid>
                 </sec:ifNotGranted>
 

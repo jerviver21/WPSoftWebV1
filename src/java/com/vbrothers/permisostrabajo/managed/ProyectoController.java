@@ -244,10 +244,13 @@ public class ProyectoController {
         setTipoEjecutante((int) (Integer)event.getNewValue());
         if(getTipoEjecutante() == getCONTRATISTA()){
             permiso.setEmpleados(new ArrayList<Empleado>());
+            empleados = new ArrayList<SelectItem>();
             permiso.setContratista(new Contratista());
         }else{
             permiso.setContratista(null);
+            empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         }
+        System.out.println("Tipo de ejecutante: "+getTipoEjecutante());
     }
     
     public void formatearFechaIniPer(DateSelectEvent event){
