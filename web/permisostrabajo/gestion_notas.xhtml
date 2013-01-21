@@ -69,7 +69,7 @@
                 </p:outputPanel>
             </p:panel>
             
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="300">
+            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="300" appendToBody="true"> 
                 <p:panelGrid  columns="2">
                     <f:facet name="header">
                         <h:outputText value="Observaciones:"/>
@@ -79,7 +79,7 @@
                     </p:inputTextarea>
                     <p:message for="nota"/>
                     <f:facet name="footer">
-                        <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.agregarNota}"  oncomplete="dlg_nota.hide()" ajax="false" />                    
+                        <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.agregarNota}"  oncomplete="dlg_nota.hide()" update="@form" />                    
                     </f:facet>
                 </p:panelGrid>
                 <p:spacer height="20" width="100"/>

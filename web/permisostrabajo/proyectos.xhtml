@@ -35,7 +35,7 @@
                         <h:outputText value="#{proyecto.estado.nombre}"/>
                     </p:column>
                     <p:column headerText="Borrar">
-                        <p:commandButton icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto(proyecto)}"/>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{proyectoController.borrarProyecto(proyecto)}" update="@form"/>
                     </p:column>
                 </p:dataTable> 
             </p:panel>

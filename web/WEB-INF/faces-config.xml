@@ -23,5 +23,7 @@
         </resource-bundle>
         <message-bundle>com.vbrothers.properties.defvals</message-bundle>
     </application>
+    
+    
 
 </faces-config>

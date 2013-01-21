@@ -54,7 +54,12 @@
                         <p:rowExpansion id="expansion">  
                             <p:tabView id="ptab">  
                                 <p:tab id="tab1" title="Controles">  
-                                    <p:commandButton type="button" onclick="dlg_control.show();" icon="ui-icon-plus" value="Agregar"/>
+                                    <h:panelGrid columns="3">
+                                        <p:outputLabel value="Control Adicional"/>
+                                        <p:inputText id ="ccontrol" value="#{gestionPermisoController.control}"/>
+                                        <p:commandButton icon="ui-icon-plus" value="Agregar"
+                                                         actionListener="#{gestionPermisoController.agregarControl(peligro)}" update="controles ccontrol"/>  
+                                    </h:panelGrid>
                                     <p:dataTable id="controles" value="#{peligro.controles}" var="control">
                                         <p:column headerText="Control">
                                             <h:outputText value="#{control.control}"/>
@@ -67,8 +72,14 @@
                                     </p:dataTable> 
                                 </p:tab>  
 
-                                <p:tab id="tab2" title="Riesgos">  
-                                    <p:commandButton type="button" onclick="dlg_riesgo.show();" icon="ui-icon-plus" value="Agregar"/>
+                                <p:tab id="tab2" title="Riesgos"> 
+                                    <h:panelGrid columns="3">
+                                        <p:outputLabel value="Riesgo"/>
+                                        <p:inputText id="criesgo" value="#{gestionPermisoController.riesgo}"/>
+                                        <p:commandButton icon="ui-icon-plus" value="Agregar"
+                                                         actionListener="#{gestionPermisoController.agregarRiesgo(peligro)}" update="riesgos criesgo"/>  
+                                    </h:panelGrid>
+                                    
                                     <p:dataTable id="riesgos" value="#{peligro.riesgos}" var="riesgo">
                                         <p:column headerText="Riesgo">
                                             <h:outputText value="#{riesgo.nombre}"/>
@@ -81,36 +92,7 @@
                                     </p:dataTable> 
                                 </p:tab>  
                             </p:tabView>  
-                            <p:dialog id="control" widgetVar="dlg_control" modal="true" width="350" height="100" appendToBody="true">
-                                <p:panelGrid columns="2">
-                                    <f:facet name="header">
-                                        <h:outputText value="Datos del Control"/>
-                                    </f:facet>
-                                    <h:outputLabel value="Control:"/>
-                                    <p:inputText value="#{gestionPermisoController.control}"/>
-                                    <f:facet name="footer">
-                                        <p:commandButton icon="ui-icon-disk" value="Guardar" oncomplete="dlg_control.hide()" 
-                                                         actionListener="#{gestionPermisoController.agregarControl(peligro)}" update="ptab"/>
-                                    </f:facet>
-                                </p:panelGrid>
-                            </p:dialog>
-                            <p:dialog id="riesgo" widgetVar="dlg_riesgo" width="350" height="100" appendToBody="true">
-                                <p:panelGrid columns="2">
-                                    <f:facet name="header">
-                                        <h:outputText value="Datos del Riesgo"/>
-                                    </f:facet>
-                                    <h:outputLabel value="Riesgo:"/>
-                                    <p:inputText value="#{gestionPermisoController.riesgo}"/>
-                                    <f:facet name="footer">
-                                        <p:commandButton icon="ui-icon-disk" value="Guardar" oncomplete="dlg_riesgo.hide()" 
-                                                         actionListener="#{gestionPermisoController.agregarRiesgo(peligro)}" update="ptab"/>
-                                    </f:facet>
-                                </p:panelGrid>
-                            </p:dialog>
                         </p:rowExpansion>   
-                        
-                        
-                        
                     </p:dataTable>  
                 </p:outputPanel> 
             </p:fieldset>  

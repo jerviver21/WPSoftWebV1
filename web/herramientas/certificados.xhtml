@@ -20,7 +20,8 @@
                     <p:message for="nombre"/>
                     <h:outputLabel for="file" value="Check List:"/>
                     <p:fileUpload id="file" fileUploadListener="#{certificadoController.cargarChecklist}" 
-                                    mode="advanced" allowTypes="/(\.|\/)(pdf)$/" sizeLimit="10000000"
+                                    mode="advanced"  auto="true"
+                                        allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/"   sizeLimit="10000000"
                                     label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar"/> 
                     
                     <f:facet name="footer">

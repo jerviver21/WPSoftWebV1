@@ -231,6 +231,7 @@ public class GestionPermisoController implements Serializable{
         ControlesPeligroTarea cpt = new ControlesPeligroTarea();
         cpt.setControl(control);
         cpt.setPeligrosTarea(pt);
+        System.out.println("Se agrega el control: "+control);
         pt.getControles().add(cpt);
         control = "";
     }
@@ -253,6 +254,7 @@ public class GestionPermisoController implements Serializable{
         rpt.setNombre(riesgo);
         rpt.setPeligrosTarea(pt);
         pt.getRiesgos().add(rpt);
+        System.out.println("Se agrega el riesgo: "+riesgo);
         riesgo = "";
     }
     

@@ -48,10 +48,10 @@
             <p:panel header="Certificados">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="certificado" value="Certificado:" />
-                    <p:selectOneMenu id="certificado" value="#{gestionPermisoController.idCertificado}">
+                    <h:selectOneMenu id="certificado" value="#{gestionPermisoController.idCertificado}">
                         <f:selectItems  value="#{gestionPermisoController.certificados}" />
                         <p:ajax/>
-                    </p:selectOneMenu>
+                    </h:selectOneMenu>
                     <p:commandButton icon="ui-icon-plus" actionListener="#{gestionPermisoController.agregarCertificado}" 
                                      update=":form:certificados"/>
                 </p:panelGrid>

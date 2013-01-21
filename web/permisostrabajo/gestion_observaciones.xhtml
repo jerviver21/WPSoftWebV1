@@ -21,11 +21,11 @@
                 </p:panelGrid>
             </p:panel>
             <p:separator/>
-            <p:commandButton value="Terminar" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
+            <p:commandButton value="Terminar Permiso" icon="ui-icon-check" action="#{gestionPermisoController.terminar}" 
                               ajax="false"  rendered="#{gestionPermisoController.permiso.etapa eq applicationController.TERMINAR}"/>
-            <p:commandButton value="Cancelar" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
+            <p:commandButton value="Cancelar Permiso" icon="ui-icon-check" action="#{gestionPermisoController.cancelar}" 
                               ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.CANCELAR}"/>
-            <p:commandButton value="Finalizar" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
+            <p:commandButton value="Finalizar Permiso" icon="ui-icon-check" action="#{gestionPermisoController.finalizar}" 
                               ajax="false" rendered="#{gestionPermisoController.permiso.etapa eq applicationController.FINALIZAR}"/>
         </h:form>
    </ui:define>

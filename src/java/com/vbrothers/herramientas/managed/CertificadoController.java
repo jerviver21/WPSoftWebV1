@@ -55,9 +55,10 @@ public class CertificadoController {
     public void descargarChecklist(Certificado cert){
         try {
             FileInputStream stream = new FileInputStream(cert.getRutaCheckList());
-            String separador = File.separator.equals("/")?"/":"\\";
+            String separador = File.separator.equals("/")?"/":"\\\\";
             checklistDown = new DefaultStreamedContent(stream, "application/pdf",
                     cert.getRutaCheckList().replaceAll(".*"+separador+"(.*)", "$1"));
+            System.out.println("Ruta: "+cert.getRutaCheckList()+ " - Nombre: "+cert.getRutaCheckList().replaceAll(".*"+separador+"(.*)", "$1"));
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "El archivo a descargar no existe!");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);

@@ -69,15 +69,14 @@
                         <p:graphicImage title="#{traz.estadoTraz.descripcion}"  url="../images/update.png" rendered="#{traz.estadoTraz.id eq 1}"/>
                     </p:column>
                     <f:facet name="footer">
-                        <p:commandButton icon="ui-icon-pencil" value="Gestionar"  action="#{gestionPermisoController.gestionarPermiso}"/>
+                        <p:commandButton icon="ui-icon-pencil" value="Gestionar"  action="#{gestionPermisoController.gestionarPermiso}" ajax="false"/>
                     </f:facet>
                 </p:dataTable>
             </p:panel>
             
             
             <p:panel header="Notas del Permiso de Trabajo" rendered="#{not empty gestionPermisoController.permiso.notas}">
-                <p:commandButton icon="ui-icon-document" value="Agregar Nota" oncomplete="dlg_nota.show()"/>
-                
+
                 <p:outputPanel id="notas">
                     <p:dataTable value="#{gestionPermisoController.permiso.notas}" var="item">
                         <p:column headerText="Nota">
