@@ -8,19 +8,9 @@
     <h:head id="head1">
         <title id="title">Work Permiss System</title>
         <link href="/wpsoft/styles/principal3.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript">
-            //Funcion para componentes de arrastrar y soltar
-            function handleDrop(event, ui) {
-                var data = ui.draggable;
-                data.fadeOut('fast');
-            }
-        </script>
         <f:view id="view1" locale="#{generalController.locale}" />
      </h:head>
-     <h:body id="body1" onload="precargar();">
-         <h:form>
-             <p:remoteCommand name="precargar" action="#{applicationController.preCargar}"/>
-         </h:form>
+     <h:body id="body1">
          
          
          <div id="holder">																																																																																																																																																																																																																																																																										

@@ -10,6 +10,8 @@
         <ui:include src="../menu.xhtml"/>
     </ui:define>
     <ui:define name="contenido">
+        
+        
         <h:form id="form" >
             <p:growl id="msgs" />
             
@@ -61,6 +63,9 @@
                         <p:column headerText="Nota">
                             <h:outputText value="#{item.nota}"/>
                         </p:column>
+                        <p:column headerText="Usuario">
+                            <h:outputText value="#{item.usr}"/>
+                        </p:column>
                         <p:column headerText="Borrar">
                             <p:commandButton update=":form:notas" icon="ui-icon-trash"
                                              actionListener="#{gestionPermisoController.borrarNota(item)}"/>
@@ -68,28 +73,26 @@
                     </p:dataTable>
                 </p:outputPanel>
             </p:panel>
-            
-            <p:dialog id="cuadro_nota" widgetVar="dlg_nota" modal="true" width="500" height="300" appendToBody="true"> 
-                <p:panelGrid  columns="2">
-                    <f:facet name="header">
-                        <h:outputText value="Observaciones:"/>
-                    </f:facet>
-                    <p:inputTextarea id="nota" value="#{gestionPermisoController.nota}"  cols="50">
-                         <p:ajax/>
-                    </p:inputTextarea>
-                    <p:message for="nota"/>
-                    <f:facet name="footer">
-                        <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.agregarNota}"  oncomplete="dlg_nota.hide()" update="@form" />                    
-                    </f:facet>
-                </p:panelGrid>
-                <p:spacer height="20" width="100"/>
-            </p:dialog>
-            
             <p:commandButton icon="ui-icon-disk" value="Guardar" action="#{gestionPermisoController.guardarValidacion}"/>
             
 
             
         </h:form>
+            
+        <p:dialog id="dlgnota" header="Nota" widgetVar="dlg_nota" appendToBody="true" width="450" height="125" resizable="false"> 
+            <h:form id="formdlg">
+                <p:panelGrid  columns="2">
+                    <p:inputTextarea id="nota" value="#{gestionPermisoController.nota}"  cols="50">
+                         <p:ajax/>
+                    </p:inputTextarea>
+                    <p:message for="nota"/>
+                </p:panelGrid>
+                <p:commandButton id="dlgbtn" value="Guardar" icon="ui-icon-disk" action="#{gestionPermisoController.agregarNota}"  
+                                         oncomplete="dlg_nota.hide();" update=":form" />   
+            </h:form>
+        </p:dialog>
+            
+            
    </ui:define>
   </ui:composition>
 </f:view>

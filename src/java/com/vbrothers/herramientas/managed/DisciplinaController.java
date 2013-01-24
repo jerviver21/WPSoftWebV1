@@ -51,6 +51,7 @@ public class DisciplinaController {
             disciplinaService.edit(getItem());
             setItems(disciplinaService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO, "Disciplina guardado con exito!!");
+            locator.restartCache();
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (Exception e) {
@@ -69,6 +70,7 @@ public class DisciplinaController {
             disciplinaService.remove(r);
             setItems(disciplinaService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Recurso borrado con exito!!");
+            locator.restartCache();
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar la disciplina, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);

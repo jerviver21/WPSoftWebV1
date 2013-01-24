@@ -71,6 +71,7 @@ public class SectorController {
             setItems(sectorService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO, "Sector guardado con exito!!");
             crearNuevo();
+            locator.restartCache();
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (Exception e) {
@@ -85,6 +86,7 @@ public class SectorController {
             sectorService.remove(r);
             setItems(sectorService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Recurso borrado con exito!!");
+            locator.restartCache();
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "No se puede borrar el sector, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -102,8 +104,15 @@ public class SectorController {
     }
 
     public void removeEquipo(Equipo r){
-        item.getEquipos().remove(r);
+        for(int i = 0 ; i < item.getEquipos().size();i++){
+            Equipo equ = item.getEquipos().get(i);
+            if(equ.getNombre().equals(r.getNombre())){
+                item.getEquipos().remove(i);
+                break;
+            }
+        }
         equipoService.remove(r);
+        locator.restartCache();
     }
 
     /**

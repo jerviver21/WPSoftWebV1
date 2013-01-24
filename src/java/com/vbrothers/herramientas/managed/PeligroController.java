@@ -10,6 +10,7 @@ import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
 import com.vbrothers.herramientas.services.ControlesServicesLocal;
 import com.vbrothers.herramientas.services.PeligrosServicesLocal;
+import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.event.ActionEvent;
 
 /**
  * @author Jerson Viveros
@@ -28,7 +28,8 @@ import javax.faces.event.ActionEvent;
 @ManagedBean(name="riesgoController")
 @SessionScoped
 public class PeligroController {
-
+    ServiceLocator locator;
+    
     private Peligro item;
     private Control control;
     private List<Peligro> items;
@@ -41,6 +42,7 @@ public class PeligroController {
 
     @PostConstruct
     public void init(){
+        locator = ServiceLocator.getInstance();
         crearNuevo();
     }
 
@@ -61,6 +63,7 @@ public class PeligroController {
             setItems(peligroService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO, "Peligro guardado con exito!!");
             crearNuevo();
+            locator.restartCache();
         } catch (LlaveDuplicadaException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         }catch (Exception e) {
@@ -77,6 +80,7 @@ public class PeligroController {
             peligroService.remove(r);
             setItems(peligroService.findAll());
             FacesUtil.addMessage(FacesUtil.INFO,  "Riesgo borrado con exito!!");
+            locator.restartCache();
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "No se puede borrar el peligro, debe estarse usando en otra parte del proceso");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -96,8 +100,16 @@ public class PeligroController {
     }
 
     public void removeControl(Control r ){
-        item.getControles().remove(r);
+       for(int i = 0 ; i < item.getControles().size();i++){
+            Control equ = item.getControles().get(i);
+            if(equ.getNombre().equals(r.getNombre())){
+                item.getControles().remove(i);
+                i--;
+            }
+            equ.setConsecutivo(i+1);
+        }
         controlService.remove(r);
+        locator.restartCache();
     }
 
     /**

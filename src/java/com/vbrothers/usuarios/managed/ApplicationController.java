@@ -48,7 +48,7 @@ public class ApplicationController {
     private String plantilla = "../plantilla2.xhtml";
     private String planIndex = "plantilla2.xhtml";
     private Map<String, String> themes; 
-    private String theme = "ui-lightness";
+    private String theme = "casablanca";
     
 
     @EJB

@@ -75,6 +75,7 @@ public class CertificadoController {
             FacesUtil.addMessage(FacesUtil.INFO, "Check List cargado con exito");
             certificado = new Certificado();
             certificados = certificadoServices.findAll();
+            locator.restartCache();
         }catch (ParametroException e) {
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);
@@ -91,6 +92,7 @@ public class CertificadoController {
             certificadoServices.borrarCertificado(cert);
             FacesUtil.addMessage(FacesUtil.INFO, "Certificado borrado con exito");
             certificados.remove(cert);
+            locator.restartCache();
         }catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR, "Error al borrar el certificado");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);

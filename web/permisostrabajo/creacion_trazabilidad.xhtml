@@ -66,7 +66,9 @@
                     <f:facet name="footer">
                         <!--  Sólo se permite la edición cuando está en estado creado Estado de Permiso 1 -->
                         <p:commandButton icon="ui-icon-pencil" value="Editar" title="Editar permiso de trabajo" 
-                                         action="#{creaPermisoController.consultarDatosPermiso}" disabled="#{creaPermisoController.permiso.estadoPermiso.id ne 1}"/>
+                                         action="#{creaPermisoController.consultarDatosPermiso}" 
+                                         disabled="#{creaPermisoController.permiso.estadoPermiso.id ne 1}"
+                                         ajax="false"/>
                     </f:facet>
                 </p:dataTable>
             </p:panel>
