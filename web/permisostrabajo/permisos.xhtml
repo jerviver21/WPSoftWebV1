@@ -10,7 +10,7 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:growl id="msgs" />
+            <p:messages  id="msgs" />
             <p:panel header="Permisos de Trabajo" id="permisos">
                 <p:commandButton ajax="false" action="#{creaPermisoController.crearNuevoPermiso}" icon="ui-icon-document" value="Crear" title="Crear Permiso de Trabajo"/>
                 <p:spacer width="5"/>

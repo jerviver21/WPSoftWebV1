@@ -11,7 +11,7 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:growl id="msgs" />
+            <p:messages  id="msgs" />
             <p:panel header="Diligencie los datos de la Actividad (Permiso de Trabajo)">
                 <p:panelGrid columns="3">
                     <h:outputLabel for="area" value="#{labels.area_sitio}" />
@@ -39,7 +39,7 @@
                     <h:outputLabel for="fecha_ini" value="Fecha Inicio"/>
                     <p:calendar id="fecha_ini" pattern="yyyy-MM-dd HH:mm" value="#{proyectoController.permiso.fechaHoraIni}" 
                                 mindate="#{proyectoController.fechaIniProy}" maxdate="#{proyectoController.fechaFinProy}" required="true">
-                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIniPer}" update="fecha_fin"/>
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIniPer}" update="@form"/>
                     </p:calendar>
                     <p:message for="fecha_ini"/>
                     

@@ -12,7 +12,7 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <h:inputHidden value="#{contratistaController.contratista.id}"/>
-            <p:growl id="msgs" />
+            <p:messages id="msgs" />
             <sec:ifAnyGranted roles="#{applicationController.ROL_ADMIN},#{applicationController.ROL_GERENTE}">
                 <p:commandButton update="@form" action="#{contratistaController.crearNuevo}" value="Crear" icon="ui-icon-document"/>
             </sec:ifAnyGranted>

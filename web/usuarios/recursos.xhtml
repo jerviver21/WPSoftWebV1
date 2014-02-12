@@ -11,7 +11,7 @@
     <ui:define name="contenido">
         <h:form id="form" >
             <h:inputHidden id="id" value="#{recursosController.recurso.id}"/>
-            <p:growl id="msgs" />
+            <p:messages  id="msgs" />
             <p:panel header="Datos del Recurso">
             <p:panelGrid columns="3" id="form_recurso">
                 <h:outputLabel for="nombre" value="Nombre: *" />

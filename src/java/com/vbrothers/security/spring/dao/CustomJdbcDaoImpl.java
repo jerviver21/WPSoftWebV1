@@ -18,7 +18,7 @@ public class CustomJdbcDaoImpl extends JdbcDaoImpl implements IChangePassword {
     public CustomJdbcDaoImpl()throws NamingException{
         super();
         InitialContext initCtx = new InitialContext();
-        DataSource datasource = (DataSource)(initCtx).lookup("java:/jboss/datasources/PostgreSQLDS"); 
+        DataSource datasource = (DataSource)(initCtx).lookup("java:/jboss/datasources/PostgreSQLDS2"); 
         setDataSource(datasource);
         
     }

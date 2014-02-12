@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-  <context-root>/wpsoft</context-root>
+    <context-root>/wpsoft</context-root>
+    <virtual-host>permisos</virtual-host>
 </jboss-web>

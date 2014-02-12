@@ -10,22 +10,28 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:growl id="msgs" />
+            <p:messages  id="msgs" />
             <p:panel id="form_proyecto" header="#{labels.datos_proyecto}">
                 <p:panelGrid columns="3" id="grid">
                     <h:outputLabel for="num_gest_cambio" value="#{labels.num_gestion_cambio}" />
-                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}" required="true" />
+                    <p:inputText id="num_gest_cambio" value="#{proyectoController.proyecto.numGestionCambio}" required="true" >
+                        <p:ajax/>
+                    </p:inputText>
                     <p:message for="num_gest_cambio"/>
                     <h:outputLabel for="nombre_proyecto" value="#{labels.nombre_proyecto}" />
-                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" required="true"/>
+                    <p:inputText id="nombre_proyecto" value="#{proyectoController.proyecto.nombre}" required="true">
+                        <p:ajax/>
+                    </p:inputText>
                     <p:message for="nombre_proyecto"/>
                     <h:outputLabel for="cuenta_cargada" value="#{labels.cuenta_cargada}" />
-                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" required="true"/>
+                    <p:inputText id="cuenta_cargada" value="#{proyectoController.proyecto.numCuentaCargada}" required="true">
+                        <p:ajax/>
+                    </p:inputText>
                     <p:message for="cuenta_cargada"/>
                     <h:outputLabel  for="fecha_ini" value="#{labels.fecha_ini}" />
                     <p:calendar id="fecha_ini" value="#{proyectoController.proyecto.fechaIni}" 
                                 mindate="#{proyectoController.fechaActual}" pattern="yyyy-MM-dd" required="true">
-                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIni}" update="fecha_fin"/>
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaIni}" update="@form"/>
                     </p:calendar>
                     <p:message for="fecha_ini"/>
                     
@@ -33,7 +39,7 @@
                     <p:calendar id="fecha_fin" value="#{proyectoController.proyecto.fechaFin}" 
                                 mindate="#{proyectoController.fechaIniProy}" pattern="yyyy-MM-dd" 
                                 required="true" disabled="#{proyectoController.proyecto.fechaIni eq null}">
-                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaFin}" update="fecha_fin"/>
+                        <p:ajax event="dateSelect" listener="#{proyectoController.formatearFechaFin}" update="@form"/>
                     </p:calendar>
                     <p:message for="fecha_fin"/>
                 </p:panelGrid>

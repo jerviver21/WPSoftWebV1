@@ -82,7 +82,7 @@ public class EmpleadoController {
             empleadosContratista = empleadoService.findEmpleadosXContratita(contratista.getId());
         }else{
             contratistasList = contratistaService.findAll();
-            empleadosContratista = empleadoService.findEmpleadosXContratita(-2l);
+            empleadosContratista = empleadoService.findEmpleadosXContratita(-1l);
         }
         empleado.setContratista(contratista);
         setContratistas(FacesUtil.getSelectsItem(contratistasList));
@@ -99,10 +99,10 @@ public class EmpleadoController {
     
     public String createEmpleado(){
         try {
-            if(!empleado.getCertificadoMedico() && empleado.getCertMedico() == null){
+            /*if(!empleado.getCertificadoMedico() && empleado.getCertMedico() == null){
                 FacesUtil.addMessage(FacesUtil.ERROR, "Es necesario cargar el certificado médico del empleado");
                 return null;
-            }
+            }*/
             if(empleado.getNumId() == 0l){
                 FacesUtil.addMessage(FacesUtil.ERROR, "Ingrese un número de identificación valido");
                 return null;
@@ -186,7 +186,7 @@ public class EmpleadoController {
         FacesContext fc = FacesContext.getCurrentInstance();
         if(!usrService.isUsuarioDisponible(empleado.getUsuario())){
             FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El nombre de usuario ya existe, seleccione otro", "El nombre de usuario ya existe, seleccione otro");
-            fc.addMessage("form:usr", fm);
+            fc.addMessage(":form1:email", fm);
         }
     }
     

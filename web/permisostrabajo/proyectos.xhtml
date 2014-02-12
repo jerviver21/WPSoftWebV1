@@ -10,7 +10,7 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:growl id="msgs"/>
+            <p:messages  id="msgs"/>
             <p:panel id="proyectos" header="Proyectos">
                 <p:commandButton ajax="false" action="#{proyectoController.crearNuevoProyecto}" icon="ui-icon-document" value="Crear" title="Crear Proyecto"/>
                 <p:spacer width="5"/>

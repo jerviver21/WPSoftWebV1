@@ -11,7 +11,7 @@
     </ui:define>
     <ui:define name="contenido">
         <h:form id="form" >
-            <p:growl id="msgs" />
+            <p:messages  id="msgs" />
             
             <p:separator/>
             <h4>Información General</h4>
@@ -27,7 +27,7 @@
             <p:separator/>
             <h4>Peligros</h4>
             <h:panelGrid columns="2">
-                <h:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}" effect="fold">
+                <h:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}" >
                     <f:selectItems  value="#{gestionPermisoController.peligros}" />
                     <p:ajax update="@form"/>
                 </h:selectOneMenu>

@@ -65,6 +65,15 @@
         <welcome-file>/permisostrabajo/mis_permisos.xhtml</welcome-file>
     </welcome-file-list>
     
+    <filter>
+        <filter-name>Character Encoding Filter</filter-name>
+        <filter-class>com.vbrothers.comun.filters.CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Character Encoding Filter</filter-name> 
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/general/session_terminada.xhtml</location>

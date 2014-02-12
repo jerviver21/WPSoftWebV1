@@ -176,7 +176,6 @@
                 </library>
                 <library dirs="200">
                     <file>${libs.jsf20.classpath}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="100">
                     <file>${reference.WPSoftServiceV1.dist}</file>

@@ -44,7 +44,7 @@ public class UsuariosController {
         setUsuario(new Users());
         usuario.setPwd("");
         locator = ServiceLocator.getInstance();
-        setGrupos(gruposServices.findAll());
+        setGrupos(gruposServices.findAllE());
         if(usuarios == null){
             setUsuarios(usersServices.findAll());
         }

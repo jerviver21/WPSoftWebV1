@@ -37,8 +37,8 @@ public class GruposController {
     @PostConstruct
     public void init(){
         grupo = new Groups();
-        setGrupos(groupsService.findAll());
-        setRoles(rolesServices.findAll());
+        setGrupos(groupsService.findAllE());
+        setRoles(rolesServices.findAllE());
         if(!roles.isEmpty()){
             setGridColumnasRoles((int) Math.sqrt(roles.size()));
             setGridFilasRoles(roles.size());    
@@ -93,6 +93,7 @@ public class GruposController {
             grupo.setRoles(rolesGrupo);
             groupsService.edit(grupo);
             FacesUtil.addMessage(FacesUtil.INFO,"Grupo guardado con exito!!");
+            FacesUtil.restartBean("sectorController");
             init();
         }catch (LlaveDuplicadaException e){
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());

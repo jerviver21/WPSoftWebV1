@@ -66,10 +66,10 @@ public class ProyectoController {
     
     /*Permite la creación y consulta de permisos de trabajo*/
     private PermisoTrabajo permiso;
-    private List<SelectItem> equipos;
-    private List<SelectItem> sectores;
-    private List<SelectItem> contratistas;
-    private List<SelectItem> empleados;
+    private List<SelectItem> equipos = new ArrayList<SelectItem>();
+    private List<SelectItem> sectores= new ArrayList<SelectItem>();
+    private List<SelectItem> contratistas= new ArrayList<SelectItem>();
+    private List<SelectItem> empleados= new ArrayList<SelectItem>();
     private Map equiposXgrupo; //Este mapa permite la selección del subcombo equipos, que depende del sector.
     
     //Paginas de Navegación en el flujo de creación de proyectos
@@ -93,7 +93,9 @@ public class ProyectoController {
         proyectos = proyectoService.findProyectosActivos(sesion.getUsuario());
         equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
-        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        if(!sectores.isEmpty()){
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        }
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPROYECTO));

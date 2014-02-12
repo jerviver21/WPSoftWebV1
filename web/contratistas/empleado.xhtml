@@ -12,7 +12,7 @@
     </ui:define>
     <ui:define name="contenido">
         
-        <p:dialog id="cuadro_cm" widgetVar="dlg_cm" modal="true" width="350" height="150" appendToBody="true">
+        <p:dialog id="cuadro_cm" widgetVar="dlg_cm" modal="true" width="700" height="150" appendToBody="true">
             <h:form id="form1" enctype="multipart/form-data">
                 <p:panel header="#{labels.certificado_medico1}" id="p_ccm">
 
@@ -28,7 +28,7 @@
                 </p:panel>
             </h:form>
         </p:dialog>
-        <p:dialog id="cuadro_ca" widgetVar="dlg_ca" modal="true" width="350" height="150" appendToBody="true">
+        <p:dialog id="cuadro_ca" widgetVar="dlg_ca" modal="true" width="700" height="150" appendToBody="true">
             <h:form id="form2" enctype="multipart/form-data">
                 <p:panel header="#{labels.certificado_altura1}" id="p_cta">
 
@@ -47,7 +47,7 @@
         
         <h:form id="form" >
             <h:inputHidden value="#{empleadoController.empleado.id}"/>
-            <p:growl id="msgs" />
+            <p:messages id="msgs" />
             <p:commandButton icon="ui-icon-document" update=":form" action="#{empleadoController.crearNuevo}" value="Crear"/>
             <p:panel id="form_proyecto" header="#{labels.datos_empleado}">
                 <p:panelGrid columns="6" id="grid">
