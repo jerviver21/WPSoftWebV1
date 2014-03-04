@@ -1,7 +1,7 @@
 
 package com.vbrothers.usuarios.managed;
 
-import com.vbrothers.common.services.CommonServicesLocal;
+import com.vi.comun.services.CommonServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.services.PermisoTimerService;
 import com.vbrothers.util.EtapaPermiso;

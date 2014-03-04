@@ -5,13 +5,13 @@
 
 package com.vbrothers.herramientas.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
 import com.vbrothers.herramientas.services.EquiposServicesLocal;
 import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Equipo;
 import com.vbrothers.permisostrabajo.dominio.Sector;
-import com.vbrothers.usuarios.services.RolesServicesLocal;
+import com.vi.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;

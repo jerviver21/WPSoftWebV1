@@ -12,6 +12,7 @@
         <h:form id="form" >
             <h:inputHidden id="id" value="#{gruposController.grupo.id}"/>
             <p:messages  id="msgs" />
+            <p:commandButton update="@form" actionListener="#{gruposController.nuevo}" value="Crear Nuevo" icon="ui-icon-document" rendered="#{gruposController.grupo.id ne null}"/>
             <p:panel id="formGrupo" header="Datos del Grupos">
                 
                 <p:panelGrid columns="3" id="grid">
@@ -45,7 +46,7 @@
             <br/>
 
             <p:outputPanel id="grupos">
-                <p:commandButton update="@form" actionListener="#{gruposController.nuevo}" value="Crear" icon="ui-icon-document"/>
+                
                 <p:dataTable value="#{gruposController.grupos}" var="grupo"
                              paginator="true"
                              rows="10"

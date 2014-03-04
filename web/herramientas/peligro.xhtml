@@ -11,6 +11,15 @@
         <ui:include src="../menu.xhtml"/>
     </ui:define>
     <ui:define name="contenido">
+        <p:ajaxStatus style="width:16px;height:16px;" id="ajaxStatusPanel">  
+            <f:facet name="start">  
+                <h:graphicImage value="../images/ajaxloading.gif" />  
+            </f:facet>  
+
+            <f:facet name="complete">  
+                <h:outputText value="" />  
+            </f:facet>  
+        </p:ajaxStatus>
         <h:form id="form" >
             <p:messages id="msgs" />
             <h:inputHidden id="id" value="#{riesgoController.item.id}"/>

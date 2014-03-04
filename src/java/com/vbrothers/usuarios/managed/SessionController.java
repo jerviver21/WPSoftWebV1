@@ -1,9 +1,9 @@
 package com.vbrothers.usuarios.managed;
 
 import com.vbrothers.locator.ServiceLocator;
-import com.vbrothers.usuarios.dominio.Groups;
-import com.vbrothers.usuarios.dominio.Users;
-import com.vbrothers.usuarios.services.UsuariosServicesLocal;
+import com.vi.usuarios.dominio.Groups;
+import com.vi.usuarios.dominio.Users;
+import com.vi.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import java.util.Collection;
 import java.util.HashSet;

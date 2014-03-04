@@ -1,11 +1,11 @@
-package com.vbrothers.usuarios.managed;
+package com.vbrothers.usuarios.managed;;
 
 import com.vbrothers.locator.ServiceLocator;
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
-import com.vbrothers.usuarios.dominio.Groups;
-import com.vbrothers.usuarios.dominio.Users;
-import com.vbrothers.usuarios.services.GruposServicesLocal;
-import com.vbrothers.usuarios.services.UsuariosServicesLocal;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.usuarios.dominio.Groups;
+import com.vi.usuarios.dominio.Users;
+import com.vi.usuarios.services.GruposServicesLocal;
+import com.vi.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import com.vbrothers.util.SpringUtils;
@@ -44,9 +44,20 @@ public class UsuariosController {
         setUsuario(new Users());
         usuario.setPwd("");
         locator = ServiceLocator.getInstance();
-        setGrupos(gruposServices.findAllE());
+        setGrupos(gruposServices.findAll());
+        //******************************** (Revisar esto debe cambiarse)
+        grupos.remove(new Groups(1l));//grupo master
+        grupos.remove(new Groups(2l));//grupo tesoreria
+        grupos.remove(new Groups(3l));//grupo usuarios
+        //********************************
+        grupos.remove(new Groups(1l));
         if(usuarios == null){
             setUsuarios(usersServices.findAll());
+            //******************************** (Revisar esto debe cambiarse)
+            usuarios.remove(new Users(1l));//usuario admin
+            usuarios.remove(new Users(19l));//usuario gaby
+            usuarios.remove(new Users(14l));//usuario ADMIN1
+            //********************************
         }
         
         if(!grupos.isEmpty()){

@@ -10,10 +10,19 @@
         <ui:include src="../menu.xhtml"/>
     </ui:define>
     <ui:define name="contenido">
+        <p:ajaxStatus style="width:16px;height:16px;" id="ajaxStatusPanel">  
+            <f:facet name="start">  
+                <h:graphicImage value="../images/ajaxloading.gif" />  
+            </f:facet>  
+
+            <f:facet name="complete">  
+                <h:outputText value="" />  
+            </f:facet>  
+        </p:ajaxStatus>
         <h:form id="form" >
             <p:messages id="msgs" />
             <h:inputHidden id="id" value="#{sectorController.item.id}"/>
-
+            <p:commandButton actionListener="#{sectorController.crearNuevo}" update="@form" value="Crear Nuevo" icon="ui-icon-document" rendered="#{sectorController.item.id ne null}"/>
             <p:panel header="Datos del Sector">
                 <p:panelGrid id="form_sector" style="width: 100%">
                     <p:row>
@@ -22,7 +31,7 @@
                         <p:column><p:message for="nombre"/></p:column>
                     </p:row>
                     <p:row>
-                        <p:column><h:outputLabel for="grupo" value="Grupo: " /></p:column>
+                        <p:column><h:outputLabel for="grupo" value="Jefe (Grupo con usuarios Jefe): " /></p:column>
                         <p:column><h:selectOneMenu id="grupo" value="#{sectorController.item.grupo}" >
                             <f:selectItems  value="#{sectorController.grupos}" />
                         </h:selectOneMenu></p:column>
@@ -59,7 +68,7 @@
                     <f:facet name="footer">
                         <p:row>
                             <p:column colspan="3">
-                                <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" icon="ui-icon-disk"/>
+                                <p:commandButton value="Guardar" update="@form"  action="#{sectorController.guardar}" icon="ui-icon-disk" ajax="false"/>
                             </p:column>
                         </p:row>
                     </f:facet>
@@ -74,7 +83,7 @@
 
 
             <p:outputPanel id="sectores">
-                <p:commandButton actionListener="#{sectorController.crearNuevo}" update="@form" value="Crear" icon="ui-icon-document"/>
+                
                 <p:dataTable value="#{sectorController.items}" var="item" >
                     <p:column headerText="Nombre">
                         <h:outputText value="#{item.nombre}"/>

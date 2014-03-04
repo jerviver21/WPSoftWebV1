@@ -1,10 +1,10 @@
 package com.vbrothers.usuarios.managed;
 
-import com.vbrothers.locator.ServiceLocator;
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.common.managed.GeneralController;
-import com.vbrothers.usuarios.dominio.Menu;
-import com.vbrothers.usuarios.services.MenusServicesLocal;
+import com.vbrothers.locator.ServiceLocator;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.usuarios.dominio.Menu;
+import com.vi.usuarios.services.MenusServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.List;
@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 /**

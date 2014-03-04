@@ -1,10 +1,10 @@
 package com.vbrothers.common.managed;
 
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
-import com.vbrothers.common.services.ParamsServicesLocal;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.comun.services.ParamsServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
-import com.vbrothers.common.dominio.Parametro;
+import com.vi.comun.dominio.Parametro;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 

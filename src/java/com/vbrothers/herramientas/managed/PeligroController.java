@@ -5,7 +5,7 @@
 
 package com.vbrothers.herramientas.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
 import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
 import com.vbrothers.herramientas.services.ControlesServicesLocal;

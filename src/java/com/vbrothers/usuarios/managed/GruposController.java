@@ -1,10 +1,10 @@
 package com.vbrothers.usuarios.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
-import com.vbrothers.usuarios.dominio.Groups;
-import com.vbrothers.usuarios.dominio.Rol;
-import com.vbrothers.usuarios.services.GruposServicesLocal;
-import com.vbrothers.usuarios.services.RolesServicesLocal;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.usuarios.dominio.Groups;
+import com.vi.usuarios.dominio.Rol;
+import com.vi.usuarios.services.GruposServicesLocal;
+import com.vi.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.ArrayList;
@@ -13,14 +13,13 @@ import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.event.ActionEvent;
+import javax.faces.bean.SessionScoped;
 
 /**
  * @author Jerson Viveros
  */
 @ManagedBean(name="gruposController")
-@RequestScoped
+@SessionScoped
 public class GruposController {
     private Groups grupo;
     private List<Groups> grupos;
@@ -37,8 +36,14 @@ public class GruposController {
     @PostConstruct
     public void init(){
         grupo = new Groups();
-        setGrupos(groupsService.findAllE());
-        setRoles(rolesServices.findAllE());
+        setGrupos(groupsService.findAll());
+        grupos.remove(new Groups(1l));//Se remueve el master
+        grupos.remove(new Groups(16l));//Se remueve el administradores
+        grupos.remove(new Groups(2l));//Se remueve el tesorero
+        grupos.remove(new Groups(3l));//Se remueve el usuarios
+        setRoles(rolesServices.findAll());
+        roles.remove(new Rol(1l));//Se remuver el master
+        roles.remove(new Rol(3l));//Se remuver el tesoreria
         if(!roles.isEmpty()){
             setGridColumnasRoles((int) Math.sqrt(roles.size()));
             setGridFilasRoles(roles.size());    

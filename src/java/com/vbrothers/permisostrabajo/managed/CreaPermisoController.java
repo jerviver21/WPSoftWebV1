@@ -1,7 +1,7 @@
 package com.vbrothers.permisostrabajo.managed;
 
-import com.vbrothers.common.exceptions.EstadoException;
-import com.vbrothers.common.exceptions.ValidacionException;
+import com.vi.comun.exceptions.EstadoException;
+import com.vi.comun.exceptions.ValidacionException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
@@ -17,6 +17,7 @@ import com.vbrothers.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -94,7 +95,11 @@ public class CreaPermisoController {
         permisos = permisoService.findPermisosEnProceso(sesion.getUsuario());
         equiposXgrupo = locator.getDataForSubcombo(ServiceLocator.SUBC_SECTOR_EQUIPO);
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
-        equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        if(sectores.isEmpty()){
+            equipos = FacesUtil.getSelectsItem(new HashMap<Object, Object>());
+        }else{
+            equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        }
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
         estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS));

@@ -73,7 +73,7 @@
                     
                     
                     <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
-                    <p:inputText id="mail" value="#{empleadoController.empleado.mail}" required="true" validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
+                    <p:inputText id="mail" value="#{empleadoController.empleado.mail}" validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
                         <f:validateRegex pattern="[\w\.]+@\w+\.\w+\.*\w*"/>
                         <p:ajax process="mail" update="mail msg_mail" event="change"/>
                     </p:inputText>

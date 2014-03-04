@@ -1,8 +1,8 @@
 package com.vbrothers.permisostrabajo.managed;
 
-import com.vbrothers.common.exceptions.EstadoException;
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
-import com.vbrothers.common.exceptions.ValidacionException;
+import com.vi.comun.exceptions.EstadoException;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.comun.exceptions.ValidacionException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;

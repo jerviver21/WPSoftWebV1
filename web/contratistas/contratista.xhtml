@@ -32,13 +32,13 @@
                     <p:message id="msg_nombre" for="nombre"/>
                     
                     <h:outputLabel for="domicilio" value="#{labels.domicilio} " />
-                    <p:inputText id="domicilio" value="#{contratistaController.contratista.domicilio}" required="true">
+                    <p:inputText id="domicilio" value="#{contratistaController.contratista.domicilio}">
                         <p:ajax process="domicilio" update="domicilio msg_domicilio" event="change"/>
                     </p:inputText>
                     <p:message id="msg_domicilio" for="domicilio"/>
                     
                     <h:outputLabel for="telefono" value="#{labels.telefono} " />
-                    <p:inputText id="telefono" value="#{contratistaController.contratista.telefono}" required="true" validatorMessage="El valor no es valido ej. (52) 24381153 ext 1101 ">
+                    <p:inputText id="telefono" value="#{contratistaController.contratista.telefono}" validatorMessage="El valor no es valido ej. (52) 24381153 ext 1101 ">
                         <f:validateRegex pattern="\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5}"/>
                         <p:ajax process="telefono" update="telefono msg_telefono" event="change"/>
                     </p:inputText>
@@ -52,7 +52,7 @@
                     <p:message id="msg_os" for="objeto_social"/>
                     
                     <h:outputLabel for="nombre_contacto" value="#{labels.nombre_contacto}" />
-                    <p:inputText id="nombre_contacto" value="#{contratistaController.contratista.nombreContacto}" required="true">
+                    <p:inputText id="nombre_contacto" value="#{contratistaController.contratista.nombreContacto}" >
                         <f:validateRegex pattern="[A-Za-z|\s]+"/>
                         <p:ajax process="nombre_contacto" update="nombre_contacto msg_nc" event="change"/>
                     </p:inputText>
@@ -66,7 +66,7 @@
                     <p:message id="msg_tc" for="telefono_contacto"/>
                     
                     <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
-                    <p:inputText id="mail" value="#{contratistaController.contratista.mail}" required="true" validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
+                    <p:inputText id="mail" value="#{contratistaController.contratista.mail}"  validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
                         <f:validateRegex pattern="[\w\.]+@\w+\.\w+\.*\w*"/>
                         <p:ajax process="mail" update="mail msg_mail" event="change"/>
                     </p:inputText>

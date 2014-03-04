@@ -1,16 +1,17 @@
 
 package com.vbrothers.contratistas.managed;
 
-import com.vbrothers.common.exceptions.EmpActivoOtroContException;
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
-import com.vbrothers.common.exceptions.ParametroException;
+
+import com.vbrothers.exceptions.EmpActivoOtroContException;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.comun.exceptions.ParametroException;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Contratista;
 import com.vbrothers.permisostrabajo.dominio.Empleado;
 import com.vbrothers.permisostrabajo.services.ContratistaServicesLocal;
 import com.vbrothers.permisostrabajo.services.EmpleadoServicesLocal;
 import com.vbrothers.usuarios.managed.SessionController;
-import com.vbrothers.usuarios.services.UsuariosServicesLocal;
+import com.vi.usuarios.services.UsuariosServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import com.vbrothers.util.SpringUtils;

@@ -1,8 +1,8 @@
 package com.vbrothers.util;
 
 import com.vbrothers.common.managed.GeneralController;
-import com.vbrothers.usuarios.dominio.Menu;
-import com.vbrothers.usuarios.dominio.Resource;
+import com.vi.usuarios.dominio.Menu;
+import com.vi.usuarios.dominio.Resource;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,13 +1,12 @@
 package com.vbrothers.permisostrabajo.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
 import com.vbrothers.herramientas.services.CertificadosServicesLocal;
 import com.vbrothers.herramientas.services.PeligrosServicesLocal;
 import com.vbrothers.herramientas.services.SectoresServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Certificado;
 import com.vbrothers.permisostrabajo.dominio.CertificadosTrabajo;
-import com.vbrothers.permisostrabajo.dominio.Control;
 import com.vbrothers.permisostrabajo.dominio.ControlesPeligroTarea;
 import com.vbrothers.permisostrabajo.dominio.NotasPermiso;
 import com.vbrothers.permisostrabajo.dominio.Peligro;
@@ -25,7 +24,6 @@ import com.vbrothers.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;

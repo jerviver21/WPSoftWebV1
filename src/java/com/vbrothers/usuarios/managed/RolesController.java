@@ -1,11 +1,11 @@
 package com.vbrothers.usuarios.managed;
 
-import com.vbrothers.common.exceptions.LlaveDuplicadaException;
 import com.vbrothers.common.managed.GeneralController;
-import com.vbrothers.usuarios.dominio.Resource;
-import com.vbrothers.usuarios.dominio.Rol;
-import com.vbrothers.usuarios.services.ResourcesServicesLocal;
-import com.vbrothers.usuarios.services.RolesServicesLocal;
+import com.vi.comun.exceptions.LlaveDuplicadaException;
+import com.vi.usuarios.dominio.Resource;
+import com.vi.usuarios.dominio.Rol;
+import com.vi.usuarios.services.ResourcesServicesLocal;
+import com.vi.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.HashSet;
@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.event.ActionEvent;
 
 /**
  * @author Jerson Viveros

@@ -1,6 +1,6 @@
 package com.vbrothers.herramientas.managed;
 
-import com.vbrothers.common.exceptions.ParametroException;
+import com.vi.comun.exceptions.ParametroException;
 import com.vbrothers.herramientas.services.CertificadosServicesLocal;
 import com.vbrothers.locator.ServiceLocator;
 import com.vbrothers.permisostrabajo.dominio.Certificado;

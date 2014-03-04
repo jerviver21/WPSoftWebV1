@@ -1,14 +1,16 @@
 package com.vbrothers.common.managed;
 
-import com.vbrothers.common.dominio.ParametrosReporte;
-import com.vbrothers.common.dominio.Reporte;
-import com.vbrothers.common.dto.ResultReporteDTO;
-import com.vbrothers.common.exceptions.ParametroException;
-import com.vbrothers.common.services.ReporteServicesLocal;
+
+import com.vi.comun.exceptions.ParametroException;
 import com.vbrothers.locator.ServiceLocator;
-import com.vbrothers.usuarios.managed.SessionController;
+
+
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
+import com.vi.reportes.dominio.ParametrosReporte;
+import com.vi.reportes.dominio.Reporte;
+import com.vi.reportes.dto.ResultReporteDTO;
+import com.vi.reportes.services.ReporteServicesLocal;
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +34,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import com.vbrothers.usuarios.managed.SessionController;
+
 
 /**
  * @author Jerson Viveros Aguirre
@@ -60,6 +64,7 @@ public class ReportesController {
 
     @EJB
     ReporteServicesLocal reporteService;
+    
     
     private int codReporte;
     private Reporte reporte;

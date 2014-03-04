@@ -1,13 +1,13 @@
 package com.vbrothers.common.managed;
 
-import com.vbrothers.common.services.CommonServicesLocal;
+import com.vi.comun.services.CommonServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.SessionScoped; 
 
 /**
  * @author Jerson Viveros
