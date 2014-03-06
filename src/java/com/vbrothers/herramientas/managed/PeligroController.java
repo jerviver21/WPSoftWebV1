@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 /**
  * @author Jerson Viveros
@@ -93,6 +95,13 @@ public class PeligroController {
 
 
     public void addControl(){
+        FacesContext fc = FacesContext.getCurrentInstance();
+        if(control.getNombre() == null || control.getNombre().equals("")){
+            System.out.println("Control: "+control.getNombre());
+            FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Requerido", "Requerido");
+            fc.addMessage("form:datos", fm);
+            return;
+        }
         control.setPeligro(item);
         control.setConsecutivo(item.getControles().size()+1);
         item.getControles().add(control);

@@ -14,7 +14,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
         <intercept-url pattern="/contratistas/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
         <intercept-url pattern="/general/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
         <intercept-url pattern="/permisostrabajo/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
-        <intercept-url pattern="/pt_tablasref/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
+        <intercept-url pattern="/herramientas/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
+        <intercept-url pattern="/reportes/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
+        <intercept-url pattern="/usuarios/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
         <intercept-url pattern="/reportes/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
         <intercept-url pattern="/usuarios/*" access="hasAnyRole('ROLE_USER','MASTER')"/>
         <intercept-url pattern="/*" access="hasAnyRole('ROLE_USER','MASTER')"/>

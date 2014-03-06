@@ -15,14 +15,14 @@ import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 
 /**
  * @author Jerson Viveros Aguirre
  */
 
 @ManagedBean(name="usuariosController")
-@RequestScoped
+@SessionScoped
 public class UsuariosController {
     ServiceLocator locator;
     private Users usuario;
@@ -87,6 +87,11 @@ public class UsuariosController {
             System.out.println("EAntes de guardar: "+getUsuario().getId());
             usersServices.edit(getUsuario());
             setUsuarios(usersServices.findAll());
+            //******************************** (Revisar esto debe cambiarse)
+            usuarios.remove(new Users(1l));//usuario admin
+            usuarios.remove(new Users(19l));//usuario gaby
+            usuarios.remove(new Users(14l));//usuario ADMIN1
+            //********************************
             FacesUtil.addMessage(FacesUtil.INFO, "Usuario guardado con exito");
         }catch (LlaveDuplicadaException e){
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());

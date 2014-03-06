@@ -59,14 +59,14 @@
                     
                     <h:outputLabel for="nombre" value="#{labels.nombre_completo}" />
                     <p:inputText id="nombre" value="#{empleadoController.empleado.nombresApellidos}" required="true" validatorMessage="Nombre Invalido">
-                        <f:validateRegex pattern="[A-Za-z|\s]+"/>
+                        <f:validateRegex pattern="[A-Za-z|\s]*"/>
                         <p:ajax process="nombre" update="nombre msg_nombre" event="change"/>
                     </p:inputText>
                     <p:message id="msg_nombre" for="nombre"/>
                     
                     <h:outputLabel for="telefono" value="#{labels.telefono}" />
                     <p:inputText id="telefono" value="#{empleadoController.empleado.telefono}" validatorMessage="El valor no es valido ej. (52) 24381153 ext 1101 ">
-                        <f:validateRegex pattern="\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5}"/>
+                        <f:validateRegex pattern="(\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5})*"/>
                         <p:ajax process="telefono" update="telefono msg_telefono" event="change"/>
                     </p:inputText>
                     <p:message id="msg_telefono"  for="telefono"/>
@@ -74,7 +74,7 @@
                     
                     <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
                     <p:inputText id="mail" value="#{empleadoController.empleado.mail}" validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
-                        <f:validateRegex pattern="[\w\.]+@\w+\.\w+\.*\w*"/>
+                        <f:validateRegex pattern="([\w\.]+@\w+\.\w+\.*\w*)*"/>
                         <p:ajax process="mail" update="mail msg_mail" event="change"/>
                     </p:inputText>
                     <p:message id="msg_mail" for="mail"/>
@@ -152,7 +152,7 @@
                         <p:commandLink value="Cambiar Clave" actionListener="#{empleadoController.cambiarClaveEmp}" 
                                        rendered="#{!empleadoController.asignarClave}" update="@form"/>
                         <p:password id="pwd" value="#{empleadoController.contrasena}" feedback="true" 
-                                    rendered="#{empleadoController.asignarClave}">
+                                    rendered="#{empleadoController.asignarClave}" required="true">
                             <p:ajax event="change"/>
                         </p:password>
                         <p:message id="mpwd" for="pwd"/>

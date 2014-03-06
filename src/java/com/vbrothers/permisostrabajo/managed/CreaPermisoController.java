@@ -97,11 +97,15 @@ public class CreaPermisoController {
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         if(sectores.isEmpty()){
             equipos = FacesUtil.getSelectsItem(new HashMap<Object, Object>());
+            FacesUtil.addMessage(FacesUtil.ERROR, "Para crear un permiso de trabajo debe existir al menos un sector creado");
         }else{
             equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
         }
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
+        if(contratistas.isEmpty()  && empleados.isEmpty()){
+            FacesUtil.addMessage(FacesUtil.ERROR, "Para crear un permiso de trabajo debe existir al menos un contratista o un empleado creado");
+        }
         estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPERMISOS));
         fechaActual = fd.format(new Date());
         crearNuevoPermiso();

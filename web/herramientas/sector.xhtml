@@ -43,11 +43,11 @@
                             <p:outputPanel id="equipos">
                                     <p:panelGrid columns="4">
                                         <h:outputLabel for="nombre_equipo" value="Equipo:" />
-                                        <p:inputText id="nombre_equipo" value="#{sectorController.equipo.nombre}"  >
-                                            <p:ajax/>
+                                        <p:inputText id="nombre_equipo" value="#{sectorController.equipo.nombre}"  validatorMessage="Requerido" onkeypress="if (event.keyCode == 13) { document.getElementById('form:add_equipo').click(); return false; }">
+                                            <p:ajax event="keyup"/>
                                         </p:inputText>
-                                        <p:message for="nombre_equipo"/>
-                                        <p:commandButton update=":form:equipos"  process="@this" actionListener="#{sectorController.addEquipo}" icon="ui-icon-plus"/>
+                                        <p:message id="m_ne" for="nombre_equipo"/>
+                                        <p:commandButton id="add_equipo" update="equipos m_ne nombre_equipo" actionListener="#{sectorController.addEquipo}" icon="ui-icon-plus"/>
                                     </p:panelGrid>
                                     <p:dataTable value="#{sectorController.item.equipos}" var="equipo"
                                                  paginator="true" rows="5"
@@ -58,7 +58,7 @@
                                             <h:outputText value="#{equipo.nombre}"/>
                                         </p:column>
                                         <p:column headerText="Borrar">
-                                            <p:commandButton update="@form"  process="@this" actionListener="#{sectorController.removeEquipo(equipo)}" icon="ui-icon-trash"/>
+                                            <p:commandButton update=":form:equipos" actionListener="#{sectorController.removeEquipo(equipo)}" icon="ui-icon-trash"/>
                                         </p:column>
                                     </p:dataTable>
                             </p:outputPanel>
@@ -99,6 +99,7 @@
                     </p:column>
                 </p:dataTable>
             </p:outputPanel>
+            <p:messages id="msgs1" />
         </h:form>
    </ui:define>
   </ui:composition>

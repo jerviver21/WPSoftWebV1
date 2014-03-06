@@ -83,7 +83,7 @@ public class EmpleadoController {
             empleadosContratista = empleadoService.findEmpleadosXContratita(contratista.getId());
         }else{
             contratistasList = contratistaService.findAll();
-            empleadosContratista = empleadoService.findEmpleadosXContratita(-1l);
+            empleadosContratista = empleadoService.findEmpleadosXContratita(-2l);
         }
         empleado.setContratista(contratista);
         setContratistas(FacesUtil.getSelectsItem(contratistasList));
@@ -187,7 +187,7 @@ public class EmpleadoController {
         FacesContext fc = FacesContext.getCurrentInstance();
         if(!usrService.isUsuarioDisponible(empleado.getUsuario())){
             FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El nombre de usuario ya existe, seleccione otro", "El nombre de usuario ya existe, seleccione otro");
-            fc.addMessage(":form1:email", fm);
+            fc.addMessage("form:usr", fm);
         }
     }
     
@@ -226,6 +226,8 @@ public class EmpleadoController {
             Empleado emp  = (Empleado) evento.getComponent().getAttributes().get("empleado");
             emp.setActivo((Boolean)evento.getNewValue());
             empleadoService.activarEmpleado(emp, sessionControler.getUsuario().getUsr());
+            FacesUtil.restartBean("creaPermisoController");
+            FacesUtil.restartBean("proyectoController");
         } catch( EmpActivoOtroContException e){
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());
         } catch (Exception e) {

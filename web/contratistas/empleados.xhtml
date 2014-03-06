@@ -21,9 +21,10 @@
                         <h:outputLabel for="contratista" value="#{labels.contratista}" style="font-weight: bold;"/>
                         <h:selectOneMenu id="contratista" value="#{empleadoController.empleado.contratista.id}" >
                             <p:ajax  listener="#{empleadoController.cargarEmpleadosContratista}" update=":form:empleados"/>
-                            <f:selectItem itemLabel="Todos" itemValue="-2"  />
+                            
                             <f:selectItems  value="#{empleadoController.contratistas}" />
                             <f:selectItem itemLabel="Planta" itemValue="-1"  />
+                            <f:selectItem itemLabel="Todos" itemValue="-2"  />
                         </h:selectOneMenu>
                     </p:panelGrid>
                 </sec:ifNotGranted>

@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 /**
@@ -49,6 +51,9 @@ public class SectorController {
     public void init(){
         crearNuevo();
         setGrupos(FacesUtil.getSelectsItem(rolService.findGruposByRol(locator.getParameter("rolAutArea")),"getCodigo" ,"getCodigo" ));
+        if(grupos.isEmpty()){
+            FacesUtil.addMessage(FacesUtil.ERROR, "Para crear un sector es necesario crear grupos con rol Autoridad de Area. (Jefes del Sector)");
+        }
     }
 
     public void crearNuevo(){
@@ -66,6 +71,11 @@ public class SectorController {
         try {
             if(getItem().getId() == 0){
                 getItem().setId(null);
+            }
+            
+            if(getItem().getGrupo() == null || getItem().getGrupo().equals("")){
+                FacesUtil.addMessage(FacesUtil.ERROR, "Debe crear un grupo con rol autoridad de area, los usuarios de este grupo aprobaran permisos de trabajo en este sector");
+                return null;
             }
             sectorService.edit(getItem());
             setItems(sectorService.findAll());
@@ -98,6 +108,12 @@ public class SectorController {
     }
 
     public void addEquipo(){
+        FacesContext fc = FacesContext.getCurrentInstance();
+        if(equipo.getNombre() == null || equipo.getNombre().equals("")){
+            FacesMessage fm = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Requerido", "Requerido");
+            fc.addMessage("form:nombre_equipo", fm);
+            return;
+        }
         equipo.setArea(item);
         item.getEquipos().add(equipo);
         equipo = new Equipo();

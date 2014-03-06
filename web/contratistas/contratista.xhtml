@@ -39,35 +39,35 @@
                     
                     <h:outputLabel for="telefono" value="#{labels.telefono} " />
                     <p:inputText id="telefono" value="#{contratistaController.contratista.telefono}" validatorMessage="El valor no es valido ej. (52) 24381153 ext 1101 ">
-                        <f:validateRegex pattern="\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5}"/>
+                        <f:validateRegex pattern="(\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5})*"/>
                         <p:ajax process="telefono" update="telefono msg_telefono" event="change"/>
                     </p:inputText>
                     <p:message id="msg_telefono" for="telefono"/>
                     
                     <h:outputLabel for="objeto_social" value="#{labels.objeto_social}" />
                     <p:inputText id="objeto_social" value="#{contratistaController.contratista.objetoSocial}" >
-                        <f:validateRegex pattern="[A-Za-z|\s]+"/>
+                        <f:validateRegex pattern="[A-Za-z|\s]*"/>
                         <p:ajax process="objeto_social" update="objeto_social msg_os" event="change"/>
                     </p:inputText>
                     <p:message id="msg_os" for="objeto_social"/>
                     
                     <h:outputLabel for="nombre_contacto" value="#{labels.nombre_contacto}" />
                     <p:inputText id="nombre_contacto" value="#{contratistaController.contratista.nombreContacto}" >
-                        <f:validateRegex pattern="[A-Za-z|\s]+"/>
+                        <f:validateRegex pattern="[A-Za-z|\s]*"/>
                         <p:ajax process="nombre_contacto" update="nombre_contacto msg_nc" event="change"/>
                     </p:inputText>
                     <p:message id="msg_nc" for="nombre_contacto"/>
                     
                     <h:outputLabel for="telefono_contacto" value="#{labels.telefono_contacto}" />
                     <p:inputText id="telefono_contacto" value="#{contratistaController.contratista.telefonoContacto}" >
-                        <f:validateRegex pattern="\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5}"/>
+                        <f:validateRegex pattern="(\(?\d*\)?\s*\d{5,12}\s*[Ee]?[Xx]?[tt]?.*\s*\d{2,5})*"/>
                         <p:ajax process="telefono_contacto" update="telefono_contacto msg_tc" event="change"/>
                     </p:inputText>
                     <p:message id="msg_tc" for="telefono_contacto"/>
                     
                     <h:outputLabel for="mail" value="#{labels.correo_electronico}" />
                     <p:inputText id="mail" value="#{contratistaController.contratista.mail}"  validatorMessage="Formato de correo invalido. ej. jerviver@gmail.com">
-                        <f:validateRegex pattern="[\w\.]+@\w+\.\w+\.*\w*"/>
+                        <f:validateRegex pattern="([\w\.]+@\w+\.\w+\.*\w*)*"/>
                         <p:ajax process="mail" update="mail msg_mail" event="change"/>
                     </p:inputText>
                     <p:message id="msg_mail" for="mail"/>
@@ -81,7 +81,7 @@
                     
                     <h:outputLabel for="nivel_riesgo" value="#{labels.nivel_riesgo}" />
                     <p:inputText id="nivel_riesgo" value="#{contratistaController.contratista.nivelRiesgo}">
-                        <f:validateRegex pattern="\w+"/>
+                        <f:validateRegex pattern="\w*"/>
                         <p:ajax process="nivel_riesgo" update="nivel_riesgo msg_nr" event="change"/>
                     </p:inputText>
                     <p:message id="msg_nr" for="nivel_riesgo"/>
@@ -99,7 +99,7 @@
                         <p:commandLink value="Cambiar Clave" actionListener="#{contratistaController.cambiarClaveCont}" 
                                        rendered="#{!contratistaController.asignarClave}" update="@form"/>
                         <p:password id="pwd" value="#{contratistaController.contrasena}" feedback="true"
-                                    rendered="#{contratistaController.asignarClave}">
+                                    rendered="#{contratistaController.asignarClave}" required="true">
                             <p:ajax event="change"/>
                         </p:password>
                         <p:message id="mpwd" for="pwd"/>

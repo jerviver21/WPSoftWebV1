@@ -32,7 +32,7 @@
                                     mode="advanced"  auto="true"
                                         allowTypes="/(\.|\/)(pdf|gif|jpe?g|png)$/"   sizeLimit="10000000"
                                     label="Seleccionar" uploadLabel="Cargar" cancelLabel="Cancelar"/> 
-                    
+                    <p:message for="file"/>
                     <f:facet name="footer">
                         <p:commandButton value="Guardar" icon="ui-icon-disk" action="#{certificadoController.guardarCertificado}" update="@form"/>
                     </f:facet>

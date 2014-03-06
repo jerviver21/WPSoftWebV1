@@ -23,7 +23,7 @@
         <h:form id="form" >
             <p:messages id="msgs" />
             <h:inputHidden id="id" value="#{riesgoController.item.id}"/>
-
+            <p:commandButton actionListener="#{riesgoController.crearNuevo}" update="@form" value="Crear Nuevo" icon="ui-icon-document" rendered="#{riesgoController.item.id ne null}"/>
             <p:panel header="Datos del Peligro">
                 <p:panelGrid id="form_riesgo" style="width: 100%">
                     <p:row>
@@ -37,11 +37,11 @@
                             <p:outputPanel id="controles_peligro">
                                     <p:panelGrid columns="4">
                                         <h:outputLabel for="datos" value="Control:" />
-                                        <p:inputText id="datos" value="#{riesgoController.control.nombre}">
-                                            <p:ajax/>
+                                        <p:inputText id="datos" value="#{riesgoController.control.nombre}" validatorMessage="Requerido" onkeypress="if (event.keyCode == 13) { document.getElementById('form:add_control').click(); return false; }">
+                                            <p:ajax event="keyup"/>
                                         </p:inputText>
-                                        <p:message for="datos"/>
-                                        <p:commandButton update=":form:controles_peligro"  process="@this" actionListener="#{riesgoController.addControl}" icon="ui-icon-plus"/>
+                                        <p:message id="m_control" for="datos"/>
+                                        <p:commandButton id="add_control" update="controles_peligro m_control datos"  process="@this" actionListener="#{riesgoController.addControl}" icon="ui-icon-plus"/>
                                     </p:panelGrid>
                                     <p:dataTable value="#{riesgoController.item.controles}" var="control"
                                                  paginator="true" rows="5"
@@ -82,7 +82,6 @@
 
 
             <p:outputPanel id="riesgos">
-                <p:commandButton actionListener="#{riesgoController.crearNuevo}" update="@form" value="Crear" icon="ui-icon-document"/>
                 <p:dataTable value="#{riesgoController.items}" var="item" >
                     <p:column headerText="Codigo">
                         <h:outputText value="#{item.nombre}"/>

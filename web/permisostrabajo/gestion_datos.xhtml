@@ -24,7 +24,7 @@
 
                     <h:outputLabel for="otra" value="Cual: *" />
                     <p:inputText id="otra" value="#{gestionPermisoController.permiso.otraDisciplina}" 
-                                 disabled="#{gestionPermisoController.permiso.disciplina.id ne -1}" required="true"/>
+                                 disabled="#{gestionPermisoController.permiso.disciplina.id ne -1}"/>
                     <p:message for="otra"/>
                 </p:panelGrid>
             </p:panel>
@@ -37,7 +37,7 @@
                         <p:ajax/>
                     </h:selectOneMenu>
                     <p:commandButton icon="ui-icon-plus" actionListener="#{gestionPermisoController.agregarSectorAfectado}" 
-                                     update=":form:sectores_afectados"/>
+                                     update="sectores_afectados "/>
                 </p:panelGrid>
 
                 <p:outputPanel id="sectores_afectados">

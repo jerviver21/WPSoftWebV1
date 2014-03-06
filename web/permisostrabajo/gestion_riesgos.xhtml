@@ -27,11 +27,11 @@
             <p:separator/>
             <h4>Peligros</h4>
             <h:panelGrid columns="2">
-                <h:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}" >
+                <h:selectOneMenu id="peligro" value="#{gestionPermisoController.peligro.id}"  onkeypress="if (event.keyCode == 13) { document.getElementById('form:bpeligro').click(); return false; }" >
                     <f:selectItems  value="#{gestionPermisoController.peligros}" />
                     <p:ajax update="@form"/>
                 </h:selectOneMenu>
-                <p:commandButton icon="ui-icon-plus" value="Agregar" actionListener="#{gestionPermisoController.agregarPeligro}" update="@form"/>
+                <p:commandButton id="bpeligro" icon="ui-icon-plus" value="Agregar" actionListener="#{gestionPermisoController.agregarPeligro}" update="@form"/>
             </h:panelGrid>
             
             
@@ -56,8 +56,10 @@
                                 <p:tab id="tab1" title="Controles">  
                                     <h:panelGrid columns="3">
                                         <p:outputLabel value="Control Adicional"/>
-                                        <p:inputText id ="ccontrol" value="#{gestionPermisoController.control}"/>
-                                        <p:commandButton icon="ui-icon-plus" value="Agregar"
+                                        <p:inputText id ="ccontrol" value="#{gestionPermisoController.control}" onkeypress="if (event.keyCode == 13) { document.getElementById('form:bccontrol').click(); return false; }">
+                                            <p:ajax event="keyup"/>
+                                        </p:inputText>
+                                        <p:commandButton id="bccontrol" icon="ui-icon-plus" value="Agregar"
                                                          actionListener="#{gestionPermisoController.agregarControl(peligro)}" update="controles ccontrol"/>  
                                     </h:panelGrid>
                                     <p:dataTable id="controles" value="#{peligro.controles}" var="control">
@@ -75,8 +77,10 @@
                                 <p:tab id="tab2" title="Riesgos"> 
                                     <h:panelGrid columns="3">
                                         <p:outputLabel value="Riesgo"/>
-                                        <p:inputText id="criesgo" value="#{gestionPermisoController.riesgo}"/>
-                                        <p:commandButton icon="ui-icon-plus" value="Agregar"
+                                        <p:inputText id="criesgo" value="#{gestionPermisoController.riesgo}" onkeypress="if (event.keyCode == 13) { document.getElementById('form:bcriesgo').click(); return false; }">
+                                            <p:ajax event="keyup"/>
+                                        </p:inputText>
+                                        <p:commandButton id="bcriesgo" icon="ui-icon-plus" value="Agregar"
                                                          actionListener="#{gestionPermisoController.agregarRiesgo(peligro)}" update="riesgos criesgo"/>  
                                     </h:panelGrid>
                                     

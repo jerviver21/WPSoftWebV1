@@ -114,6 +114,7 @@ public class GruposController {
             grupos.remove(r);
             groupsService.remove(r);
             FacesUtil.addMessage(FacesUtil.INFO,"Grupo borrado con exito!!");
+            FacesUtil.restartBean("sectorController");
         } catch (Exception e) {
             FacesUtil.addMessage(FacesUtil.ERROR,"Error al borrar el grupo");
             Log.getLogger().log(Level.SEVERE, e.getMessage(), e);

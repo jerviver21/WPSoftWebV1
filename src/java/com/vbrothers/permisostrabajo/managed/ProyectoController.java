@@ -95,9 +95,14 @@ public class ProyectoController {
         sectores = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_SECTOR));
         if(!sectores.isEmpty()){
             equipos = FacesUtil.getSelectsItem((Map)equiposXgrupo.get(sectores.get(0).getValue()));
+        }else{
+            FacesUtil.addMessage(FacesUtil.ERROR, "Para crear un proyecto debe existir al menos un sector creado");
         }
         empleados = FacesUtil.getSelectsItem(empleadoServices.findEmpleadosActivosPlanta());
         contratistas = FacesUtil.getSelectsItem(contratistaServices.findContratistasActivos());
+        if(contratistas.isEmpty()  && empleados.isEmpty()){
+            FacesUtil.addMessage(FacesUtil.ERROR, "Para crear un proyecto debe existir al menos un contratista o un empleado creado");
+        }
         estados = FacesUtil.getSelectsItem(locator.getDataForCombo(ServiceLocator.COMB_ID_ESTADOSPROYECTO));
         fechaActual = fd.format(new Date());
         crearNuevoProyecto();
