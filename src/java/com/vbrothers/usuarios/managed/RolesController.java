@@ -8,6 +8,7 @@ import com.vi.usuarios.services.ResourcesServicesLocal;
 import com.vi.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
+import com.vi.usuarios.dominio.Users;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,11 +36,14 @@ public class RolesController {
     @EJB
     private ResourcesServicesLocal resourceService;
 
+    Users sesion;
 
     @PostConstruct
     public void init(){
+        sesion = ((SessionController)FacesUtil.getManagedBean("#{sessionController}")).getUsuario();
+        
         rol = new Rol();
-        setRoles(rolService.findAll());
+        setRoles(rolService.findByLicencia(sesion.getLicencia()));
         GeneralController generalController = (GeneralController)FacesUtil.getManagedBean("#{generalController}");
         setRecursos(resourceService.findAll(generalController.getLocale()));
         if(!getRecursos().isEmpty()){

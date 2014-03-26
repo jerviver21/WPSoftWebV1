@@ -38,26 +38,20 @@ public class UsuariosController {
     UsuariosServicesLocal usersServices;
     @EJB
     GruposServicesLocal gruposServices;
+    
+    Users sesion;
 
     @PostConstruct
     public void init(){
+        sesion = ((SessionController)FacesUtil.getManagedBean("#{sessionController}")).getUsuario();
+        
         setUsuario(new Users());
         usuario.setPwd("");
         locator = ServiceLocator.getInstance();
-        setGrupos(gruposServices.findAll());
-        //******************************** (Revisar esto debe cambiarse)
-        grupos.remove(new Groups(1l));//grupo master
-        grupos.remove(new Groups(2l));//grupo tesoreria
-        grupos.remove(new Groups(3l));//grupo usuarios
-        //********************************
+        setGrupos(gruposServices.findByLicencia(sesion.getLicencia()));
         grupos.remove(new Groups(1l));
         if(usuarios == null){
-            setUsuarios(usersServices.findAll());
-            //******************************** (Revisar esto debe cambiarse)
-            usuarios.remove(new Users(1l));//usuario admin
-            usuarios.remove(new Users(19l));//usuario gaby
-            usuarios.remove(new Users(14l));//usuario ADMIN1
-            //********************************
+            setUsuarios(usersServices.findUsersByLicencia(sesion.getLicencia()));
         }
         
         if(!grupos.isEmpty()){
@@ -86,12 +80,7 @@ public class UsuariosController {
             usuario.setPwd(SpringUtils.getPasswordEncoder().encodePassword(usuario.getPwd(), null));
             System.out.println("EAntes de guardar: "+getUsuario().getId());
             usersServices.edit(getUsuario());
-            setUsuarios(usersServices.findAll());
-            //******************************** (Revisar esto debe cambiarse)
-            usuarios.remove(new Users(1l));//usuario admin
-            usuarios.remove(new Users(19l));//usuario gaby
-            usuarios.remove(new Users(14l));//usuario ADMIN1
-            //********************************
+            setUsuarios(usersServices.findUsersByLicencia(sesion.getLicencia()));
             FacesUtil.addMessage(FacesUtil.INFO, "Usuario guardado con exito");
         }catch (LlaveDuplicadaException e){
             FacesUtil.addMessage(FacesUtil.ERROR, e.getMessage());

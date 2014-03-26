@@ -7,6 +7,7 @@ import com.vi.usuarios.services.GruposServicesLocal;
 import com.vi.usuarios.services.RolesServicesLocal;
 import com.vbrothers.util.FacesUtil;
 import com.vbrothers.util.Log;
+import com.vi.usuarios.dominio.Users;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,19 +32,17 @@ public class GruposController {
     private GruposServicesLocal groupsService;
     @EJB
     RolesServicesLocal rolesServices;
+    
+    Users sesion;
 
 
     @PostConstruct
     public void init(){
+        sesion = ((SessionController)FacesUtil.getManagedBean("#{sessionController}")).getUsuario();
+        
         grupo = new Groups();
-        setGrupos(groupsService.findAll());
-        grupos.remove(new Groups(1l));//Se remueve el master
-        grupos.remove(new Groups(16l));//Se remueve el administradores
-        grupos.remove(new Groups(2l));//Se remueve el tesorero
-        grupos.remove(new Groups(3l));//Se remueve el usuarios
-        setRoles(rolesServices.findAll());
-        roles.remove(new Rol(1l));//Se remuver el master
-        roles.remove(new Rol(3l));//Se remuver el tesoreria
+        setGrupos(groupsService.findByLicencia(sesion.getLicencia()));
+        setRoles(rolesServices.findByLicencia(sesion.getLicencia()));
         if(!roles.isEmpty()){
             setGridColumnasRoles((int) Math.sqrt(roles.size()));
             setGridFilasRoles(roles.size());    
