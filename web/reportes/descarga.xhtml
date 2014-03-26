@@ -1,0 +1,31 @@
+
+<html  xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui"
+     >
+
+
+    <f:view>
+
+        <ui:composition template="../#{applicationController.plan3}">
+            <ui:define name="contenido">
+                <div style="height: 450px">
+                <h:form id="formId">
+
+                    <p:commandLink value="#{labels.descargar}" ajax="false" title="Download" actionListener="#{reportesController.descargar}" rendered="#{reportesController.renderDownload}">
+                          <p:fileDownload value="#{reportesController.file}"/>
+                    </p:commandLink>
+                    
+                    <br/>
+                    <br/>
+                    
+                    <p:commandLink  ajax="false" action="#{reportesController.generarNuevo}" value="Generar otro reporte!" rendered="#{reportesController.renderDownload}"/>
+                </h:form>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </f:view>
+
+</html>

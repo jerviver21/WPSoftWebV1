@@ -60,12 +60,11 @@ public class ApplicationController {
     @PostConstruct
     public void init(){
         locator = ServiceLocator.getInstance();
-        System.out.println("--> Iniciando application controller <--");
+        locator.setCommonFacade(commonServices);
+
         commonServices.updateEstructuraMenus();
         timerServices.initTimer();
-        
-        
-        
+
         ROL_ADMIN = locator.getParameter("rolAdmin");
         ROL_MASTER = locator.getParameter("rolMaster");
         ROL_CONTRATISTA = locator.getParameter("rolContratista");

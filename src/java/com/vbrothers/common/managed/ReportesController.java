@@ -150,12 +150,12 @@ public class ReportesController {
         }
     }
 
-    public void generar() {
+    public String generar() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Map<String, Object> params = new HashMap<String, Object>();
             if(parametros == null){
-                return;
+                return null;
             }
             //Lectura de los parámetros de la página, se almacenan en un mapa para poder generar el jasper
             Set<ParametrosReporte> pks = parametros.keySet();
@@ -171,13 +171,14 @@ public class ReportesController {
                     case DATE:
                         org.primefaces.component.calendar.Calendar campoFecha =
                                 (org.primefaces.component.calendar.Calendar) parametros.get(parametro);
+                        System.out.println(campoFecha+" - "+campoFecha.getValue()+" - "+campoFecha.getLabel()+" - "+campoFecha.getPattern()+" - "+campoFecha.getId());
                         param = format.format((Date)campoFecha.getValue());
                         break;
                     case NUMERIC:
                         HtmlInputText campoNum = (HtmlInputText) parametros.get(parametro);
                         if(!campoNum.getValue().toString().matches("\\d+")){
                             FacesUtil.addMessage(FacesUtil.ERROR, "El campo: "+parametro.getEtiqueta()+" debe ser numérico");
-                            return;
+                            return null;
                         }
                         param = Long.parseLong(campoNum.getValue().toString());
                         break;
@@ -202,7 +203,7 @@ public class ReportesController {
         List<UIComponent> componentes = contenedor.getChildren();
         componentes.clear();
         codReporte = -1;
-        
+        return "/reportes/descarga.xhtml";
     }
 
     public void descargar(ActionEvent evt)throws Exception{
@@ -211,8 +212,13 @@ public class ReportesController {
         }
         FileInputStream stream = new FileInputStream(rutaArchivo);
         file = new DefaultStreamedContent(stream, "application/zip", reporte.getNombre().replaceAll("\\s", "")+".zip");
-        renderDownload = false;
     }
+    
+    public String generarNuevo(){
+        renderDownload = false;
+        return "/reportes/reportes.xhtml";
+    }
+
 
 
     /**

@@ -1,4 +1,5 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
+
+<html  xmlns="http://www.w3.org/1999/xhtml"
      xmlns:h="http://java.sun.com/jsf/html"
      xmlns:f="http://java.sun.com/jsf/core"
      xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -8,12 +9,10 @@
 
     <f:view>
 
-        <ui:composition template="#{applicationController.plantilla}">
-            <ui:define name="navegador">
-                <ui:include src="../menu.xhtml"/>
-            </ui:define>
+        <ui:composition template="../#{applicationController.plan3}">
             <ui:define name="contenido">
-                <h:form id="formId" prependId="false">
+                <div style="height: 450px">
+                <h:form id="formId">
                     
                     
                     <p:messages id="msgs" />
@@ -37,10 +36,8 @@
                         <p:commandButton value="#{labels.boton_enviar}" action="#{reportesController.generar}" ajax="false"/>
                     </p:panel>
 
-                    <p:commandLink value="#{labels.descargar}" ajax="false" title="Download" actionListener="#{reportesController.descargar}" rendered="#{reportesController.renderDownload}">
-                          <p:fileDownload value="#{reportesController.file}"/>
-                    </p:commandLink>
                 </h:form>
+                </div>
             </ui:define>
         </ui:composition>
     </f:view>
